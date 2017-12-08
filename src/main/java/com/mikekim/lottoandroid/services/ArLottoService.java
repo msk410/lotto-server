@@ -127,7 +127,7 @@ public class ArLottoService {
             while (numbersMatcher.find() && dateMatcher.find()) {
                 ArGames temp = new ArGames();
                 temp.setName("Natural State Jackpot");
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + dateMatcher.group(2);
+                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 temp.setWinningNumbers(numbersMatcher.group().split(" "));
                 if (null == arLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
@@ -160,7 +160,7 @@ public class ArLottoService {
                 ArGames temp = new ArGames();
                 temp.setName("Cash 3 " + dateMatcher.group(2));
                 String[] dateRaw = dateMatcher.group(1).split("/");
-                String date = dateRaw[2] + "/" + dateRaw[0] + "/" + dateRaw[1];
+                String date = dateRaw[2] + "/" + StringUtils.leftPad(dateRaw[0], 2, "0") + "/" + StringUtils.leftPad(dateRaw[1], 2, "0");
                 temp.setDate(date);
                 temp.setWinningNumbers(numbersMatcher.group().split(" "));
                 if (null == arLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
@@ -175,6 +175,7 @@ public class ArLottoService {
             System.out.println("failed to retrieve cash 3");
         }
     }
+
     public void getCash4() {
         webClient.setJavaScriptEnabled(true);
         webClient.setThrowExceptionOnScriptError(false);
@@ -192,7 +193,7 @@ public class ArLottoService {
                 ArGames temp = new ArGames();
                 temp.setName("Cash 4 " + dateMatcher.group(2));
                 String[] dateRaw = dateMatcher.group(1).split("/");
-                String date = dateRaw[2] + "/" + dateRaw[0] + "/" + dateRaw[1];
+                String date = dateRaw[2] + "/" + StringUtils.leftPad(dateRaw[0], 2, "0") + "/" + StringUtils.leftPad(dateRaw[1], 2, "0");
                 temp.setDate(date);
                 temp.setWinningNumbers(numbersMatcher.group().split(" "));
                 if (null == arLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
@@ -224,7 +225,7 @@ public class ArLottoService {
             while (numbersMatcher.find() && dateMatcher.find()) {
                 ArGames temp = new ArGames();
                 temp.setName("Lucky for Life");
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + dateMatcher.group(2);
+                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 temp.setWinningNumbers(numbersMatcher.group(1).split(" "));
                 temp.setBonus(numbersMatcher.group(2));
