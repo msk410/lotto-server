@@ -6,7 +6,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.CaGames;
 import com.mikekim.lottoandroid.repositories.CaLottoRepository;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class CaLottoService {
 
     @Autowired
     CaLottoRepository caLottoRepository;
-    WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
+    WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
     public void getAll() {
         getPowerball();
@@ -108,8 +108,8 @@ public class CaLottoService {
 
 
     public void getSuperLottoPlus() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/superlotto-plus/winning-numbers");
             String pageHtml = currentPage.asText();
@@ -143,8 +143,8 @@ public class CaLottoService {
     }
 
     public void fantasy5() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/fantasy-5/winning-numbers");
             String pageHtml = currentPage.asText();
@@ -176,8 +176,8 @@ public class CaLottoService {
         }
     }
     public void daily3() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-3/winning-numbers");
             String pageHtml = currentPage.asText();
@@ -203,8 +203,8 @@ public class CaLottoService {
         }
     }
     public void daily4() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-4/winning-numbers");
             String pageHtml = currentPage.asText();

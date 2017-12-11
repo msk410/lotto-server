@@ -5,11 +5,9 @@ import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.mikekim.lottoandroid.models.CoGames;
 import com.mikekim.lottoandroid.models.CtGames;
-import com.mikekim.lottoandroid.repositories.CoLottoRepository;
 import com.mikekim.lottoandroid.repositories.CtLottoRepository;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,7 +27,7 @@ import java.util.regex.Pattern;
 public class CtLottoService {
     public static final Calendar TODAY = Calendar.getInstance();
 
-    WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
+    WebClient webClient = new WebClient(BrowserVersion.CHROME);
     @Autowired
     CtLottoRepository ctLottoRepository;
 
@@ -117,8 +115,8 @@ public class CtLottoService {
     }
 
     public void getLotto() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
@@ -150,8 +148,8 @@ public class CtLottoService {
         saveGame(gamesList, "lotto!");
     }
     public void getLuckyForLife() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
@@ -185,8 +183,8 @@ public class CtLottoService {
     }
 
     public void getPlay3() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
@@ -218,8 +216,8 @@ public class CtLottoService {
         saveGame(gamesList, "play 3");
     }
     public void getPlay4() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
@@ -251,8 +249,8 @@ public class CtLottoService {
         saveGame(gamesList, "play 4");
     }
     public void getLuckyLinksNight() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
@@ -285,8 +283,8 @@ public class CtLottoService {
     }
 
     public void getLuckyLinksDay() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;

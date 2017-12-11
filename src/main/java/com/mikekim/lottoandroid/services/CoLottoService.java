@@ -7,7 +7,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.CoGames;
 import com.mikekim.lottoandroid.repositories.CoLottoRepository;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class CoLottoService {
     public static final Calendar TODAY = Calendar.getInstance();
     @Autowired
     CoLottoRepository coLottoRepository;
-    WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
+    WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
 
     public void getAll() {
@@ -111,8 +111,8 @@ public class CoLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
@@ -169,8 +169,8 @@ public class CoLottoService {
     }
 
     public void getLotto() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
@@ -226,8 +226,8 @@ public class CoLottoService {
     }
 
     public void getCash5() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
@@ -283,8 +283,8 @@ public class CoLottoService {
     }
 
     public void getPick3() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;

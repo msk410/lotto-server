@@ -1,15 +1,12 @@
 package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.ArGames;
-import com.mikekim.lottoandroid.models.CoGames;
-import com.mikekim.lottoandroid.models.NyGames;
 import com.mikekim.lottoandroid.repositories.ArLottoRepository;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -28,7 +24,7 @@ public class ArLottoService {
 
     @Autowired
     ArLottoRepository arLottoRepository;
-    WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
+    WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
     public void getAll() {
         getPowerball();
@@ -112,8 +108,8 @@ public class ArLottoService {
 
 
     public void getNaturalStateJackpot() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.myarkansaslottery.com/games/natural-state-jackpot");
             String pageHtml = currentPage.asText();
@@ -144,8 +140,8 @@ public class ArLottoService {
     }
 
     public void getCash3() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.myarkansaslottery.com/games/cash-3");
             String pageHtml = currentPage.asText();
@@ -177,8 +173,8 @@ public class ArLottoService {
     }
 
     public void getCash4() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.myarkansaslottery.com/games/cash-4");
             String pageHtml = currentPage.asText();
@@ -210,8 +206,8 @@ public class ArLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.setJavaScriptEnabled(true);
-        webClient.setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.myarkansaslottery.com/games/lucky-for-life");
             String pageHtml = currentPage.asText();

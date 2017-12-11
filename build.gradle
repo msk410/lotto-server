@@ -30,6 +30,6 @@ dependencies {
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	// https://mvnrepository.com/artifact/net.sourceforge.htmlunit/htmlunit
-	compile group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.4'
+	compile group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.28'
 
 }
