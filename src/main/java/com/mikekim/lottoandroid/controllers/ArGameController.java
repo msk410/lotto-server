@@ -1,7 +1,6 @@
 package com.mikekim.lottoandroid.controllers;
 
 import com.mikekim.lottoandroid.models.ArGames;
-import com.mikekim.lottoandroid.models.CoGames;
 import com.mikekim.lottoandroid.repositories.ArLottoRepository;
 import com.mikekim.lottoandroid.services.ArLottoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +14,24 @@ import java.util.List;
 public class ArGameController {
 
     @Autowired
-    ArLottoRepository arLottoRepository;
+    ArLottoRepository repository;
 
     @Autowired
-    ArLottoService arLottoService;
+    ArLottoService service;
 
     @GetMapping(value = "/ar/get")
     public Iterable<ArGames> getAll() {
-        return arLottoRepository.findAll();
+        return repository.findAll();
     }
 
     @GetMapping(value = "/ar/save")
     public void saveGames() {
-        arLottoService.getAll();
+        service.getAll();
     }
 
     @GetMapping(value = "/ar/{name}")
     public List<ArGames> test(@PathVariable String name) {
-        return arLottoRepository.findAllGames(name);
+        return repository.findAllGames(name);
     }
 
 

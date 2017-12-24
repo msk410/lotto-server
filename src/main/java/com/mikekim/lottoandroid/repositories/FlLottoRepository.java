@@ -1,6 +1,5 @@
 package com.mikekim.lottoandroid.repositories;
 
-import com.mikekim.lottoandroid.models.ArGames;
 import com.mikekim.lottoandroid.models.FlGames;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

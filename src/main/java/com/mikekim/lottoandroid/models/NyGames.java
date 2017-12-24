@@ -1,6 +1,8 @@
 package com.mikekim.lottoandroid.models;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 @Entity
 @IdClass(GamePrimaryKey.class)
