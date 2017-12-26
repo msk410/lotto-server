@@ -38,8 +38,6 @@ public class InLottoService {
     }
 
 
-
-
     public void getPowerball() {
         try {
             TextPage currentPage = webClient.getPage("http://www.powerball.com/powerball/winnums-text.txt");
@@ -220,6 +218,7 @@ public class InLottoService {
             System.out.println("failed to retrieve Cash 4 Life");
         }
     }
+
     public void getDaily4() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -256,6 +255,7 @@ public class InLottoService {
             System.out.println("failed to retrieve daily 4");
         }
     }
+
     public void getDaily3() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -265,7 +265,6 @@ public class InLottoService {
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(Evening|Midday)\\s*(\\d+) - (\\d+) - (\\d+)\\s*SB:(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            System.out.println(pageHtml);
             List<InGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 InGames temp = new InGames();
@@ -291,6 +290,7 @@ public class InLottoService {
             System.out.println("failed to retrieve daily 3");
         }
     }
+
     public void getQuickDraw() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -300,7 +300,6 @@ public class InLottoService {
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(Evening|Midday)\\s*(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*BE:(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            System.out.println(pageHtml);
             List<InGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 InGames temp = new InGames();
@@ -308,7 +307,7 @@ public class InLottoService {
                 String date = "20" + dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[20];
-                for(int i = 0, j = 5; i < 20; i++, j++) {
+                for (int i = 0, j = 5; i < 20; i++, j++) {
                     nums[i] = dataMatcher.group(j);
                 }
 

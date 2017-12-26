@@ -251,7 +251,8 @@ public class IdLottoService {
             System.out.println("failed to retrieve Weekly Grand");
         }
     }
-//todo fix when night might be missing? or just update once per day
+
+    //todo fix when night might be missing? or just update once per day
     public void getPick3() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);

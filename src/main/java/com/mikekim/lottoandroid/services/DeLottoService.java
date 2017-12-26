@@ -226,6 +226,7 @@ public class DeLottoService {
 
         saveGame(gamesList, "play 3");
     }
+
     public void getPlay4() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -336,7 +337,6 @@ public class DeLottoService {
         }
         saveGame(gamesList, "multi win");
     }
-
 
 
     public void getLuckyForLife() {

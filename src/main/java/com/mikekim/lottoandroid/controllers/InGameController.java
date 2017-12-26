@@ -1,10 +1,7 @@
 package com.mikekim.lottoandroid.controllers;
 
-import com.mikekim.lottoandroid.models.IlGames;
 import com.mikekim.lottoandroid.models.InGames;
-import com.mikekim.lottoandroid.repositories.IlLottoRepository;
 import com.mikekim.lottoandroid.repositories.InLottoRepository;
-import com.mikekim.lottoandroid.services.IlLottoService;
 import com.mikekim.lottoandroid.services.InLottoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

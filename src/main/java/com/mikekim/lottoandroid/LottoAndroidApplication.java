@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class LottoAndroidApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(LottoAndroidApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(LottoAndroidApplication.class, args);
+    }
 }

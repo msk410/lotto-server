@@ -5,11 +5,8 @@ import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.mikekim.lottoandroid.models.MaGames;
-import com.mikekim.lottoandroid.models.MeGames;
 import com.mikekim.lottoandroid.repositories.MaLottoRepository;
-import com.mikekim.lottoandroid.repositories.MeLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -122,7 +119,6 @@ public class MaLottoService {
             List<MaGames> gamesList = new ArrayList<>();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            System.out.println(pageHtml);
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MaGames temp = new MaGames();
                 temp.setName("Megabucks Doubler");

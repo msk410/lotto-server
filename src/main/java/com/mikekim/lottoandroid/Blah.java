@@ -11,7 +11,7 @@ public class Blah {
     @Autowired
     NyLottoRepository nyLottoRepository;
 
-//    @Scheduled(fixedRate = 5000)
+    //    @Scheduled(fixedRate = 5000)
     public void test() {
         NyGames t = new NyGames();
 
@@ -22,7 +22,7 @@ public class Blah {
         t2.setName("t");
         t2.setDate("t");
 
-        if(null == nyLottoRepository.findByNameAndDate(t.getName(), t.getDate())) {
+        if (null == nyLottoRepository.findByNameAndDate(t.getName(), t.getDate())) {
             nyLottoRepository.save(t);
             System.out.println("saving t");
         } else {
@@ -30,7 +30,7 @@ public class Blah {
         }
 
 
-        if(null == nyLottoRepository.findByNameAndDate(t2.getName(), t2.getDate())) {
+        if (null == nyLottoRepository.findByNameAndDate(t2.getName(), t2.getDate())) {
             nyLottoRepository.save(t2);
             System.out.println("saing t2");
         } else {

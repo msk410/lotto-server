@@ -184,6 +184,7 @@ public class IlLottoService {
             System.out.println("failed to retrieve lucky day lotto evening");
         }
     }
+
     public void getLuckyDayLottoMidday() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);

@@ -121,11 +121,11 @@ public class CaLottoService {
             while (numbersMatcher.find() && dateMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Super Lotto Plus");
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2),2,"0");
+                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
-                for(int i = 0, j = 0; j < numbersMatcher.group(1).length(); i++, j+=2) {
-                    nums[i] = numbersMatcher.group(1).substring(j, j+2);
+                for (int i = 0, j = 0; j < numbersMatcher.group(1).length(); i++, j += 2) {
+                    nums[i] = numbersMatcher.group(1).substring(j, j + 2);
                 }
                 temp.setWinningNumbers(nums);
                 temp.setBonus(numbersMatcher.group(2));
@@ -156,11 +156,11 @@ public class CaLottoService {
             while (numbersMatcher.find() && dateMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Fantasy 5");
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2),2,"0");
+                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
-                for(int i = 0, j = 0; j < numbersMatcher.group(1).length(); i++, j+=2) {
-                    nums[i] = numbersMatcher.group(1).substring(j, j+2);
+                for (int i = 0, j = 0; j < numbersMatcher.group(1).length(); i++, j += 2) {
+                    nums[i] = numbersMatcher.group(1).substring(j, j + 2);
                 }
                 temp.setWinningNumbers(nums);
                 if (null == caLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
@@ -175,6 +175,7 @@ public class CaLottoService {
             System.out.println("failed to retrieve fantasy 5");
         }
     }
+
     public void daily3() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -187,7 +188,7 @@ public class CaLottoService {
             while (dateMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Daily 3 " + dateMatcher.group(4));
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2),2,"0");
+                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 temp.setWinningNumbers(dateMatcher.group(5).split(""));
                 if (null == caLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
@@ -202,6 +203,7 @@ public class CaLottoService {
             System.out.println("failed to retrieve daily 3");
         }
     }
+
     public void daily4() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -214,7 +216,7 @@ public class CaLottoService {
             while (dateMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Daily 4");
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2),2,"0");
+                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 temp.setWinningNumbers(dateMatcher.group(4).split(""));
                 if (null == caLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {

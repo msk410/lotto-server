@@ -75,10 +75,11 @@ public class MeGames {
     public void setExtraText(String extraText) {
         this.extraText = extraText;
     }
+
     @Override
     public String toString() {
         String winningNumbers = "";
-        for(String s : this.getWinningNumbers()) {
+        for (String s : this.getWinningNumbers()) {
             winningNumbers += s + " ";
         }
         return this.getName() + " " + this.getDate() + " " + winningNumbers + " " + this.getBonus() + " " + this.getExtraText() + " " + this.getExtra();

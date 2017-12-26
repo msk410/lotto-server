@@ -189,6 +189,7 @@ public class FlLottoService {
             System.out.println("failed to retrieve cash 4 life");
         }
     }
+
     public void getLuckyMoney() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
@@ -225,6 +226,7 @@ public class FlLottoService {
             System.out.println("failed to retrieve lucky money");
         }
     }
+
     public void getFantasyFive() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
@@ -261,6 +263,7 @@ public class FlLottoService {
             System.out.println("failed to retrieve fantasy 5");
         }
     }
+
     public void getPick5() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
@@ -337,6 +340,7 @@ public class FlLottoService {
             System.out.println("failed to retrieve pick 4");
         }
     }
+
     public void getPick3() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setActiveXNative(false);
@@ -377,6 +381,7 @@ public class FlLottoService {
             System.out.println("failed to retrieve pick 3");
         }
     }
+
     public void getPick2() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
@@ -412,7 +417,6 @@ public class FlLottoService {
             System.out.println("failed to retrieve pick 2");
         }
     }
-
 
 
     private void saveGame(List<FlGames> gamesList, String gameName) {

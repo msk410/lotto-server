@@ -5,11 +5,7 @@ import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import com.mikekim.lottoandroid.models.KsGames;
 import com.mikekim.lottoandroid.models.KyGames;
-import com.mikekim.lottoandroid.repositories.KsLottoRepository;
 import com.mikekim.lottoandroid.repositories.KyLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +33,7 @@ public class KyLottoService {
         getLuckyForLife();
         getPick3();
         getPick4();
-            getCashBall();
+        getCashBall();
         get5CardCash();
     }
 

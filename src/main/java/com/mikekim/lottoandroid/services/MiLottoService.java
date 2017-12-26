@@ -6,9 +6,7 @@ import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.mikekim.lottoandroid.models.MeGames;
 import com.mikekim.lottoandroid.models.MiGames;
-import com.mikekim.lottoandroid.repositories.MeLottoRepository;
 import com.mikekim.lottoandroid.repositories.MiLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,7 @@ public class MiLottoService {
         getPowerball();
         getMegaMillions();
         getAllGames(); //todo check what daily 3/4 games look like
+        //todo un fuck this
     }
 
 
@@ -181,7 +180,7 @@ public class MiLottoService {
             int i = 0;
 
 
-            saveGame(gamesList, gamesList.size() + "michigan games" );
+            saveGame(gamesList, gamesList.size() + "michigan games");
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Megabucks Plus");

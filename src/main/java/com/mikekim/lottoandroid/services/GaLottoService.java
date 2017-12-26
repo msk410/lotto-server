@@ -119,7 +119,6 @@ public class GaLottoService {
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("LAST DRAW RESULTS:\\((\\d{2})/(\\d{2})/(\\d{4})\\)\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            System.out.println(pageHtml);
             List<GaGames> gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
@@ -153,7 +152,6 @@ public class GaLottoService {
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("LAST DRAW RESULTS:\\((\\d{2})/(\\d{2})/(\\d{4})\\)\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            System.out.println(pageHtml);
             List<GaGames> gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
@@ -246,6 +244,7 @@ public class GaLottoService {
             System.out.println("failed to retrieve Cash 3");
         }
     }
+
     public void getCash4() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -314,6 +313,7 @@ public class GaLottoService {
             System.out.println("failed to retrieve Cash 4");
         }
     }
+
     public void getAllOrNothing() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);

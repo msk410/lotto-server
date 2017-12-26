@@ -3,7 +3,7 @@ package com.mikekim.lottoandroid.models;
 import java.io.Serializable;
 
 
-public class GamePrimaryKey implements Serializable{
+public class GamePrimaryKey implements Serializable {
     private String name;
     private String date;
 

@@ -131,7 +131,7 @@ public class CtLottoService {
                 CtGames temp = new CtGames();
                 temp.setName("Lotto!");
                 temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
-                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1),2,"0") + "/" + StringUtils.leftPad(dataMatcher.group(2),2,"0"));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
                 if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
@@ -147,6 +147,7 @@ public class CtLottoService {
 
         saveGame(gamesList, "lotto!");
     }
+
     public void getLuckyForLife() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -164,7 +165,7 @@ public class CtLottoService {
                 CtGames temp = new CtGames();
                 temp.setName("Lucky for Life");
                 temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
-                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1),2,"0") + "/" + StringUtils.leftPad(dataMatcher.group(2),2,"0"));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
                 temp.setBonus(dataMatcher.group(7));
                 if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
@@ -199,7 +200,7 @@ public class CtLottoService {
                 CtGames temp = new CtGames();
                 temp.setName("Play 3");
                 temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
-                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1),2,"0") + "/" + StringUtils.leftPad(dataMatcher.group(2),2,"0"));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
                 if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
@@ -215,6 +216,7 @@ public class CtLottoService {
 
         saveGame(gamesList, "play 3");
     }
+
     public void getPlay4() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -232,7 +234,7 @@ public class CtLottoService {
                 CtGames temp = new CtGames();
                 temp.setName("Play 4");
                 temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
-                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1),2,"0") + "/" + StringUtils.leftPad(dataMatcher.group(2),2,"0"));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
                 if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
@@ -248,6 +250,7 @@ public class CtLottoService {
 
         saveGame(gamesList, "play 4");
     }
+
     public void getLuckyLinksNight() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -265,7 +268,7 @@ public class CtLottoService {
                 CtGames temp = new CtGames();
                 temp.setName("Lucky Links Night");
                 temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
-                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1),2,"0") + "/" + StringUtils.leftPad(dataMatcher.group(2),2,"0"));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
                 if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
@@ -299,7 +302,7 @@ public class CtLottoService {
                 CtGames temp = new CtGames();
                 temp.setName("Lucky Links Day");
                 temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
-                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1),2,"0") + "/" + StringUtils.leftPad(dataMatcher.group(2),2,"0"));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
                 if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {

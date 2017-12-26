@@ -5,9 +5,7 @@ import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.mikekim.lottoandroid.models.KyGames;
 import com.mikekim.lottoandroid.models.LaGames;
-import com.mikekim.lottoandroid.repositories.KyLottoRepository;
 import com.mikekim.lottoandroid.repositories.LaLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +104,7 @@ public class LaLottoService {
         saveGame(gamesList, "mega millions");
 
     }
+
     public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -128,9 +127,9 @@ public class LaLottoService {
                         if (i == 0 || i == 1) {
                             temp.setWinningNumbers(table.getRow(j).getCell(1).asText().split(""));
                         } else {
-                            String[] nums = new String[i+3];
-                            for(int s = 0, s2 = 0; s2 <table.getRow(j).getCell(1).asText().length(); s++, s2+=2) {
-                                nums[s] = table.getRow(j).getCell(1).asText().substring(s2, s2+2);
+                            String[] nums = new String[i + 3];
+                            for (int s = 0, s2 = 0; s2 < table.getRow(j).getCell(1).asText().length(); s++, s2 += 2) {
+                                nums[s] = table.getRow(j).getCell(1).asText().substring(s2, s2 + 2);
                             }
                             temp.setWinningNumbers(nums);
                         }

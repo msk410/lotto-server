@@ -248,19 +248,19 @@ public class MdLottoService {
                     String card4Raw = table.getRow(j).getCell(1).getFirstChild().getNextElementSibling().getNextElementSibling().getNextElementSibling().getAttributes().getNamedItem("src").getNodeValue();
                     String card5Raw = table.getRow(j).getCell(1).getFirstChild().getNextElementSibling().getNextElementSibling().getNextElementSibling().getNextElementSibling().getAttributes().getNamedItem("src").getNodeValue();
 
-                    card1Raw = card1Raw.split("/")[card1Raw.split("/").length-1].split("\\.")[0];
+                    card1Raw = card1Raw.split("/")[card1Raw.split("/").length - 1].split("\\.")[0];
                     nums[0] = card1Raw.split("_")[1] + String.valueOf(card1Raw.split("_")[0].charAt(0)).toUpperCase();
 
-                    card2Raw = card2Raw.split("/")[card2Raw.split("/").length-1].split("\\.")[0];
+                    card2Raw = card2Raw.split("/")[card2Raw.split("/").length - 1].split("\\.")[0];
                     nums[1] = card2Raw.split("_")[1] + String.valueOf(card2Raw.split("_")[0].charAt(0)).toUpperCase();
 
-                    card3Raw = card3Raw.split("/")[card3Raw.split("/").length-1].split("\\.")[0];
+                    card3Raw = card3Raw.split("/")[card3Raw.split("/").length - 1].split("\\.")[0];
                     nums[2] = card3Raw.split("_")[1] + String.valueOf(card3Raw.split("_")[0].charAt(0)).toUpperCase();
 
-                    card4Raw = card4Raw.split("/")[card4Raw.split("/").length-1].split("\\.")[0];
+                    card4Raw = card4Raw.split("/")[card4Raw.split("/").length - 1].split("\\.")[0];
                     nums[3] = card4Raw.split("_")[1] + String.valueOf(card4Raw.split("_")[0].charAt(0)).toUpperCase();
 
-                    card5Raw = card5Raw.split("/")[card5Raw.split("/").length-1].split("\\.")[0];
+                    card5Raw = card5Raw.split("/")[card5Raw.split("/").length - 1].split("\\.")[0];
                     nums[4] = card5Raw.split("_")[1] + String.valueOf(card5Raw.split("_")[0].charAt(0)).toUpperCase();
                     temp.setWinningNumbers(nums);
                     if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
@@ -313,6 +313,7 @@ public class MdLottoService {
             System.out.println("failed to retrieve multi match");
         }
     }
+
     public void getCash4Life() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);

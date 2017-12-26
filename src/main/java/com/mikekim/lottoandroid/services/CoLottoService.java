@@ -39,6 +39,7 @@ public class CoLottoService {
         getPick3();
 
     }
+
     public void getPowerball() {
         try {
             TextPage currentPage = webClient.getPage("http://www.powerball.com/powerball/winnums-text.txt");

@@ -201,6 +201,7 @@ public class NyLottoService {
         }
         saveGame(nyGamesList, "pick 10");
     }
+
     private void getNumbersWin() {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/iy3t-z4bs.json", Object[].class);
