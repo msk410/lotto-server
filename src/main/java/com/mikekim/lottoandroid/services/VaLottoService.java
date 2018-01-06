@@ -4,8 +4,8 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.mikekim.lottoandroid.models.MnGames;
-import com.mikekim.lottoandroid.repositories.MnLottoRepository;
+import com.mikekim.lottoandroid.models.VaGames;
+import com.mikekim.lottoandroid.repositories.VaLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +20,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class MnLottoService {
+public class VaLottoService {
 
     @Autowired
-    MnLottoRepository repository;
+
+    VaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLuckyForLife();
-        getLottoAmerica();
-        getDaily3();
-        getGopher5();
-        getNorthStarCash();
-
+        getBankAMillion();
+        getCash4Life();
+        getCash5();
+        getPick4();
+        getPick3();
     }
-
 
     public void getPowerball() {
         try {
@@ -49,12 +48,12 @@ public class MnLottoService {
             Pattern numbersPattern = Pattern.compile(numbersRegex);
             Matcher numbersMatcher = numbersPattern.matcher(textSource);
 
-            List<MnGames> lotto = new ArrayList<>();
+            List<VaGames> lotto = new ArrayList<>();
 
             for (int index = 0; index < 30; index++) {
                 if (numbersMatcher.find() && dateMatcher.find()) {
                     String[] rawWinningNumbers = numbersMatcher.group().trim().split("  ");
-                    MnGames temp = new MnGames();
+                    VaGames temp = new VaGames();
                     temp.setName("Powerball");
                     String[] formatedDateArray = dateMatcher.group().trim().split("/");
                     String formatedDate = formatedDateArray[2] + "/" + formatedDateArray[0] + "/" + formatedDateArray[1];
@@ -85,9 +84,9 @@ public class MnLottoService {
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
-        List<MnGames> gamesList = new ArrayList<>();
+        List<VaGames> gamesList = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
-            MnGames temp = new MnGames();
+            VaGames temp = new VaGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
             String[] rawDate = jsonData.get("draw_date").split("T")[0].split("-");
@@ -109,25 +108,65 @@ public class MnLottoService {
 
     }
 
-    public void getLuckyForLife() {
+    public void getBankAMillion() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
+        webClient.getOptions().setCssEnabled(true);
         try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/lucky_for_life/winning_s/");
+            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/bankamillion.aspx");
+            webClient.waitForBackgroundJavaScript(30 * 1000);
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*BONUS\\s*BALL\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                MnGames temp = new MnGames();
-                temp.setName("Lucky for Life");
+            List<VaGames> gamesList = new ArrayList<>();
+            while (dataMatcher.find()) {
+                VaGames temp = new VaGames();
+                temp.setName("Bank a Million");
+                String[] nums = new String[6];
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
+                temp.setWinningNumbers(nums);
+                temp.setBonus(dataMatcher.group(10));
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            saveGame(gamesList, "Bank a Million");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Bank a Million");
+        }
+    }
+
+    public void getCash4Life() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/cash4life.aspx");
+            webClient.waitForBackgroundJavaScript(30 * 1000);
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*CASH\\s*BALL\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<VaGames> gamesList = new ArrayList<>();
+            while (dataMatcher.find()) {
+                VaGames temp = new VaGames();
+                temp.setName("Cash 4 Life");
                 String[] nums = new String[5];
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
                 nums[0] = dataMatcher.group(4);
                 nums[1] = dataMatcher.group(5);
                 nums[2] = dataMatcher.group(6);
@@ -137,36 +176,38 @@ public class MnLottoService {
                 temp.setBonus(dataMatcher.group(9));
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
-            saveGame(gamesList, "Lucky for Life");
+            saveGame(gamesList, "Cash 4 Life");
 
         } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
+            System.out.println("failed to retrieve Cash 4 Life");
         }
     }
 
-    public void getLottoAmerica() {
+    public void getCash5() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        System.out.println("wtf");
+        webClient.getOptions().setCssEnabled(true);
         try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/lotto_america/winning_s/");
+            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/cash5.aspx");
+            webClient.waitForBackgroundJavaScript(30 * 1000);
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*x\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                MnGames temp = new MnGames();
-                temp.setName("Lotto America");
+            List<VaGames> gamesList = new ArrayList<>();
+            while (dataMatcher.find()) {
+                VaGames temp = new VaGames();
+                VaGames temp2 = new VaGames();
+                temp.setName("Cash 5 Day");
+                temp2.setName("Cash 5 Night");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
+                date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp2.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
                 nums[1] = dataMatcher.group(5);
@@ -174,196 +215,172 @@ public class MnLottoService {
                 nums[3] = dataMatcher.group(7);
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
-                temp.setBonus(dataMatcher.group(9));
-                temp.setExtra(dataMatcher.group(10));
-                temp.setExtraText("All Star Bonus: ");
+
+                nums = new String[5];
+                nums[0] = dataMatcher.group(9);
+                nums[1] = dataMatcher.group(10);
+                nums[2] = dataMatcher.group(11);
+                nums[3] = dataMatcher.group(12);
+                nums[4] = dataMatcher.group(13);
+                temp2.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
+                }
+                if (null == repository.findByNameAndDate(temp2.getName(), temp2.getDate())) {
+                    gamesList.add(temp2);
                 }
             }
-            saveGame(gamesList, "Lotto America");
+            saveGame(gamesList, "Cash 5");
 
         } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto America");
+            System.out.println("failed to retrieve Cash 5");
         }
     }
 
-    public void getDaily3() {
+    public void getPick4() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        System.out.println("wtf");
+        webClient.getOptions().setCssEnabled(true);
         try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/daily_3/winning_s/");
+            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/pick4.aspx");
+            webClient.waitForBackgroundJavaScript(30 * 1000);
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                MnGames temp = new MnGames();
-                temp.setName("Daily 3");
+            List<VaGames> gamesList = new ArrayList<>();
+            while (dataMatcher.find()) {
+                VaGames temp = new VaGames();
+                VaGames temp2 = new VaGames();
+                temp.setName("Pick 4 Day");
+                temp2.setName("Pick 4 Night");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
+                date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp2.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+
+                nums = new String[4];
+                nums[0] = dataMatcher.group(8);
+                nums[1] = dataMatcher.group(9);
+                nums[2] = dataMatcher.group(10);
+                nums[3] = dataMatcher.group(11);
+                temp2.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+                if (null == repository.findByNameAndDate(temp2.getName(), temp2.getDate())) {
+                    gamesList.add(temp2);
+                }
+            }
+            saveGame(gamesList, "Pick 4");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Pick 4");
+        }
+    }
+
+    public void getPick3() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/pick3.aspx");
+            webClient.waitForBackgroundJavaScript(30 * 1000);
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<VaGames> gamesList = new ArrayList<>();
+            while (dataMatcher.find()) {
+                VaGames temp = new VaGames();
+                VaGames temp2 = new VaGames();
+                temp.setName("Pick 3 Day");
+                temp2.setName("Pick 3 Night");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp2.setDate(date);
                 String[] nums = new String[3];
                 nums[0] = dataMatcher.group(4);
                 nums[1] = dataMatcher.group(5);
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
+
+                nums = new String[3];
+                nums[0] = dataMatcher.group(7);
+                nums[1] = dataMatcher.group(8);
+                nums[2] = dataMatcher.group(9);
+                temp2.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
+                }
+                if (null == repository.findByNameAndDate(temp2.getName(), temp2.getDate())) {
+                    gamesList.add(temp2);
                 }
             }
-            saveGame(gamesList, "Daily 3");
+            saveGame(gamesList, "Pick 3");
 
         } catch (IOException e) {
-            System.out.println("failed to retrieve Daily 3");
+            System.out.println("failed to retrieve Pick 3");
         }
     }
 
-    public void getGopher5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        System.out.println("wtf");
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/gopher_5/winning_s/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                MnGames temp = new MnGames();
-                temp.setName("Gopher 5");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
-                temp.setDate(date);
-                String[] nums = new String[5];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
-                nums[4] = dataMatcher.group(8);
-                temp.setWinningNumbers(nums);
-                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                    gamesList.add(temp);
-                } else {
-                    break;
-                }
+    private String formatMonth(String month) {
+        switch (month) {
+            case ("Dec"): {
+                return "12";
             }
-            saveGame(gamesList, "gopher 5");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve gopher 5");
-        }
-    }
-
-    public void getNorthStarCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/northstar_cash/winning_s/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                MnGames temp = new MnGames();
-                temp.setName("North Star Cash");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
-                temp.setDate(date);
-                String[] nums = new String[5];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
-                nums[4] = dataMatcher.group(8);
-                temp.setWinningNumbers(nums);
-                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                    gamesList.add(temp);
-                } else {
-                    break;
-                }
+            case ("Nov"): {
+                return "11";
             }
-            saveGame(gamesList, "North Star Cash");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve North Star Cash");
-        }
-    }
-
-    private String formatMonth(String gameMonth) {
-        switch (gameMonth) {
-            case ("January"): {
-                gameMonth = "01";
-                break;
+            case ("Oct"): {
+                return "10";
             }
-            case ("February"): {
-                gameMonth = "02";
-                break;
+            case ("Sep"): {
+                return "09";
             }
-            case ("March"): {
-                gameMonth = "03";
-                break;
+            case ("Aug"): {
+                return "08";
             }
-            case ("April"): {
-                gameMonth = "04";
-                break;
+            case ("Jul"): {
+                return "07";
+            }
+            case ("Jun"): {
+                return "06";
             }
             case ("May"): {
-                gameMonth = "05";
-                break;
+                return "05";
             }
-            case ("June"): {
-                gameMonth = "06";
-                break;
+            case ("Apr"): {
+                return "04";
             }
-            case ("July"): {
-                gameMonth = "07";
-                break;
+            case ("Mar"): {
+                return "03";
             }
-            case ("August"): {
-                gameMonth = "08";
-                break;
+            case ("Feb"): {
+                return "02";
             }
-            case ("September"): {
-                gameMonth = "09";
-                break;
-            }
-            case ("October"): {
-                gameMonth = "10";
-                break;
-            }
-            case ("November"): {
-                gameMonth = "11";
-                break;
-            }
-            case ("December"): {
-                gameMonth = "12";
-                break;
+            case ("Jan"): {
+                return "01";
             }
             default:
-                break;
+                return "00";
         }
-        return gameMonth;
     }
 
-
-    private void saveGame(List<MnGames> gamesList, String gameName) {
+    private void saveGame(List<VaGames> gamesList, String gameName) {
         if (!gamesList.isEmpty()) {
-            Iterable<MnGames> gameIterable = gamesList;
+            Iterable<VaGames> gameIterable = gamesList;
             System.out.println("saving " + gameName + " games");
             repository.save(gameIterable);
         } else {
