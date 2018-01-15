@@ -112,7 +112,7 @@ public class MdLottoService {
 
 
     public void getPickGames() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -188,7 +188,7 @@ public class MdLottoService {
     }
 
     public void getBonusMatch5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -224,7 +224,7 @@ public class MdLottoService {
     }
 
     public void get5CardCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -279,7 +279,7 @@ public class MdLottoService {
     }
 
     public void getMultiMatch() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -315,7 +315,7 @@ public class MdLottoService {
     }
 
     public void getCash4Life() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {

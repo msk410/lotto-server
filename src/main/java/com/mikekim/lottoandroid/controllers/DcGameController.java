@@ -28,8 +28,9 @@ public class DcGameController {
     }
 
     @GetMapping(value = "/dc/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/dc/{name}")

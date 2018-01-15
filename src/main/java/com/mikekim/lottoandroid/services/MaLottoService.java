@@ -30,7 +30,10 @@ public class MaLottoService {
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getMegabucksDoubler();//todo skip ma for now cuz its gay
+        getMegabucksDoubler();
+        getMassCash();
+        getNumbersGame();
+        getLuckyForLife();
     }
 
 
@@ -111,10 +114,9 @@ public class MaLottoService {
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-        webClient.waitForBackgroundJavaScript(30 * 5000);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.masslottery.com/games/lottery/megabucks-doubler.html");
-
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
             List<MaGames> gamesList = new ArrayList<>();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
@@ -142,6 +144,121 @@ public class MaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Megabucks Doubler");
+        }
+    }
+
+    public void getLuckyForLife() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.masslottery.com/games/lottery/lucky-for-life.html");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            String pageHtml = currentPage.asText();
+            List<MaGames> gamesList = new ArrayList<>();
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                MaGames temp = new MaGames();
+                temp.setName("Lucky for Life");
+                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                temp.setBonus(dataMatcher.group(9));
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "Lucky for Life");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Lucky for Life");
+        }
+    }
+
+    public void getMassCash() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.masslottery.com/games/lottery/mass-cash.html");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            String pageHtml = currentPage.asText();
+            List<MaGames> gamesList = new ArrayList<>();
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                MaGames temp = new MaGames();
+                temp.setName("Mass Cash");
+                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "Mass Cash");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Mass Cash");
+        }
+    }
+
+    public void getNumbersGame() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.masslottery.com/games/lottery/numbers-game.html");
+            webClient.waitForBackgroundJavaScript(30 * 1000);
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            String pageHtml = currentPage.asText();
+            List<MaGames> gamesList = new ArrayList<>();
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)[,\\s\\d$]+(Mid\\s*-\\s*Day|Evening)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                MaGames temp = new MaGames();
+                temp.setName("Numbers Game " + dataMatcher.group(8).replace("-D", "d"));
+                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "Numbers Game");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Numbers Game");
         }
     }
 

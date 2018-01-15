@@ -108,7 +108,7 @@ public class RiLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -142,15 +142,14 @@ public class RiLottoService {
             System.out.println("failed to retrieve Lucky for Life");
         }
     }
-
     public void getWildMoney() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/rhode-island/wild-money/");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d{1,2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<RiGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
@@ -178,9 +177,8 @@ public class RiLottoService {
             System.out.println("failed to retrieve Wild Money");
         }
     }
-
     public void getTheNumbersEvening() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {

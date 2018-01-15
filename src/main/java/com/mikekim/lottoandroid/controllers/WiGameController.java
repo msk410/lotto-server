@@ -26,8 +26,9 @@ public class WiGameController {
     }
 
     @GetMapping(value = "/wi/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/wi/{name}")

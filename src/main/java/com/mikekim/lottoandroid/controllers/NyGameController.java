@@ -25,12 +25,13 @@ public class NyGameController {
         return nyLottoRepository.findAll();
     }
 
-    @GetMapping(value = "/save")
-    public void saveGames() {
+    @GetMapping(value = "/ny/save")
+    public String saveGames() {
         nyLottoService.getAll();
+        return "done";
     }
 
-    @GetMapping(value = "/test/{name}")
+    @GetMapping(value = "/ny/{name}")
     public List<NyGames> test(@PathVariable String name) {
         return nyLottoRepository.findAllGames(name);
     }

@@ -110,7 +110,7 @@ public class IaLottoService {
     }
 
     public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setUseInsecureSSL(true);
@@ -150,7 +150,7 @@ public class IaLottoService {
     }
 
     public void getLuckyForlife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setUseInsecureSSL(true);
@@ -188,7 +188,7 @@ public class IaLottoService {
     }
 
     public void getPick3Midday() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setUseInsecureSSL(true);
@@ -223,7 +223,7 @@ public class IaLottoService {
     }
 
     public void getPick3Evening() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setUseInsecureSSL(true);
@@ -258,7 +258,7 @@ public class IaLottoService {
     }
 
     public void getPick4Midday() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setUseInsecureSSL(true);
@@ -294,7 +294,7 @@ public class IaLottoService {
     }
 
     public void getPick4Evening() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setUseInsecureSSL(true);

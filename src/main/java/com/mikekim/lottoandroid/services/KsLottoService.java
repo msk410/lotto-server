@@ -109,7 +109,7 @@ public class KsLottoService {
     }
 
     public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -148,7 +148,7 @@ public class KsLottoService {
 
 
     public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -184,7 +184,7 @@ public class KsLottoService {
     }
 
     public void getSuperKansasCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -220,7 +220,7 @@ public class KsLottoService {
     }
 
     public void get2By2() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -254,7 +254,7 @@ public class KsLottoService {
     }
 
     public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {

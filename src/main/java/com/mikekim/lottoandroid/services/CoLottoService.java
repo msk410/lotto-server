@@ -112,7 +112,7 @@ public class CoLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -126,7 +126,7 @@ public class CoLottoService {
             Pattern noMatchPattern = Pattern.compile("There are no past Lucky for Life drawings yet for");
             Pattern datePattern = Pattern.compile("([A-Za-z]{3,4}. [0-9]{1,2}, [0-9]{4}) ➞");
             Pattern numberPattern = Pattern.compile("(\\d+-\\d+-\\d+-\\d+-\\d+)\\s*(\\d+)");
-            String url = baseUrl + year + "-" + month;
+            String url = baseUrl + year + "-" + StringUtils.leftPad(month, 2, "0");
             while (luckyForLifeGames.size() < 30 && flag) {
 
                 currentPage = webClient.getPage(url);
@@ -160,7 +160,7 @@ public class CoLottoService {
                     month = "12";
                     year = String.valueOf(Integer.parseInt(year) - 1);
                 }
-                url = baseUrl + year + "-" + month;
+                url = baseUrl + year + "-" + StringUtils.leftPad(month, 2, "0");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -170,7 +170,7 @@ public class CoLottoService {
     }
 
     public void getLotto() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -184,7 +184,7 @@ public class CoLottoService {
             Pattern noMatchPattern = Pattern.compile("There are no past Lotto drawings yet for");
             Pattern datePattern = Pattern.compile("([A-Za-z]{3,4}. [0-9]{1,2}, [0-9]{4}) ➞");
             Pattern numberPattern = Pattern.compile("\\d+-\\d+-\\d+-\\d+-\\d+-\\d+");
-            String url = baseUrl + year + "-" + month;
+            String url = baseUrl + year + "-" + StringUtils.leftPad(month, 2, "0");
             while (lotto.size() < 30 && flag) {
 
                 currentPage = webClient.getPage(url);
@@ -217,7 +217,7 @@ public class CoLottoService {
                     month = "12";
                     year = String.valueOf(Integer.parseInt(year) - 1);
                 }
-                url = baseUrl + year + "-" + month;
+                url = baseUrl + year + "-" + StringUtils.leftPad(month, 2, "0");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -227,7 +227,7 @@ public class CoLottoService {
     }
 
     public void getCash5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -241,7 +241,7 @@ public class CoLottoService {
             Pattern noMatchPattern = Pattern.compile("There are no past Cash 5 drawings yet for");
             Pattern datePattern = Pattern.compile("([A-Za-z]{3,4}. [0-9]{1,2}, [0-9]{4}) ➞");
             Pattern numberPattern = Pattern.compile("\\d+-\\d+-\\d+-\\d+-\\d+");
-            String url = baseUrl + year + "-" + month;
+            String url = baseUrl + year + "-" + StringUtils.leftPad(month, 2, "0");
             while (cash5.size() < 30 && flag) {
 
                 currentPage = webClient.getPage(url);
@@ -274,7 +274,7 @@ public class CoLottoService {
                     month = "12";
                     year = String.valueOf(Integer.parseInt(year) - 1);
                 }
-                url = baseUrl + year + "-" + month;
+                url = baseUrl + year + "-" + StringUtils.leftPad(month, 2, "0");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -284,7 +284,7 @@ public class CoLottoService {
     }
 
     public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -298,7 +298,7 @@ public class CoLottoService {
             Pattern noMatchPattern = Pattern.compile("There are no past Pick 3 drawings yet for");
             Pattern datePattern = Pattern.compile("([A-Za-z]{3,4}. [0-9]{1,2}, [0-9]{4}): ([A-Za-z]+) ➞");
             Pattern numberPattern = Pattern.compile("\\d+-\\d+-\\d+");
-            String url = baseUrl + year + "-" + month;
+            String url = baseUrl + year + "-" + StringUtils.leftPad(month, 2, "0");
             while (pick3.size() < 30 && flag) {
 
                 currentPage = webClient.getPage(url);
@@ -331,7 +331,7 @@ public class CoLottoService {
                     month = "12";
                     year = String.valueOf(Integer.parseInt(year) - 1);
                 }
-                url = baseUrl + year + "-" + month;
+                url = baseUrl + year + "-" + StringUtils.leftPad(month, 2, "0");
             }
         } catch (IOException e) {
             e.printStackTrace();

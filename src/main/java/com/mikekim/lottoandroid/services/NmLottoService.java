@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.NmGames;
 import com.mikekim.lottoandroid.repositories.NmLottoRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -105,13 +106,11 @@ public class NmLottoService {
     }
 
     public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.nmlottery.com/lotto-america.aspx");
             String pageHtml = currentPage.asText();
@@ -145,17 +144,16 @@ public class NmLottoService {
     }
 
     public void getRoadRunnerCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.nmlottery.com/roadrunner-cash.aspx");
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+Winning numbers for the ([A-Za-z]+)\\s*(\\d{1,2}),\\s*(\\d{4})");
+
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
 
             List<NmGames> gamesList = new ArrayList<>();
@@ -182,28 +180,32 @@ public class NmLottoService {
         }
     }
 
+    //todo steal from lotteryusa
     public void getPick3() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.nmlottery.com/pick-3.aspx");
+            HtmlPage currentPage = webClient.getPage("http://www.nmlottery.com/drawing-results.aspx?game=pick3");
             webClient.waitForBackgroundJavaScript(10 * 1000);
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\sWinning numbers for the ([A-Za-z]+)\\s*(\\d{1,2}),\\s*(\\d{4})\\s*([A-Za-z]+)");
+//            Pattern dataPattern = Pattern.compile("(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\sWinning numbers for the ([A-Za-z]+)\\s*(\\d{1,2}),\\s*(\\d{4})\\s*([A-Za-z]+)");
+            Pattern dataPattern = Pattern.compile("(\\d{1,2})/(\\d{1,2})/(\\d{4})\\s*(DAY|EVE)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<NmGames> gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 NmGames temp = new NmGames();
-                temp.setName("Pick 3 " + dataMatcher.group(7));
+                String ex = dataMatcher.group(4).equals("DAY") ? "Midday" : "Evening";
+                temp.setName("Pick 3 " + ex);
                 String[] nums = new String[3];
-                String date = dataMatcher.group(6) + "/" + formatMonth(dataMatcher.group(4)) + "/" + dataMatcher.group(5);
+                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
-                nums[0] = dataMatcher.group(1);
-                nums[1] = dataMatcher.group(2);
-                nums[2] = dataMatcher.group(3);
+                nums[0] = dataMatcher.group(5);
+                nums[1] = dataMatcher.group(6);
+                nums[2] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);

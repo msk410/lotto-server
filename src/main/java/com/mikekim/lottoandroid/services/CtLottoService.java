@@ -37,10 +37,13 @@ public class CtLottoService {
         getMegaMillions();
         getLotto();
         getLuckyForLife();
-        getPlay3();
-        getPlay4();
+        getPlay3Day();
+        getPlay3Night();
+        getPlay4Day();
+        getPlay4Night();
         getLuckyLinksDay();
         getLuckyLinksNight();
+        getCash5();
     }
 
     public void getPowerball() {
@@ -115,14 +118,14 @@ public class CtLottoService {
     }
 
     public void getLotto() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<CtGames> gamesList = new ArrayList<>();
         try {
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)");
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)");
 
             currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=6&winners=1");
             String pageHtml = currentPage.asText();
@@ -148,15 +151,49 @@ public class CtLottoService {
         saveGame(gamesList, "lotto!");
     }
 
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+    public void getCash5() {
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<CtGames> gamesList = new ArrayList<>();
         try {
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+)(\\s*|\\t*)([0-9]+)");
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+)");
+
+            currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=7&winners=1");
+            String pageHtml = currentPage.asText();
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            while (dataMatcher.find()) {
+                CtGames temp = new CtGames();
+                temp.setName("Cash 5");
+                temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
+                if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        saveGame(gamesList, "Cash 5!");
+    }
+
+    public void getLuckyForLife() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        HtmlPage currentPage = null;
+        List<CtGames> gamesList = new ArrayList<>();
+        try {
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+)(\\s*|\\t*)([0-9]+)");
 
             currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=12&winners=1");
             String pageHtml = currentPage.asText();
@@ -183,22 +220,22 @@ public class CtLottoService {
         saveGame(gamesList, "lucky for life");
     }
 
-    public void getPlay3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+    public void getPlay3Day() {
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<CtGames> gamesList = new ArrayList<>();
         try {
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+)");
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+)");
 
             currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=1&winners=1");
             String pageHtml = currentPage.asText();
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             while (dataMatcher.find()) {
                 CtGames temp = new CtGames();
-                temp.setName("Play 3");
+                temp.setName("Play 3 Day");
                 temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
                 temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
                 if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
@@ -217,22 +254,90 @@ public class CtLottoService {
         saveGame(gamesList, "play 3");
     }
 
-    public void getPlay4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+    public void getPlay3Night() {
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<CtGames> gamesList = new ArrayList<>();
         try {
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+)");
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+)");
+
+            currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=3&winners=1");
+            String pageHtml = currentPage.asText();
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            while (dataMatcher.find()) {
+                CtGames temp = new CtGames();
+                temp.setName("Play 3 Night");
+                temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
+                if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        saveGame(gamesList, "play 3");
+    }
+
+    public void getPlay4Day() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        HtmlPage currentPage = null;
+        List<CtGames> gamesList = new ArrayList<>();
+        try {
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+)");
 
             currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=2&winners=1");
             String pageHtml = currentPage.asText();
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             while (dataMatcher.find()) {
                 CtGames temp = new CtGames();
-                temp.setName("Play 4");
+                temp.setName("Play 4 Day");
+                temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
+                temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
+                if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        saveGame(gamesList, "play 4");
+    }
+
+    public void getPlay4Night() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        HtmlPage currentPage = null;
+        List<CtGames> gamesList = new ArrayList<>();
+        try {
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+)");
+
+            currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=4&winners=1");
+            String pageHtml = currentPage.asText();
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            while (dataMatcher.find()) {
+                CtGames temp = new CtGames();
+                temp.setName("Play 4 Night");
                 temp.setWinningNumbers(dataMatcher.group(5).split(" - "));
                 temp.setDate(dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0"));
                 if (null == ctLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
@@ -252,14 +357,14 @@ public class CtLottoService {
     }
 
     public void getLuckyLinksNight() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<CtGames> gamesList = new ArrayList<>();
         try {
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)");
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)");
 
             currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=15&winners=1");
             String pageHtml = currentPage.asText();
@@ -286,14 +391,14 @@ public class CtLottoService {
     }
 
     public void getLuckyLinksDay() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<CtGames> gamesList = new ArrayList<>();
         try {
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)");
+            Pattern dataPattern = Pattern.compile("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})(\\s*|\\t*)(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)");
 
             currentPage = webClient.getPage("https://www.ctlottery.org/Modules/Games/default.aspx?id=8&winners=1");
             String pageHtml = currentPage.asText();

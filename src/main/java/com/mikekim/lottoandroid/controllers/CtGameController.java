@@ -25,8 +25,9 @@ public class CtGameController {
     }
 
     @GetMapping(value = "/ct/save")
-    public void saveGames() {
+    public String saveGames() {
         ctLottoService.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/ct/{name}")

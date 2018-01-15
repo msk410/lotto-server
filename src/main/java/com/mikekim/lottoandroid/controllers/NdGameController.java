@@ -25,8 +25,9 @@ public class NdGameController {
     }
 
     @GetMapping(value = "/nd/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/nd/{name}")

@@ -31,7 +31,7 @@ public class NjLottoService {
         getMegaMillions();
         get5CardCash();
         getPick6Xtra();
-        getCash4Life();//todo messed up
+        getCash4Life();
     }
 
     public void getPowerball() {
@@ -111,9 +111,9 @@ public class NjLottoService {
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.njlottery.com/en-us/drawgames/5CardCash.html");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*[0-9AKQJ]+\\s*([0-9AKQJ]+[CSHD])\\s*[0-9AKQJ]+\\s*([0-9AKQJ]+[CSHD])\\s*[0-9AKQJ]+\\s*([0-9AKQJ]+[CSHD])\\s*[0-9AKQJ]+\\s*([0-9AKQJ]+[CSHD])\\s*[0-9AKQJ]+\\s*([0-9AKQJ]+[CSHD])");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -141,7 +141,7 @@ public class NjLottoService {
         }
     }
 
-    public void getPick6Xtra() { //todo not working
+    public void getPick6Xtra() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -149,9 +149,9 @@ public class NjLottoService {
         webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.njlottery.com/en-us/drawgames/jackpotgames/pick6lotto.html");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*times(\\d{1,2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -189,10 +189,9 @@ public class NjLottoService {
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.njlottery.com/en-us/drawgames/cash4life.html");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*times(\\d{1,2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);

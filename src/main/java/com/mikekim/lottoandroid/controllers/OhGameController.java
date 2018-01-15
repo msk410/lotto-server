@@ -18,7 +18,7 @@ public class OhGameController {
     OhLottoRepository nyLottoRepository;
 
     @Autowired
-    OhLottoService nyLottoService;
+    OhLottoService service;
 
     @GetMapping(value = "/oh/get")
     public Iterable<OhGames> getAll() {
@@ -26,8 +26,9 @@ public class OhGameController {
     }
 
     @GetMapping(value = "/oh/save")
-    public void saveGames() {
-        nyLottoService.getAll();
+    public String saveGames() {
+        service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/oh/{name}")

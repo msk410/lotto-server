@@ -111,14 +111,12 @@ public class MtLottoService {
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/lotto-america#tab.winningNumbers");
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*SB:(\\d{2})\\s*ASB:x(\\d{1,2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<MtGames> gamesList = new ArrayList<>();
-
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
                 temp.setName("Lotto America");
@@ -151,7 +149,6 @@ public class MtLottoService {
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/lucky-for-life#tab.winningNumbers");
             String pageHtml = currentPage.asText();
@@ -189,7 +186,6 @@ public class MtLottoService {
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/montana-cash#tab.winningNumbers");
             String pageHtml = currentPage.asText();
@@ -226,7 +222,6 @@ public class MtLottoService {
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/big-sky-bonus#tab.winningNumbers");
             String pageHtml = currentPage.asText();

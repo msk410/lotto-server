@@ -109,15 +109,14 @@ public class DcLottoService {
     }
 
     public void getDc3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://dclottery.com/games/dc3/pastdata.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(evening|mid-day)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -127,7 +126,7 @@ public class DcLottoService {
                 String extraName = "evening".equals(dataMatcher.group(4)) ? "Evening" : "Midday";
                 temp.setName("DC-3 " + extraName);
                 String[] nums = new String[3];
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 nums[0] = dataMatcher.group(5);
                 nums[1] = dataMatcher.group(6);
@@ -145,15 +144,14 @@ public class DcLottoService {
     }
 
     public void getDc4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://dclottery.com/games/dc4/pastdata.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(evening|mid-day)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -163,7 +161,7 @@ public class DcLottoService {
                 String extraName = "evening".equals(dataMatcher.group(4)) ? "Evening" : "Midday";
                 temp.setName("DC-4 " + extraName);
                 String[] nums = new String[4];
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 nums[0] = dataMatcher.group(5);
                 nums[1] = dataMatcher.group(6);
@@ -182,15 +180,14 @@ public class DcLottoService {
     }
 
     public void getDc5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://dclottery.com/games/dc5/pastdata.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(evening|mid-day)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -200,7 +197,7 @@ public class DcLottoService {
                 String extraName = "evening".equals(dataMatcher.group(4)) ? "Evening" : "Midday";
                 temp.setName("DC-5 " + extraName);
                 String[] nums = new String[5];
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 nums[0] = dataMatcher.group(5);
                 nums[1] = dataMatcher.group(6);
@@ -220,15 +217,14 @@ public class DcLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://dclottery.com/games/lucky-for-life/pastdata.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -237,7 +233,7 @@ public class DcLottoService {
                 DcGames temp = new DcGames();
                 temp.setName("Lucky for Life");
                 String[] nums = new String[5];
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 nums[0] = dataMatcher.group(4);
                 nums[1] = dataMatcher.group(5);

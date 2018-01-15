@@ -19,17 +19,18 @@ public class CoGameController {
     @Autowired
     CoLottoService coLottoService;
 
-    @GetMapping(value = "/colorado/get")
+    @GetMapping(value = "/co/get")
     public Iterable<CoGames> getAll() {
         return coLottoRepository.findAll();
     }
 
-    @GetMapping(value = "/colorado/save")
-    public void saveGames() {
+    @GetMapping(value = "/co/save")
+    public String saveGames() {
         coLottoService.getAll();
+        return "done";
     }
 
-    @GetMapping(value = "/cotest/{name}")
+    @GetMapping(value = "/co/{name}")
     public List<CoGames> test(@PathVariable String name) {
         return coLottoRepository.findAllGames(name);
     }

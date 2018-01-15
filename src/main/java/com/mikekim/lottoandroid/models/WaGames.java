@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 
-//TODO ALL OF WASHINGON GAMES
 @Entity
 @IdClass(GamePrimaryKey.class)
 public class WaGames {

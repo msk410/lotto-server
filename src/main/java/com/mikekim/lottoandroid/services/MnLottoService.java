@@ -110,12 +110,11 @@ public class MnLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/lucky_for_life/winning_s/");
             String pageHtml = currentPage.asText();
@@ -149,13 +148,11 @@ public class MnLottoService {
     }
 
     public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        System.out.println("wtf");
         try {
             HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/lotto_america/winning_s/");
             String pageHtml = currentPage.asText();
@@ -191,13 +188,11 @@ public class MnLottoService {
     }
 
     public void getDaily3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        System.out.println("wtf");
         try {
             HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/daily_3/winning_s/");
             String pageHtml = currentPage.asText();
@@ -228,13 +223,11 @@ public class MnLottoService {
     }
 
     public void getGopher5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        System.out.println("wtf");
         try {
             HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/gopher_5/winning_s/");
             String pageHtml = currentPage.asText();
@@ -267,12 +260,11 @@ public class MnLottoService {
     }
 
     public void getNorthStarCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/northstar_cash/winning_s/");
             String pageHtml = currentPage.asText();

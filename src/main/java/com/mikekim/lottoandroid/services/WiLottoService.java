@@ -109,10 +109,9 @@ public class WiLottoService {
     }
 
     public void getMegabucks() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
 
         try {
             HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/megabuckshistory.aspx");
@@ -147,10 +146,9 @@ public class WiLottoService {
     }
 
     public void getSuperCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
 
         try {
             HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/supercashhistory.aspx");
@@ -187,10 +185,9 @@ public class WiLottoService {
     }
 
     public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
 
         try {
             HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/pick4history.aspx");
@@ -223,10 +220,9 @@ public class WiLottoService {
     }
 
     public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
 
         try {
             HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/pick3history.aspx");
@@ -258,10 +254,9 @@ public class WiLottoService {
     }
 
     public void getFiveCardCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
 
         try {
             HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/5CardCash/history.aspx");
@@ -295,10 +290,9 @@ public class WiLottoService {
     }
 
     public void getBadger5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
 
         try {
             HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/badger5history.aspx");

@@ -26,8 +26,9 @@ public class OkGameController {
     }
 
     @GetMapping(value = "/ok/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/ok/{name}")

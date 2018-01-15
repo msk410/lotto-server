@@ -23,7 +23,7 @@ public class GaLottoService {
 
     @Autowired
     GaLottoRepository repository;
-    WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
+    WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
     public void getAll() {
         getPowerball();
@@ -35,7 +35,7 @@ public class GaLottoService {
         getCash4();
         getGeorgiaFive();
         getAllOrNothing();
-        //TODO get5CardCash(); https://www.galottery.com/en-us/games/draw-games/5-card-cash.html#tab-winningNumbers
+        getFiveCardCash();
     }
 
     public void getPowerball() {
@@ -117,7 +117,7 @@ public class GaLottoService {
         try {
             HtmlPage currentPage = webClient.getPage("https://www.galottery.com/en-us/games/draw-games/fantasy-five.html#tab-winningNumbers");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("LAST DRAW RESULTS:\\((\\d{2})/(\\d{2})/(\\d{4})\\)\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            Pattern dataPattern = Pattern.compile("LAST\\s*DRAW\\s*RESULTS:\\((\\d{2})/(\\d{2})/(\\d{4})\\)\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<GaGames> gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
@@ -184,7 +184,7 @@ public class GaLottoService {
         try {
             HtmlPage currentPage = webClient.getPage("https://www.galottery.com/en-us/games/draw-games/jumbo-bucks-lotto.html#tab-winningNumbers");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("LAST DRAW RESULTS:\\((\\d+)/(\\d+)/(\\d+)\\)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("LAST DRAW RESULTS:\\((\\d+)/(\\d+)/(\\d+)\\)\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<GaGames> gamesList = new ArrayList<>();
 
@@ -216,7 +216,6 @@ public class GaLottoService {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.galottery.com/en-us/games/draw-games/cash-three.html#tab-winningNumbers");
             String pageHtml = currentPage.asText();
@@ -249,7 +248,6 @@ public class GaLottoService {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.galottery.com/en-us/games/draw-games/cash-four.html#tab-winningNumbers");
             String pageHtml = currentPage.asText();
@@ -283,7 +281,6 @@ public class GaLottoService {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.galottery.com/en-us/games/draw-games/georgia-five.html#tab-winningNumbers");
             String pageHtml = currentPage.asText();
@@ -307,10 +304,10 @@ public class GaLottoService {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "Cash 4");
+            saveGame(gamesList, "Georgia Five");
 
         } catch (IOException e) {
-            System.out.println("failed to retrieve Cash 4");
+            System.out.println("failed to retrieve Georgia Five");
         }
     }
 
@@ -318,7 +315,6 @@ public class GaLottoService {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.galottery.com/en-us/games/draw-games/all-or-nothing.html#tab-winningNumbers");
             String pageHtml = currentPage.asText();
@@ -355,6 +351,48 @@ public class GaLottoService {
             System.out.println("failed to retrieve all or nothing");
         }
     }
+
+
+    public void getFiveCardCash() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+
+        try {
+            HtmlPage currentPage = webClient.getPage("https://www.galottery.com/en-us/games/draw-games/5-card-cash.html#tab-winningNumbers");
+            webClient.waitForBackgroundJavaScript(30 * 1000);
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\d{2})/(\\d{2})/(\\d{4})\\s*([0-9A-Z]+)\\s*[0-9A-Za-z]+\\s*of\\s*([a-z])[a-z]+\\s*([0-9A-Z]+)\\s*[0-9A-Za-z]+\\s*of\\s*([a-z])[a-z]+\\s*([0-9A-Z]+)\\s*[0-9A-Za-z]+\\s*of\\s*([a-z])[a-z]+\\s*([0-9A-Z]+)\\s*[0-9A-Za-z]+\\s*of\\s*([a-z])[a-z]+\\s*([0-9A-Z]+)\\s*[0-9A-Za-z]+\\s*of\\s*([a-z])[a-z]+");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<GaGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                GaGames temp = new GaGames();
+                temp.setName("5 Card Cash");
+                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + dataMatcher.group(2);
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4) + dataMatcher.group(5).toUpperCase();
+                nums[1] = dataMatcher.group(6) + dataMatcher.group(7).toUpperCase();
+                nums[2] = dataMatcher.group(8) + dataMatcher.group(9).toUpperCase();
+                nums[3] = dataMatcher.group(10) + dataMatcher.group(11).toUpperCase();
+                nums[4] = dataMatcher.group(12) + dataMatcher.group(13).toUpperCase();
+
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "5 Card Cash");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve 5 Card Cash");
+        }
+    }
+
 
     private void saveGame(List<GaGames> gamesList, String gameName) {
         if (!gamesList.isEmpty()) {

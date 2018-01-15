@@ -26,8 +26,9 @@ public class SdGameController {
     }
 
     @GetMapping(value = "/sd/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/sd/{name}")

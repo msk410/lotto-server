@@ -107,17 +107,15 @@ public class VaLottoService {
         saveGame(gamesList, "mega millions");
 
     }
-
     public void getBankAMillion() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/bankamillion.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*BONUS\\s*BALL\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -148,15 +146,14 @@ public class VaLottoService {
     }
 
     public void getCash4Life() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/cash4life.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*CASH\\s*BALL\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -186,15 +183,14 @@ public class VaLottoService {
     }
 
     public void getCash5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/cash5.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -238,15 +234,14 @@ public class VaLottoService {
     }
 
     public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/pick4.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -288,15 +283,14 @@ public class VaLottoService {
     }
 
     public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/pick3.aspx");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);

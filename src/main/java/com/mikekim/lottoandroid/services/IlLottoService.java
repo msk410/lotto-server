@@ -107,7 +107,6 @@ public class IlLottoService {
             }
         }
         saveGame(gamesList, "mega millions");
-
     }
 
     public void getLotto() {
@@ -149,11 +148,9 @@ public class IlLottoService {
     }
 
     public void getLuckyDayLottoEvening() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/lucky-day-lotto-evening/");
             String pageHtml = currentPage.asText();
@@ -186,11 +183,9 @@ public class IlLottoService {
     }
 
     public void getLuckyDayLottoMidday() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/midday-lucky-day-lotto/");
             String pageHtml = currentPage.asText();
@@ -223,15 +218,13 @@ public class IlLottoService {
     }
 
     public void getPick4Evening() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/daily-4/");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*Fireball:\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<IlGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
@@ -261,15 +254,14 @@ public class IlLottoService {
     }
 
     public void getPick4Midday() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
 
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/midday-4/");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*Fireball:\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<IlGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
@@ -299,15 +291,13 @@ public class IlLottoService {
     }
 
     public void getPick3Midday() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/midday-3/");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*Fireball:\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<IlGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
@@ -336,15 +326,14 @@ public class IlLottoService {
     }
 
     public void getPick3Evening() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
 
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/daily-3/");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*Fireball:\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<IlGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {

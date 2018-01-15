@@ -111,12 +111,11 @@ public class MeLottoService {
     }
 
     public void getMegaBucksPlus() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/megaplusold.shtml");
             String pageHtml = currentPage.asText();
@@ -150,12 +149,11 @@ public class MeLottoService {
     }
 
     public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/lottoamericaold.shtml");
             String pageHtml = currentPage.asText();
@@ -191,12 +189,11 @@ public class MeLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/lucky-for-life-previous.html");
             String pageHtml = currentPage.asText();
@@ -230,12 +227,11 @@ public class MeLottoService {
     }
 
     public void getGimme5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/gimme5-previous.html");
             String pageHtml = currentPage.asText();
@@ -268,12 +264,11 @@ public class MeLottoService {
     }
 
     public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/pickThreeHistory.shtml");
             String pageHtml = currentPage.asText();
@@ -304,12 +299,11 @@ public class MeLottoService {
     }
 
     public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/pickFourHistory.shtml");
             String pageHtml = currentPage.asText();
@@ -341,12 +335,11 @@ public class MeLottoService {
     }
 
     public void getWorldPokerTour() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/world-poker-tour-previous.html");
             String pageHtml = currentPage.asText();

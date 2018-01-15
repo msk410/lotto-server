@@ -26,8 +26,9 @@ public class OrGameController {
     }
 
     @GetMapping(value = "/or/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/or/{name}")

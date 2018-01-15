@@ -26,8 +26,9 @@ public class VtGameController {
     }
 
     @GetMapping(value = "/vt/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/vt/{name}")

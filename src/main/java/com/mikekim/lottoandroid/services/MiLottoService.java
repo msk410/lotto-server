@@ -31,8 +31,8 @@ public class MiLottoService {
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getAllGames(); //todo check what daily 3/4 games look like
-        //todo un fuck this
+        getAllGames();
+        getPokerLotto();
     }
 
 
@@ -107,19 +107,54 @@ public class MiLottoService {
 
     }
 
+    public void getPokerLotto() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/michigan/poker-lotto/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD])");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<MiGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                MiGames temp = new MiGames();
+                temp.setName("Poker Lotto");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "Poker Lotto");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Poker Lotto");
+        }
+    }
+
     public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 
         try {
             HtmlPage currentPage = webClient.getPage("https://www.michiganlottery.com/recent_winning_numbers?");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
-            System.out.println((pageHtml));
             List<MiGames> gamesList = new ArrayList<>();
             Pattern dataPattern = Pattern.compile("(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*Results\\s*for:\\s*\\w*\\.\\s*(\\w{3})\\s*(\\d{2}),\\s*(\\d{4})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -175,15 +210,95 @@ public class MiLottoService {
                     gamesList.add(temp);
                 }
             }
-            final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='card_house']").get(0);
-            System.out.println(div);
-            int i = 0;
+            dataPattern = Pattern.compile("MID\\s*\\*\\s*(\\d)\\s(\\d)\\s(\\d)\\s[^\\d]\\s*EVE\\s*\\*\\s*(\\d\\s\\d\\s\\d\\s*|Drawing\\sat\\s[\\d: ]+pm)?\\s*Results\\s*for:\\s*[A-Za-z]+\\.\\s*([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                MiGames temp = new MiGames();
+                temp.setName("Daily 3 Midday");
+                String date = dataMatcher.group(7) + "/" + formatMonth(dataMatcher.group(5)) + "/" + StringUtils.leftPad(dataMatcher.group(6), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(1);
+                nums[1] = dataMatcher.group(2);
+                nums[2] = dataMatcher.group(3);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("EVE\\s*\\*\\s*(\\d)\\s(\\d)\\s(\\d)\\s*Results\\s*for:\\s*[A-Za-z]+\\.\\s*([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                MiGames temp = new MiGames();
+                temp.setName("Daily 3 Evening");
+                String date = dataMatcher.group(6) + "/" + formatMonth(dataMatcher.group(4)) + "/" + StringUtils.leftPad(dataMatcher.group(5), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(1);
+                nums[1] = dataMatcher.group(2);
+                nums[2] = dataMatcher.group(3);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("MID\\s*\\*\\s*(\\d)\\s(\\d)\\s(\\d)\\s(\\d)\\s[^\\d]\\s*EVE\\s*\\*\\s*(\\d\\s\\d\\s\\d\\s\\d\\s*|Drawing\\sat\\s[\\d: ]+pm)?\\s*Results\\s*for:\\s*[A-Za-z]+\\.\\s*([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                MiGames temp = new MiGames();
+                temp.setName("Daily 4 Midday");
+                String date = dataMatcher.group(8) + "/" + formatMonth(dataMatcher.group(6)) + "/" + StringUtils.leftPad(dataMatcher.group(7), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(1);
+                nums[1] = dataMatcher.group(2);
+                nums[2] = dataMatcher.group(3);
+                nums[3] = dataMatcher.group(4);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("EVE\\s*\\*\\s*(\\d)\\s(\\d)\\s(\\d)\\s(\\d)\\s*Results\\s*for:\\s*[A-Za-z]+\\.\\s*([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                MiGames temp = new MiGames();
+                temp.setName("Daily 4 Evening");
+                String date = dataMatcher.group(7) + "/" + formatMonth(dataMatcher.group(5)) + "/" + StringUtils.leftPad(dataMatcher.group(6), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(1);
+                nums[1] = dataMatcher.group(2);
+                nums[2] = dataMatcher.group(3);
+                nums[3] = dataMatcher.group(4);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+
+            dataPattern = Pattern.compile("(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d+)\\s*Results\\s*for:\\s*\\w*\\.\\s*(\\w+)\\s*(\\d{2}),\\s*(\\d{4})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                MiGames temp = new MiGames();
+                temp.setName("Keno!");
+                String date = dataMatcher.group(25) + "/" + formatMonth(dataMatcher.group(23).substring(0, 3)) + "/" + StringUtils.leftPad(dataMatcher.group(24), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[22];
+                for (int i = 0; i < 22; i++) {
+                    nums[i] = dataMatcher.group(i + 1);
+                }
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
 
 
-            saveGame(gamesList, gamesList.size() + "michigan games");
+            saveGame(gamesList, gamesList.size() + " michigan");
 
         } catch (IOException e) {
-            System.out.println("failed to retrieve Megabucks Plus");
+            System.out.println("failed to retrieve michigan games");
         }
     }
 

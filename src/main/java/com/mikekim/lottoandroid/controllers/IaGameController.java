@@ -25,8 +25,9 @@ public class IaGameController {
     }
 
     @GetMapping(value = "/ia/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/ia/{name}")

@@ -25,8 +25,9 @@ public class MiGameController {
     }
 
     @GetMapping(value = "/mi/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/mi/{name}")

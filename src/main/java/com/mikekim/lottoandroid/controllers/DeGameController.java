@@ -25,8 +25,9 @@ public class DeGameController {
     }
 
     @GetMapping(value = "/de/save")
-    public void saveGames() {
+    public String saveGames() {
         deLottoService.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/de/{name}")

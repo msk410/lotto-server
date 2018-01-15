@@ -25,8 +25,9 @@ public class MsGameController {
     }
 
     @GetMapping(value = "/ms/save")
-    public void saveGames() {
+    public String saveGames() {
         service.getAll();
+        return "done";
     }
 
     @GetMapping(value = "/ms/{name}")

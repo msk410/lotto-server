@@ -110,15 +110,14 @@ public class VtLottoService {
     }
 
     public void getMegabucks() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/megabucks/view-past-winning-numbers");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             List<VtGames> gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers']").get(i);
@@ -151,15 +150,14 @@ public class VtLottoService {
     }
 
     public void getGimme5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/gimme-5/view-past-winning-numbers");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             List<VtGames> gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers noExtra']").get(i);
@@ -191,15 +189,14 @@ public class VtLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/lucky-life/view-past-winning-numbers");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             List<VtGames> gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers']").get(i);
@@ -233,15 +230,14 @@ public class VtLottoService {
     }
 
     public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/pick-3/view-past-winning-numbers");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             List<VtGames> gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers threeNumbers']").get(i);
@@ -271,15 +267,14 @@ public class VtLottoService {
     }
 
     public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/pick-4/view-past-winning-numbers");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             List<VtGames> gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers fourNumbers']").get(i);

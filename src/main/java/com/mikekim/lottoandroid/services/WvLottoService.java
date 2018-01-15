@@ -28,11 +28,11 @@ public class WvLottoService {
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
     public void getAll() {
-//        getPowerball();
-//        getMegaMillions();
-//        getLottoAmerica();
-//        getDaily3();
-//        getDaily4();
+        getPowerball();
+        getMegaMillions();
+        getLottoAmerica();
+        getDaily3();
+        getDaily4();
         getCash25();
     }
 
@@ -108,15 +108,14 @@ public class WvLottoService {
     }
 
     public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/lotto-america/");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]+) ([0-9]+), ([0-9]{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -146,15 +145,14 @@ public class WvLottoService {
     }
 
     public void getDaily3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-3/");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -193,15 +191,14 @@ public class WvLottoService {
     }
 
     public void getDaily4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-4/");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing\\s*results\\s*for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -242,15 +239,14 @@ public class WvLottoService {
     }
 
     public void getCash25() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/cash-25/");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]+) ([0-9]+), ([0-9]{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);

@@ -108,7 +108,7 @@ public class ArLottoService {
 
 
     public void getNaturalStateJackpot() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.myarkansaslottery.com/games/natural-state-jackpot");
@@ -140,7 +140,7 @@ public class ArLottoService {
     }
 
     public void getCash3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.myarkansaslottery.com/games/cash-3");
@@ -173,7 +173,7 @@ public class ArLottoService {
     }
 
     public void getCash4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.myarkansaslottery.com/games/cash-4");
@@ -206,7 +206,7 @@ public class ArLottoService {
     }
 
     public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.myarkansaslottery.com/games/lucky-for-life");

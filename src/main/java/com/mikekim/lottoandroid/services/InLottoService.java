@@ -108,32 +108,31 @@ public class InLottoService {
         saveGame(gamesList, "mega millions");
 
     }
-
     public void getHoosierLotto() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.hoosierlottery.com/games/hoosier-lotto");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*LOTTO\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*\\$[0-9\\. ]+Million\\s*[0-9,]+\\s*\\d+/\\d+/\\d+\\s*\\+PLUS\\s*(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)");
+            Pattern dataPattern = Pattern.compile("\\d+/\\d+/\\d+\\s*\\+PLUS\\s*(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)\\s*[0-9,]+\\s*(\\d+)/(\\d+)/(\\d{2})\\s*LOTTO\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*\\$[0-9\\. ]+Million\\s*[0-9,]+\\s*");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<InGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 InGames temp = new InGames();
                 temp.setName("Hoosier Lotto");
-                String date = "20" + dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = "20" + dataMatcher.group(4) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(3), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[6];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
-                nums[4] = dataMatcher.group(8);
-                nums[5] = dataMatcher.group(9);
+                nums[0] = dataMatcher.group(5);
+                nums[1] = dataMatcher.group(6);
+                nums[2] = dataMatcher.group(7);
+                nums[3] = dataMatcher.group(8);
+                nums[4] = dataMatcher.group(9);
+                nums[5] = dataMatcher.group(10);
                 temp.setWinningNumbers(nums);
                 temp.setExtraText("+PLUS: ");
-                temp.setExtra(dataMatcher.group(10));
+                temp.setExtra(dataMatcher.group(1));
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
@@ -148,7 +147,7 @@ public class InLottoService {
     }
 
     public void getCash5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -183,7 +182,7 @@ public class InLottoService {
     }
 
     public void getCash4Life() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -220,7 +219,7 @@ public class InLottoService {
     }
 
     public void getDaily4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -257,7 +256,7 @@ public class InLottoService {
     }
 
     public void getDaily3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {
@@ -292,7 +291,7 @@ public class InLottoService {
     }
 
     public void getQuickDraw() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         try {

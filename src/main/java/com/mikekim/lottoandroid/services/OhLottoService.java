@@ -105,15 +105,15 @@ public class OhLottoService {
     }
 
     public void getAllGames() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.ohiolottery.com/WinningNumbers/CheckYourNumbers.aspx?page=1#9");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+//            webClient.waitForBackgroundJavaScript(30 * 1000);
+//            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("Lucky For Life\\s*(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);

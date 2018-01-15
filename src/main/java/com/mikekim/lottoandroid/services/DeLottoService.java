@@ -186,6 +186,7 @@ public class DeLottoService {
             Pattern numbersPattern = Pattern.compile("<ul class=\"list-unstyled drawing-ball\">\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)");
 
             String url = baseUrl + year + "/" + month + "/Play3";
+            int occurances = 0;
             while (gamesList.size() < 6 && flag) {
 
                 currentPage = webClient.getPage(url);
@@ -209,8 +210,12 @@ public class DeLottoService {
                     if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                         gamesList.add(temp);
                     } else {
-                        flag = false;
-                        break;
+                        occurances++;
+                        if (occurances > 3) {
+                            if (gamesList.size() > 5)
+                                flag = false;
+                            break;
+                        }
                     }
                 }
                 month = String.valueOf(Integer.parseInt(month) - 1);
@@ -241,7 +246,7 @@ public class DeLottoService {
             String month = String.valueOf(TODAY.get(Calendar.MONTH) + 1);
             Pattern datePattern = Pattern.compile("Play 4\\s*(<i class=\"li li-sun li-lg color-tertiary\">|<i class=\"li li-moon\">)\\s*</i>\\s*</td>\\s*<td data-label=\"Date\">\\s*(\\d+)/(\\d+)/(\\d+)");
             Pattern numbersPattern = Pattern.compile("<ul class=\"list-unstyled drawing-ball\">\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)");
-
+            int occurances = 0;
             String url = baseUrl + year + "/" + month + "/Play4";
             while (gamesList.size() < 6 && flag) {
 
@@ -257,17 +262,22 @@ public class DeLottoService {
                     temp.setName("Play 4 " + n);
                     String date = "20" + dateMatcher.group(4) + "/" + dateMatcher.group(2) + "/" + dateMatcher.group(3);
                     temp.setDate(date);
-                    String[] winningNumbers = new String[3];
+                    String[] winningNumbers = new String[4];
                     winningNumbers[0] = numbersMacher.group(1);
                     winningNumbers[1] = numbersMacher.group(2);
                     winningNumbers[2] = numbersMacher.group(3);
+                    winningNumbers[3] = numbersMacher.group(4);
                     temp.setWinningNumbers(winningNumbers);
 
                     if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                         gamesList.add(temp);
                     } else {
-                        flag = false;
-                        break;
+                        occurances++;
+                        if (occurances > 3) {
+                            if (gamesList.size() > 5)
+                                flag = false;
+                            break;
+                        }
                     }
                 }
                 month = String.valueOf(Integer.parseInt(month) - 1);
