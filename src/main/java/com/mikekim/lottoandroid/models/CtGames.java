@@ -15,6 +15,7 @@ public class CtGames {
     private String bonus;
     private String extra;
     private String extraText;
+    private boolean showGame;
 
     public CtGames(String name, String date, String[] winningNumbers, String bonus, String extra, String extraText) {
         this.name = name;
@@ -26,6 +27,20 @@ public class CtGames {
     }
 
     public CtGames() {
+        this.name = "";
+        this.date = "";
+        this.bonus = "";
+        this.extra = "";
+        this.extraText = "";
+        this.showGame = true;
+    }
+
+    public boolean isShowGame() {
+        return showGame;
+    }
+
+    public void setShowGame(boolean showGame) {
+        this.showGame = showGame;
     }
 
     public String getName() {
