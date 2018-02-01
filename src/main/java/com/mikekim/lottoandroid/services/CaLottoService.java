@@ -106,33 +106,30 @@ public class CaLottoService {
 
     }
 
-
     public void getSuperLottoPlus() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/superlotto-plus/winning-numbers");
+            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/superlotto-plus");
             String pageHtml = currentPage.asText();
-            Pattern datePattern = Pattern.compile("([A-Za-z]{3}) ([0-9]+), ([0-9]{4}) - [0-9]{4}");
-            Matcher dateMatcher = datePattern.matcher(pageHtml);
-            Pattern numbersPattern = Pattern.compile("(\\d{10})\\s*(\\d+)");
-            Matcher numbersMatcher = numbersPattern.matcher(pageHtml);
+            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4}) \\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<CaGames> gamesList = new ArrayList<>();
-            while (numbersMatcher.find() && dateMatcher.find()) {
+            if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Super Lotto Plus");
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
-                for (int i = 0, j = 0; j < numbersMatcher.group(1).length(); i++, j += 2) {
-                    nums[i] = numbersMatcher.group(1).substring(j, j + 2);
-                }
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
-                temp.setBonus(numbersMatcher.group(2));
+                temp.setBonus(dataMatcher.group(9));
                 if (null == caLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
             saveGame(gamesList, "super lotto plus");
@@ -146,27 +143,25 @@ public class CaLottoService {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/fantasy-5/winning-numbers");
+            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/fantasy-5");
             String pageHtml = currentPage.asText();
-            Pattern datePattern = Pattern.compile("([A-Za-z]{3}) ([0-9]+), ([0-9]+) - [0-9]{4}");
-            Matcher dateMatcher = datePattern.matcher(pageHtml);
-            Pattern numbersPattern = Pattern.compile("(\\d{10})");
-            Matcher numbersMatcher = numbersPattern.matcher(pageHtml);
+            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4}) \\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<CaGames> gamesList = new ArrayList<>();
-            while (numbersMatcher.find() && dateMatcher.find()) {
+            if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Fantasy 5");
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
-                for (int i = 0, j = 0; j < numbersMatcher.group(1).length(); i++, j += 2) {
-                    nums[i] = numbersMatcher.group(1).substring(j, j + 2);
-                }
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 if (null == caLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
             saveGame(gamesList, "fantasy 5");
@@ -175,26 +170,28 @@ public class CaLottoService {
             System.out.println("failed to retrieve fantasy 5");
         }
     }
-
     public void daily3() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setCssEnabled(false);
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-3/winning-numbers");
+            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-3");
             String pageHtml = currentPage.asText();
-            Pattern datePattern = Pattern.compile("([A-Za-z]{3}) ([0-9]+), ([0-9]{4}) - [0-9]+\\s*(Evening|Midday)\\s*(\\d{3})");
-            Matcher dateMatcher = datePattern.matcher(pageHtml);
+            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*\\| Winning Numbers\\s*(\\w+)\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<CaGames> gamesList = new ArrayList<>();
-            while (dateMatcher.find()) {
+            while (dataMatcher.find()) {
                 CaGames temp = new CaGames();
-                temp.setName("Daily 3 " + dateMatcher.group(4));
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
+                temp.setName("Daily 3 " + dataMatcher.group(4));
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
-                temp.setWinningNumbers(dateMatcher.group(5).split(""));
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(5);
+                nums[1] = dataMatcher.group(6);
+                nums[2] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
                 if (null == caLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
             saveGame(gamesList, "daily 3");
@@ -207,22 +204,26 @@ public class CaLottoService {
     public void daily4() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setCssEnabled(false);
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-4/winning-numbers");
+            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-4");
             String pageHtml = currentPage.asText();
-            Pattern datePattern = Pattern.compile("([A-Za-z]{3}) ([0-9]+), ([0-9]{4}) - [0-9]+\\s*(\\d{4})");
-            Matcher dateMatcher = datePattern.matcher(pageHtml);
+            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*\\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<CaGames> gamesList = new ArrayList<>();
-            while (dateMatcher.find()) {
+            if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
-                temp.setName("Daily 4");
-                String date = dateMatcher.group(3) + "/" + formatMonth(dateMatcher.group(1)) + "/" + StringUtils.leftPad(dateMatcher.group(2), 2, "0");
+                temp.setName("Daily 4 ");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
-                temp.setWinningNumbers(dateMatcher.group(4).split(""));
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
                 if (null == caLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
             saveGame(gamesList, "daily 4");
@@ -231,43 +232,42 @@ public class CaLottoService {
             System.out.println("failed to retrieve daily 4");
         }
     }
-
     private String formatMonth(String month) {
         switch (month) {
-            case ("Jan"): {
+            case ("January"): {
                 return "01";
             }
-            case ("Feb"): {
+            case ("February"): {
                 return "02";
             }
-            case ("Mar"): {
+            case ("March"): {
                 return "03";
             }
-            case ("Apr"): {
+            case ("April"): {
                 return "04";
             }
             case ("May"): {
                 return "05";
             }
-            case ("Jun"): {
+            case ("June"): {
                 return "06";
             }
-            case ("Jul"): {
+            case ("July"): {
                 return "07";
             }
-            case ("Aug"): {
+            case ("August"): {
                 return "08";
             }
-            case ("Sep"): {
+            case ("September"): {
                 return "09";
             }
-            case ("Oct"): {
+            case ("October"): {
                 return "10";
             }
-            case ("Nov"): {
+            case ("November"): {
                 return "11";
             }
-            case ("Dec"): {
+            case ("December"): {
                 return "12";
             }
 

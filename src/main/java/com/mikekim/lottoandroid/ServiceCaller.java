@@ -165,16 +165,13 @@ public class ServiceCaller {
         azLottoService.getAll();    //over 1 minute    needs javascript
         arLottoService.getAll();    //5 secs
 
-    //    caLottoService.getAll(); //todo might need to change it to get 1 drawing everyday. current endpoints do not update immediately
+        caLottoService.getAll();
         coLottoService.getAll();    //15 secs
         ctLottoService.getAll();    //30ish seconds, alot of games
         deLottoService.getAll();       //15 secs
         dcLottoService.getAll();    //5 secs
-    //    flLottoService.getAll(); //todo might need to change it to get 1 drawing everyday. current endpoints do not update immediately
-
+        flLottoService.getAll();
         gaLottoService.getAll();    //over 1 min needs javascript
-
-
         iaLottoService.getAll();    //12 secs
         ilLottoService.getAll();    //15 sec
         idLottoService.getAll();    //5 secs
@@ -205,13 +202,13 @@ public class ServiceCaller {
         scLottoService.getAll();    //5 secs
         sdLottoService.getAll();    //5 secs
         tnLottoService.getAll();    //5 secs
-        txLottoService.getAll();    //todo getting old numbers
+        txLottoService.getAll();
         vaLottoService.getAll();    //5 secs
         vtLottoService.getAll();    //10 secs
         waLottoService.getAll();    //5 secs
         wiLottoService.getAll();    //5 secs
         wyLottoService.getAll();    //5 secs
-        wvLottoService.getAll();    //todo getting old numbers
+        wvLottoService.getAll();
     }
 }
 

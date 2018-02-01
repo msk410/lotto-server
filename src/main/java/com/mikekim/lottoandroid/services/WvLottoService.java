@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -117,22 +115,26 @@ public class WvLottoService {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/lotto-america/");
 
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]+) ([0-9]+), ([0-9]{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("\\w+, (\\w+) (\\d+)\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)\\s*Jackpot \\$[0-9\\. ]+ Million\\.\\sAll Star Bonus: (\\d+)x");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<WvGames> gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 WvGames temp = new WvGames();
                 temp.setName("Lotto America");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                Calendar calendar = Calendar.getInstance();
+
+                String date = calendar.get(Calendar.YEAR) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
-                nums[4] = dataMatcher.group(8);
+                nums[0] = dataMatcher.group(3);
+                nums[1] = dataMatcher.group(4);
+                nums[2] = dataMatcher.group(5);
+                nums[3] = dataMatcher.group(6);
+                nums[4] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
-                temp.setBonus(dataMatcher.group(9));
+                temp.setBonus(dataMatcher.group(8));
+                temp.setExtra(dataMatcher.group(9));
+                temp.setExtraText("All Star Bonus: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
@@ -143,7 +145,6 @@ public class WvLottoService {
             System.out.println("failed to retrieve Lotto America");
         }
     }
-
     public void getDaily3() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -154,33 +155,23 @@ public class WvLottoService {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-3/");
 
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<WvGames> gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 WvGames temp = new WvGames();
-                WvGames temp2 = new WvGames();
                 temp.setName("Daily 3");
-                temp2.setName("Daily 3");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 date = dataMatcher.group(6) + "/" + formatMonth(dataMatcher.group(4)) + "/" + StringUtils.leftPad(dataMatcher.group(5), 2, "0");
-                temp2.setDate(date);
                 String[] nums = new String[3];
                 nums[0] = dataMatcher.group(7);
                 nums[1] = dataMatcher.group(8);
                 nums[2] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
-                nums = new String[3];
-                nums[0] = dataMatcher.group(10);
-                nums[1] = dataMatcher.group(11);
-                nums[2] = dataMatcher.group(12);
-                temp2.setWinningNumbers(nums);
+
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                }
-                if (null == repository.findByNameAndDate(temp2.getName(), temp2.getDate())) {
-                    gamesList.add(temp2);
                 }
             }
             saveGame(gamesList, "Daily 3");
@@ -200,35 +191,25 @@ public class WvLottoService {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-4/");
 
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing\\s*results\\s*for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<WvGames> gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 WvGames temp = new WvGames();
-                WvGames temp2 = new WvGames();
                 temp.setName("Daily 4");
-                temp2.setName("Daily 4");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 date = dataMatcher.group(6) + "/" + formatMonth(dataMatcher.group(4)) + "/" + StringUtils.leftPad(dataMatcher.group(5), 2, "0");
-                temp2.setDate(date);
+
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(7);
                 nums[1] = dataMatcher.group(8);
                 nums[2] = dataMatcher.group(9);
                 nums[3] = dataMatcher.group(10);
                 temp.setWinningNumbers(nums);
-                nums = new String[4];
-                nums[0] = dataMatcher.group(11);
-                nums[1] = dataMatcher.group(12);
-                nums[2] = dataMatcher.group(13);
-                nums[3] = dataMatcher.group(14);
-                temp2.setWinningNumbers(nums);
+
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                }
-                if (null == repository.findByNameAndDate(temp2.getName(), temp2.getDate())) {
-                    gamesList.add(temp2);
                 }
             }
             saveGame(gamesList, "Daily 4");
@@ -246,9 +227,8 @@ public class WvLottoService {
         webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/cash-25/");
-
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]+) ([0-9]+), ([0-9]{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("([A-Za-z]+) ([0-9]+), ([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<WvGames> gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
