@@ -9,6 +9,7 @@ import com.mikekim.lottoandroid.repositories.IdLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,7 +26,7 @@ public class IdLottoService {
     @Autowired
     IdLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -106,7 +107,6 @@ public class IdLottoService {
         saveGame(gamesList, "mega millions");
 
     }
-
     public void getLottoAmerica() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -114,7 +114,7 @@ public class IdLottoService {
         try {
             HtmlPage currentPage = webClient.getPage("https://www.idaholottery.com/games/draw/lottoAmerica/history.asp");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d{1,2})/(\\d{1,2})/(\\d{4})\\s*(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)\\s*(\\d+)\\s*x(\\d+)");
+            Pattern dataPattern = Pattern.compile("(\\d{1,2})/(\\d{1,2})/(\\d{4})\\s*(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)\\s*SB: (\\d+)\\s*All-Star Bonus: (\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<IdGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
@@ -264,7 +264,7 @@ public class IdLottoService {
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             Matcher dataMatcher1 = dataPattern1.matcher(pageHtml);
             List<IdGames> gamesList = new ArrayList<>();
-            if(dataMatcher1.find()) {
+            if (dataMatcher1.find()) {
                 IdGames temp = new IdGames();
                 temp.setName("Pick 3 Day");
                 String date = dataMatcher1.group(3) + "/" + StringUtils.leftPad(dataMatcher1.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher1.group(2), 2, "0");

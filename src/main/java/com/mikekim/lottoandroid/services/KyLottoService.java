@@ -10,6 +10,7 @@ import com.mikekim.lottoandroid.repositories.KyLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +27,7 @@ public class KyLottoService {
     @Autowired
     KyLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -155,7 +156,7 @@ public class KyLottoService {
             for (int i = 0; i < 2; i++) {
                 final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='greenCustomStyle']").get(i);
                 int j = 0;
-                while (gamesList.size() < 10 && j < 30) {
+                while (gamesList.size() < 10 && j < table.getRowCount()) {
                     if (table.getRow(j).getCell(1).asText().matches("\\d+/\\d+/\\d{4}")) {
                         if ("Drawing Tonight".equals(table.getRow(j).getCell(2).asText())) {
                             j++;
@@ -196,7 +197,7 @@ public class KyLottoService {
             for (int i = 0; i < 2; i++) {
                 final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='greenCustomStyle']").get(i);
                 int j = 0;
-                while (gamesList.size() < 10 && j < 30) {
+                while (gamesList.size() < 10 && j < table.getRowCount()) {
                     if (table.getRow(j).getCell(1).asText().matches("\\d+/\\d+/\\d{4}")) {
                         if ("Drawing Tonight".equals(table.getRow(j).getCell(2).asText())) {
                             j++;
@@ -226,6 +227,7 @@ public class KyLottoService {
             System.out.println("failed to retrieve Lucky for Life");
         }
     }
+
     public void getCashBall() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);

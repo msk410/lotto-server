@@ -9,6 +9,7 @@ import com.mikekim.lottoandroid.repositories.CaLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,8 +26,9 @@ public class CaLottoService {
     @Autowired
     CaLottoRepository caLottoRepository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
+        System.out.println("***************cali****************");
         getPowerball();
         getMegaMillions();
         getSuperLottoPlus();
@@ -170,6 +172,7 @@ public class CaLottoService {
             System.out.println("failed to retrieve fantasy 5");
         }
     }
+
     public void daily3() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -232,6 +235,7 @@ public class CaLottoService {
             System.out.println("failed to retrieve daily 4");
         }
     }
+
     private String formatMonth(String month) {
         switch (month) {
             case ("January"): {

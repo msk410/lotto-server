@@ -8,6 +8,7 @@ import com.mikekim.lottoandroid.repositories.MsLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,7 +25,7 @@ public class MsLottoService {
     @Autowired
     MsLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getMegaMillions();
         getPick();

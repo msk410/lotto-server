@@ -11,6 +11,7 @@ import com.mikekim.lottoandroid.repositories.MiLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,7 +28,7 @@ public class MiLottoService {
     @Autowired
     MiLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -152,141 +153,143 @@ public class MiLottoService {
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 
         try {
-            HtmlPage currentPage = webClient.getPage("https://www.michiganlottery.com/recent_winning_numbers?");
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/michigan/");
+            webClient.waitForBackgroundJavaScriptStartingBefore(30000);
             String pageHtml = currentPage.asText();
             List<MiGames> gamesList = new ArrayList<>();
-            Pattern dataPattern = Pattern.compile("(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*Results\\s*for:\\s*\\w*\\.\\s*(\\w{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            Pattern dataPattern = Pattern.compile("Fantasy 5\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 MiGames temp = new MiGames();
                 temp.setName("Fantasy 5");
-                String date = dataMatcher.group(8) + "/" + formatMonth(dataMatcher.group(6)) + "/" + StringUtils.leftPad(dataMatcher.group(7), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
-                nums[0] = dataMatcher.group(1);
-                nums[1] = dataMatcher.group(2);
-                nums[2] = dataMatcher.group(3);
-                nums[3] = dataMatcher.group(4);
-                nums[4] = dataMatcher.group(5);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            dataPattern = Pattern.compile("(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d+)\\s*Results\\s*for:\\s*\\w*\\.\\s*(\\w{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataPattern = Pattern.compile("Classic Lotto 47\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 MiGames temp = new MiGames();
-                temp.setName("Lotto 47");
-                String date = dataMatcher.group(9) + "/" + formatMonth(dataMatcher.group(7)) + "/" + StringUtils.leftPad(dataMatcher.group(8), 2, "0");
+                temp.setName("Classic Lotto 47");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[6];
-                nums[0] = dataMatcher.group(1);
-                nums[1] = dataMatcher.group(2);
-                nums[2] = dataMatcher.group(3);
-                nums[3] = dataMatcher.group(4);
-                nums[4] = dataMatcher.group(5);
-                nums[5] = dataMatcher.group(6);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
+            dataPattern = Pattern.compile("Lucky For Life\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 MiGames temp = new MiGames();
                 temp.setName("Lucky for Life");
-                String date = dataMatcher.group(9) + "/" + formatMonth(dataMatcher.group(7)) + "/" + StringUtils.leftPad(dataMatcher.group(8), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
-                String[] nums = new String[6];
-                nums[0] = dataMatcher.group(1);
-                nums[1] = dataMatcher.group(2);
-                nums[2] = dataMatcher.group(3);
-                nums[3] = dataMatcher.group(4);
-                nums[4] = dataMatcher.group(5);
-                nums[5] = dataMatcher.group(6);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setBonus(dataMatcher.group(9));
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            dataPattern = Pattern.compile("MID\\s*\\*\\s*(\\d)\\s(\\d)\\s(\\d)\\s[^\\d]\\s*EVE\\s*\\*\\s*(\\d\\s\\d\\s\\d\\s*|Drawing\\sat\\s[\\d: ]+pm)?\\s*Results\\s*for:\\s*[A-Za-z]+\\.\\s*([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataPattern = Pattern.compile("Midday 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 MiGames temp = new MiGames();
                 temp.setName("Daily 3 Midday");
-                String date = dataMatcher.group(7) + "/" + formatMonth(dataMatcher.group(5)) + "/" + StringUtils.leftPad(dataMatcher.group(6), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
-                nums[0] = dataMatcher.group(1);
-                nums[1] = dataMatcher.group(2);
-                nums[2] = dataMatcher.group(3);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            dataPattern = Pattern.compile("EVE\\s*\\*\\s*(\\d)\\s(\\d)\\s(\\d)\\s*Results\\s*for:\\s*[A-Za-z]+\\.\\s*([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataPattern = Pattern.compile("Daily 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 MiGames temp = new MiGames();
                 temp.setName("Daily 3 Evening");
-                String date = dataMatcher.group(6) + "/" + formatMonth(dataMatcher.group(4)) + "/" + StringUtils.leftPad(dataMatcher.group(5), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
-                nums[0] = dataMatcher.group(1);
-                nums[1] = dataMatcher.group(2);
-                nums[2] = dataMatcher.group(3);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            dataPattern = Pattern.compile("MID\\s*\\*\\s*(\\d)\\s(\\d)\\s(\\d)\\s(\\d)\\s[^\\d]\\s*EVE\\s*\\*\\s*(\\d\\s\\d\\s\\d\\s\\d\\s*|Drawing\\sat\\s[\\d: ]+pm)?\\s*Results\\s*for:\\s*[A-Za-z]+\\.\\s*([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataPattern = Pattern.compile("Midday 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 MiGames temp = new MiGames();
                 temp.setName("Daily 4 Midday");
-                String date = dataMatcher.group(8) + "/" + formatMonth(dataMatcher.group(6)) + "/" + StringUtils.leftPad(dataMatcher.group(7), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
-                nums[0] = dataMatcher.group(1);
-                nums[1] = dataMatcher.group(2);
-                nums[2] = dataMatcher.group(3);
-                nums[3] = dataMatcher.group(4);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            dataPattern = Pattern.compile("EVE\\s*\\*\\s*(\\d)\\s(\\d)\\s(\\d)\\s(\\d)\\s*Results\\s*for:\\s*[A-Za-z]+\\.\\s*([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})");
+            dataPattern = Pattern.compile("Daily 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 MiGames temp = new MiGames();
                 temp.setName("Daily 4 Evening");
-                String date = dataMatcher.group(7) + "/" + formatMonth(dataMatcher.group(5)) + "/" + StringUtils.leftPad(dataMatcher.group(6), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
-                nums[0] = dataMatcher.group(1);
-                nums[1] = dataMatcher.group(2);
-                nums[2] = dataMatcher.group(3);
-                nums[3] = dataMatcher.group(4);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
 
-            dataPattern = Pattern.compile("(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d+)\\s*Results\\s*for:\\s*\\w*\\.\\s*(\\w+)\\s*(\\d{2}),\\s*(\\d{4})");
+            dataPattern = Pattern.compile("Keno\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 MiGames temp = new MiGames();
                 temp.setName("Keno!");
-                String date = dataMatcher.group(25) + "/" + formatMonth(dataMatcher.group(23).substring(0, 3)) + "/" + StringUtils.leftPad(dataMatcher.group(24), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[22];
                 for (int i = 0; i < 22; i++) {
-                    nums[i] = dataMatcher.group(i + 1);
+                    nums[i] = dataMatcher.group(i + 4);
                 }
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {

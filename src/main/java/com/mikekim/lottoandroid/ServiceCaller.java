@@ -159,9 +159,9 @@ public class ServiceCaller {
     WvLottoService wvLottoService;
 
 
- //   @Scheduled(fixedRate = 500000)
+    //@Scheduled(fixedRate = 5000000)
     public void callAll() {
-        System.out.println("starting");
+        System.out.println("starting" + new Date().toString());
         azLottoService.getAll();    //over 1 minute    needs javascript
         arLottoService.getAll();    //5 secs
 
@@ -192,9 +192,9 @@ public class ServiceCaller {
         neLottoService.getAll();    //10 secs
         nhLottoService.getAll();    //15 secs
         njLottoService.getAll();    //todo 30 secs
-        nmLottoService.getAll();    //todo fix pick 3
-        nyLottoService.getAll();    //todo getting old numbers
-        ohLottoService.getAll();    //8 secs //todo need to run two times day
+        nmLottoService.getAll();
+        nyLottoService.getAll();
+        ohLottoService.getAll();    //8 secs
         okLottoService.getAll();    //around 15 secs?
         orLottoService.getAll();    //10 secs
         paLottoService.getAll();    //10 secs
@@ -209,6 +209,7 @@ public class ServiceCaller {
         wiLottoService.getAll();    //5 secs
         wyLottoService.getAll();    //5 secs
         wvLottoService.getAll();
+        System.out.println("finish" + new Date().toString());
     }
 }
 

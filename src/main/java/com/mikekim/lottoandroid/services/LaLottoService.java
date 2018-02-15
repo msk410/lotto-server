@@ -10,6 +10,7 @@ import com.mikekim.lottoandroid.repositories.LaLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +27,7 @@ public class LaLottoService {
     @Autowired
     LaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -116,7 +117,7 @@ public class LaLottoService {
                 String gameName = "";
                 final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='table table-condensed table-bordered table-striped table-data']").get(i);
                 int j = 0;
-                while (gamesList.size() < 10 && j < 10) {
+                while (gamesList.size() < 10 && j < table.getRowCount()) {
                     if (table.getRow(j).getCell(0).asText().matches("[A-Za-z]{3},\\s*[A-Za-z]{3}\\s*\\d+\\s*,\\s*\\d{4}")) {
                         LaGames temp = new LaGames();
                         String[] rawDate = table.getRow(j).getCell(0).asText().split(" ");

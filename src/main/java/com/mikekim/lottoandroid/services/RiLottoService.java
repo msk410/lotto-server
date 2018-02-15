@@ -9,6 +9,7 @@ import com.mikekim.lottoandroid.repositories.RiLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,7 +26,7 @@ public class RiLottoService {
     @Autowired
     RiLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -142,6 +143,7 @@ public class RiLottoService {
             System.out.println("failed to retrieve Lucky for Life");
         }
     }
+
     public void getWildMoney() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -177,6 +179,7 @@ public class RiLottoService {
             System.out.println("failed to retrieve Wild Money");
         }
     }
+
     public void getTheNumbersEvening() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);

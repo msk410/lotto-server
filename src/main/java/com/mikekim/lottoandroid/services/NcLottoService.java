@@ -10,6 +10,7 @@ import com.mikekim.lottoandroid.repositories.NcLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +27,7 @@ public class NcLottoService {
     @Autowired
     NcLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -117,7 +118,7 @@ public class NcLottoService {
             List<NcGames> gamesList = new ArrayList<>();
             final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='datatable past_results']").get(0);
             int j = 2;
-            while (gamesList.size() < 10 && j < 10) {
+            while (gamesList.size() < 10 && j < table.getRowCount()) {
                 if (table.getRow(j).getCell(0).asText().matches("[\\w]{3}\\s*\\d+,\\s*\\d{4}")) {
 
                     NcGames temp = new NcGames();
@@ -159,7 +160,7 @@ public class NcLottoService {
             List<NcGames> gamesList = new ArrayList<>();
             final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='datatable past_results']").get(0);
             int j = 2;
-            while (gamesList.size() < 10 && j < 10) {
+            while (gamesList.size() < 10 && j < table.getRowCount()) {
                 if (table.getRow(j).getCell(0).asText().matches("[\\w]{3}\\s*\\d+,\\s*\\d{4}")) {
 
                     NcGames temp = new NcGames();
@@ -200,7 +201,7 @@ public class NcLottoService {
             List<NcGames> gamesList = new ArrayList<>();
             final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='datatable past_results']").get(0);
             int j = 2;
-            while (gamesList.size() < 10 && j < 10) {
+            while (gamesList.size() < 10 && j < table.getRowCount()) {
                 if (table.getRow(j).getCell(0).asText().matches("[\\w]{3}\\s*\\d+,\\s*\\d{4}")) {
 
                     NcGames temp = new NcGames();
@@ -235,7 +236,7 @@ public class NcLottoService {
             List<NcGames> gamesList = new ArrayList<>();
             final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='datatable past_results']").get(0);
             int j = 2;
-            while (gamesList.size() < 10 && j < 10) {
+            while (gamesList.size() < 10 && j < table.getRowCount()) {
                 if (table.getRow(j).getCell(0).asText().matches("[\\w]{3}\\s*\\d+,\\s*\\d{4}")) {
 
                     NcGames temp = new NcGames();

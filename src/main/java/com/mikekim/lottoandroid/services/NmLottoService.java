@@ -9,6 +9,7 @@ import com.mikekim.lottoandroid.repositories.NmLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,13 +26,14 @@ public class NmLottoService {
     @Autowired
     NmLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
         getLottoAmerica();
         getRoadRunnerCash();
-        getPick3();
+        getPick3Evening();
+        getPick3Midday();
     }
 
     public void getPowerball() {
@@ -180,41 +182,112 @@ public class NmLottoService {
         }
     }
 
-    //todo steal from lotteryusa
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
+    public void getPick3Evening() {
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.nmlottery.com/drawing-results.aspx?game=pick3");
-            webClient.waitForBackgroundJavaScript(10 * 1000);
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-mexico/pick-3/");
             String pageHtml = currentPage.asText();
-//            Pattern dataPattern = Pattern.compile("(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\sWinning numbers for the ([A-Za-z]+)\\s*(\\d{1,2}),\\s*(\\d{4})\\s*([A-Za-z]+)");
-            Pattern dataPattern = Pattern.compile("(\\d{1,2})/(\\d{1,2})/(\\d{4})\\s*(DAY|EVE)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<NmGames> gamesList = new ArrayList<>();
-            if (dataMatcher.find()) {
+            while (gamesList.size() < 30 && dataMatcher.find()) {
                 NmGames temp = new NmGames();
-                String ex = dataMatcher.group(4).equals("DAY") ? "Midday" : "Evening";
-                temp.setName("Pick 3 " + ex);
-                String[] nums = new String[3];
-                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setName("Pick 3 Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonth1(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
-                nums[0] = dataMatcher.group(5);
-                nums[1] = dataMatcher.group(6);
-                nums[2] = dataMatcher.group(7);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
+                } else {
+                    break;
                 }
             }
-            saveGame(gamesList, "pick 3");
+            saveGame(gamesList, "Pick 3 Evening");
 
         } catch (IOException e) {
-            System.out.println("failed to retrieve pick 3");
+            System.out.println("failed to retrieve Pick 3 Evening");
+        }
+    }
+
+    public void getPick3Midday() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-mexico/midday-pick-3/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NmGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NmGames temp = new NmGames();
+                temp.setName("Pick 3 Midday");
+                String date = dataMatcher.group(3) + "/" + formatMonth1(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "Pick 3 Midday");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Pick 3 Midday");
+        }
+    }
+
+    private String formatMonth1(String month) {
+        switch (month) {
+            case ("Dec"): {
+                return "12";
+            }
+            case ("Nov"): {
+                return "11";
+            }
+            case ("Oct"): {
+                return "10";
+            }
+            case ("Sep"): {
+                return "09";
+            }
+            case ("Aug"): {
+                return "08";
+            }
+            case ("Jul"): {
+                return "07";
+            }
+            case ("Jun"): {
+                return "06";
+            }
+            case ("May"): {
+                return "05";
+            }
+            case ("Apr"): {
+                return "04";
+            }
+            case ("Mar"): {
+                return "03";
+            }
+            case ("Feb"): {
+                return "02";
+            }
+            case ("Jan"): {
+                return "01";
+            }
+            default:
+                return "00";
         }
     }
 

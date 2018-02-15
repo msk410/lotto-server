@@ -9,6 +9,7 @@ import com.mikekim.lottoandroid.repositories.OhLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +27,7 @@ public class OhLottoService {
 
     OhLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -152,6 +153,22 @@ public class OhLottoService {
                     gamesList.add(temp);
                 }
             }
+            dataPattern = Pattern.compile("Pick 3\\s*(\\d+)/(\\d+)/(\\d{4})\\s*\\d+\\s*\\d+\\s*\\d+\\s*(Midday|Evening)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Midday|Evening)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                OhGames temp = new OhGames();
+                temp.setName("Pick 3 " + dataMatcher.group(8));
+                String[] nums = new String[3];
+                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                nums[0] = dataMatcher.group(5);
+                nums[1] = dataMatcher.group(6);
+                nums[2] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
             dataPattern = Pattern.compile("Classic Lotto\\s*(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
@@ -188,9 +205,26 @@ public class OhLottoService {
                     gamesList.add(temp);
                 }
             }
-            dataPattern = Pattern.compile("Pick 5\\s*(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Midday|Evening)");
+            dataPattern = Pattern.compile("Pick 4\\s*(\\d+)/(\\d+)/(\\d{4})\\s*\\d+\\s*\\d+\\s*\\d+\\s*\\d+\\s*(Midday|Evening)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Midday|Evening)");
             dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
+                OhGames temp = new OhGames();
+                temp.setName("Pick 4 " + dataMatcher.group(9));
+                String[] nums = new String[4];
+                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                nums[0] = dataMatcher.group(5);
+                nums[1] = dataMatcher.group(6);
+                nums[2] = dataMatcher.group(7);
+                nums[3] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("Pick 5\\s*(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Midday|Evening)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            while (dataMatcher.find()) {
                 OhGames temp = new OhGames();
                 temp.setName("Pick 5 " + dataMatcher.group(9));
                 String[] nums = new String[5];
@@ -201,6 +235,24 @@ public class OhLottoService {
                 nums[2] = dataMatcher.group(6);
                 nums[3] = dataMatcher.group(7);
                 nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("Pick 5\\s*(\\d+)/(\\d+)/(\\d{4})\\s*\\d+\\s*\\d+\\s*\\d+\\s*\\d+\\s*\\d+\\s*(Midday|Evening)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Midday|Evening)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            while (dataMatcher.find()) {
+                OhGames temp = new OhGames();
+                temp.setName("Pick 5 " + dataMatcher.group(10));
+                String[] nums = new String[5];
+                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                nums[0] = dataMatcher.group(5);
+                nums[1] = dataMatcher.group(6);
+                nums[2] = dataMatcher.group(7);
+                nums[3] = dataMatcher.group(8);
+                nums[4] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);

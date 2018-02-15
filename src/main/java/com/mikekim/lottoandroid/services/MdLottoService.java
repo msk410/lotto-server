@@ -10,6 +10,7 @@ import com.mikekim.lottoandroid.repositories.MdLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,8 +27,7 @@ public class MdLottoService {
     @Autowired
     MdLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    private HtmlTable table;
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -234,7 +234,7 @@ public class MdLottoService {
             String gameName = "";
             final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='numbers_tabl']").get(0);
             int j = 0;
-            while (gamesList.size() < 10 && j < 10) {
+            while (gamesList.size() < 10 && j < table.getRowCount()) { //todo check if table.getRowCount gets higher when there are more records
                 if (table.getRow(j).getCell(0).asText().matches("(\\d+)/(\\d+)/(\\d{4})")) {
                     MdGames temp = new MdGames();
                     String[] rawDate = table.getRow(j).getCell(0).asText().split("/");

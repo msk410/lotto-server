@@ -9,6 +9,7 @@ import com.mikekim.lottoandroid.models.NjGames;
 import com.mikekim.lottoandroid.repositories.NjLottoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,12 +27,16 @@ public class NjLottoService {
     NjLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.FIREFOX_52);
 
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        get5CardCash();
-        getPick6Xtra();
         getCash4Life();
+        getPick6Xtra();
+        getJerseyCash5();
+        get5CardCash();
+        getPick4();
+        getPick3();
     }
 
     public void getPowerball() {
@@ -104,7 +109,6 @@ public class NjLottoService {
         saveGame(gamesList, "mega millions");
 
     }
-
     public void get5CardCash() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -182,6 +186,7 @@ public class NjLottoService {
         }
     }
 
+
     public void getCash4Life() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -193,13 +198,13 @@ public class NjLottoService {
             HtmlPage currentPage = webClient.getPage("https://www.njlottery.com/en-us/drawgames/cash4life.html");
             webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*times(\\d{1,2})");
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<NjGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NjGames temp = new NjGames();
                 temp.setName("Cash 4 Life");
-                String[] nums = new String[6];
+                String[] nums = new String[5];
                 String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + dataMatcher.group(2);
                 temp.setDate(date);
                 nums[0] = dataMatcher.group(4);
@@ -207,10 +212,9 @@ public class NjLottoService {
                 nums[2] = dataMatcher.group(6);
                 nums[3] = dataMatcher.group(7);
                 nums[4] = dataMatcher.group(8);
-                nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
-                temp.setExtra(dataMatcher.group(10));
-                temp.setExtraText("Xtra: ");
+                temp.setBonus(dataMatcher.group(9));
+
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
@@ -221,7 +225,116 @@ public class NjLottoService {
             System.out.println("failed to retrieve Cash 4 Life");
         }
     }
+    public void getJerseyCash5() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        try {
+            HtmlPage currentPage = webClient.getPage("https://www.njlottery.com/en-us/drawgames/dailygames/jerseycash.html");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*times(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NjGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 10 && dataMatcher.find()) {
+                NjGames temp = new NjGames();
+                temp.setName("Jersey Cash 5 Xtra");
+                String[] nums = new String[5];
+                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + dataMatcher.group(2);
+                temp.setDate(date);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                temp.setExtra(dataMatcher.group(9));
+                temp.setExtraText("Xtra: ");
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            saveGame(gamesList, "Jersey Cash 5 Xtra");
 
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Jersey Cash 5 Xtra");
+        }
+    }
+    public void getPick4() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        try {
+            HtmlPage currentPage = webClient.getPage("https://www.njlottery.com/en-us/drawgames/dailygames/pick4.html");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s*\\((\\d+)/(\\d+)/(\\d{4})\\)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NjGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 10 && dataMatcher.find()) {
+                NjGames temp = new NjGames();
+                temp.setName("Pick 4 " + dataMatcher.group(1));
+                String[] nums = new String[4];
+                String date = dataMatcher.group(4) + "/" + dataMatcher.group(2) + "/" + dataMatcher.group(3);
+                temp.setDate(date);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+                temp.setExtra(dataMatcher.group(8));
+                temp.setExtraText("Fireball: ");
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            saveGame(gamesList, "pick 4");
+        } catch (IOException e) {
+            System.out.println("pick 4");
+        }
+    }
+    public void getPick3() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        try {
+            HtmlPage currentPage = webClient.getPage("https://www.njlottery.com/en-us/drawgames/dailygames/pick3.html");
+            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s*\\((\\d+)/(\\d+)/(\\d{4})\\)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NjGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 10 && dataMatcher.find()) {
+                NjGames temp = new NjGames();
+                temp.setName("Pick 3 " + dataMatcher.group(1));
+                String[] nums = new String[3];
+                String date = dataMatcher.group(4) + "/" + dataMatcher.group(2) + "/" + dataMatcher.group(3);
+                temp.setDate(date);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                temp.setExtra(dataMatcher.group(7));
+                temp.setExtraText("Fireball: ");
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            saveGame(gamesList, "pick 4");
+
+        } catch (IOException e) {
+            System.out.println("pick 4");
+        }
+    }
 
     private void saveGame(List<NjGames> gamesList, String gameName) {
         if (!gamesList.isEmpty()) {

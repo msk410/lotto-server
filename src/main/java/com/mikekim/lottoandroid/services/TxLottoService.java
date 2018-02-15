@@ -9,6 +9,7 @@ import com.mikekim.lottoandroid.repositories.TxLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +27,7 @@ public class TxLottoService {
 
     TxLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -38,6 +39,7 @@ public class TxLottoService {
         getPick3();
         getDaily4();
     }
+
     public void getPowerball() {
         try {
             TextPage currentPage = webClient.getPage("http://www.powerball.com/powerball/winnums-text.txt");

@@ -9,6 +9,7 @@ import com.mikekim.lottoandroid.repositories.WvLottoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,7 +25,7 @@ public class WvLottoService {
 
     WvLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -145,6 +146,7 @@ public class WvLottoService {
             System.out.println("failed to retrieve Lotto America");
         }
     }
+
     public void getDaily3() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -180,7 +182,6 @@ public class WvLottoService {
             System.out.println("failed to retrieve Daily 3");
         }
     }
-
     public void getDaily4() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -189,7 +190,6 @@ public class WvLottoService {
         webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-4/");
-
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
@@ -199,8 +199,6 @@ public class WvLottoService {
                 temp.setName("Daily 4");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
-                date = dataMatcher.group(6) + "/" + formatMonth(dataMatcher.group(4)) + "/" + StringUtils.leftPad(dataMatcher.group(5), 2, "0");
-
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(7);
                 nums[1] = dataMatcher.group(8);
@@ -258,7 +256,11 @@ public class WvLottoService {
     }
 
     private String formatMonth(String gameMonth) {
-        switch (gameMonth) {
+        String fuckYou = gameMonth.toLowerCase();
+        char[] f = fuckYou.toCharArray();
+        f[0] = String.valueOf(f[0]).toUpperCase().charAt(0);
+        fuckYou = new String(f);
+        switch (fuckYou) {
             case ("January"): {
                 gameMonth = "01";
                 break;

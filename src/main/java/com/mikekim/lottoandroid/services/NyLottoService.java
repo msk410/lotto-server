@@ -2,10 +2,15 @@ package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.mikekim.lottoandroid.models.NyGames;
 import com.mikekim.lottoandroid.repositories.NyLottoRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,7 +28,7 @@ public class NyLottoService {
     @Autowired
     NyLottoRepository nyLottoRepository;
     WebClient webClient = new WebClient();
-
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         //TODO get intervals
         getPowerball();
@@ -31,7 +36,10 @@ public class NyLottoService {
         getCash4Life();
         getNyLotto();
         getTake5();
-        getNumbersWin();
+        getWin4Evening();
+        getWin4Midday();
+        getNumbersEvening();
+        getNumbersMidday();
         getPick10();
     }
 
@@ -107,164 +115,367 @@ public class NyLottoService {
     }
 
     public void getCash4Life() {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/7pxf-c5iz.json", Object[].class);
-        List<NyGames> nyGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            NyGames temp = new NyGames();
-            temp.setName("Cash 4 Life");
-            Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
-            String[] rawDate = jsonData.get("draw_date").split("T")[0].split("-");
-            String date = rawDate[0] + "/" + rawDate[1] + "/" + rawDate[2];
-            temp.setDate(date);
-
-            String[] winningNumbers = jsonData.get("winning_numbers").split(" ");
-            temp.setWinningNumbers(winningNumbers);
-            temp.setBonus(jsonData.get("cash_ball"));
-            if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                nyGamesList.add(temp);
-            } else {
-                break;
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/cash4life/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("Cash 4 Life");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                temp.setBonus(dataMatcher.group(9));
+                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
             }
+            saveGame(gamesList, "cash 4 life");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve cash 4 life");
         }
-        saveGame(nyGamesList, "cash 4 life");
-    }
-
-    public void getNyLotto() {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/etu4-7qqz.json", Object[].class);
-        List<NyGames> nyGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            NyGames temp = new NyGames();
-            temp.setName("NY Lotto");
-            Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
-            String[] rawDate = jsonData.get("draw_date").split("T")[0].split("-");
-            String date = rawDate[0] + "/" + rawDate[1] + "/" + rawDate[2];
-            temp.setDate(date);
-
-            String[] winningNumbers = jsonData.get("winning_numbers").split(" ");
-            temp.setWinningNumbers(winningNumbers);
-            temp.setBonus(jsonData.get("bonus"));
-            if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                nyGamesList.add(temp);
-            } else {
-                break;
-            }
-        }
-        saveGame(nyGamesList, "ny lotto");
-
     }
 
     public void getTake5() {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/hh4x-xmbw.json", Object[].class);
-        List<NyGames> nyGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            NyGames temp = new NyGames();
-            temp.setName("Take 5");
-            Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
-            String[] rawDate = jsonData.get("draw_date").split("T")[0].split("-");
-            String date = rawDate[0] + "/" + rawDate[1] + "/" + rawDate[2];
-            temp.setDate(date);
-
-            String[] winningNumbers = jsonData.get("winning_numbers").split(" ");
-            temp.setWinningNumbers(winningNumbers);
-            if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                nyGamesList.add(temp);
-            } else {
-                break;
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/take-5/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("Take 5");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
             }
+            saveGame(gamesList, "take 5");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve take 5");
         }
-        saveGame(nyGamesList, "take 5");
     }
 
-
-    private void getPick10() {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/r9pz-ziyb.json", Object[].class);
-        List<NyGames> nyGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            NyGames temp = new NyGames();
-            temp.setName("Pick 10");
-            Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
-            String[] rawDate = jsonData.get("draw_date").split("T")[0].split("-");
-            String date = rawDate[0] + "/" + rawDate[1] + "/" + rawDate[2];
-            temp.setDate(date);
-
-            String[] winningNumbers = jsonData.get("winning_numbers").split(" ");
-            temp.setWinningNumbers(winningNumbers);
-            if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                nyGamesList.add(temp);
-            } else {
-                break;
+    public void getNyLotto() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/lotto/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("New York Lotto");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[6];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
+                temp.setWinningNumbers(nums);
+                temp.setBonus(dataMatcher.group(10));
+                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
             }
+            saveGame(gamesList, "New York Lotto");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve New York Lotto");
         }
-        saveGame(nyGamesList, "pick 10");
     }
 
-    private void getNumbersWin() {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/iy3t-z4bs.json", Object[].class);
-        List<NyGames> nyGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            NyGames temp1 = new NyGames();
-            NyGames temp2 = new NyGames();
-            NyGames temp3 = new NyGames();
-            NyGames temp4 = new NyGames();
-            temp1.setName("Win 4 Midday");
-            temp2.setName("Win 4 Evening");
-            temp3.setName("NUMBERS Midday");
-            temp4.setName("NUMBERS Evening");
-            Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
-            String[] rawDate = jsonData.get("draw_date").split("T")[0].split("-");
-            String date = rawDate[0] + "/" + rawDate[1] + "/" + rawDate[2];
-            temp1.setDate(date);
-            temp2.setDate(date);
-            temp3.setDate(date);
-            temp4.setDate(date);
+    public void getWin4Evening() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/win-4/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("Win 4 Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+                int sum = 0;
+                for (String s : nums) {
+                    sum += Integer.valueOf(s);
+                }
+                temp.setExtra(String.valueOf(sum));
+                temp.setExtraText("Lucky Sum: ");
 
-            String[] winningNumbers = jsonData.get("midday_win_4").split("");
-            temp1.setWinningNumbers(winningNumbers);
-            temp1.setExtra(jsonData.get("midday_win_4_sum"));
-            temp1.setExtraText(" Lucky Sum: ");
-
-            winningNumbers = jsonData.get("evening_win_4").split("");
-            temp2.setWinningNumbers(winningNumbers);
-            temp2.setExtra(jsonData.get("evening_win_4_sum"));
-            temp2.setExtraText(" Lucky Sum: ");
-
-            winningNumbers = jsonData.get("midday_daily").split("");
-            temp3.setWinningNumbers(winningNumbers);
-            temp3.setExtra(jsonData.get("midday_daily_sum"));
-            temp3.setExtraText(" Lucky Sum: ");
-
-            winningNumbers = jsonData.get("evening_daily").split("");
-            temp4.setWinningNumbers(winningNumbers);
-            temp4.setExtra(jsonData.get("evening_daily_sum"));
-            temp4.setExtraText(" Lucky Sum: ");
-
-
-            if (null == nyLottoRepository.findByNameAndDate(temp1.getName(), temp1.getDate())) {
-                nyGamesList.add(temp1);
-                nyGamesList.add(temp2);
-                nyGamesList.add(temp3);
-                nyGamesList.add(temp4);
-            } else {
-                break;
+                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
             }
+            saveGame(gamesList, "win 4 evening");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve win 4 evening");
         }
-        saveGame(nyGamesList, "numbers/win 4");
     }
 
+    public void getWin4Midday() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/midday-win-4/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("Win 4 Midday");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+                int sum = 0;
+                for (String s : nums) {
+                    sum += Integer.valueOf(s);
+                }
+                temp.setExtra(String.valueOf(sum));
+                temp.setExtraText("Lucky Sum: ");
 
-    public void saveGame(List<NyGames> nyGamesList, String gameName) {
-        if (!nyGamesList.isEmpty()) {
-            Iterable<NyGames> gameIterable = nyGamesList;
+                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "win 4 midday");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve win 4 midday");
+        }
+    }
+
+    public void getNumbersEvening() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/numbers/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("NUMBERS Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                int sum = 0;
+                for (String s : nums) {
+                    sum += Integer.valueOf(s);
+                }
+                temp.setExtra(String.valueOf(sum));
+                temp.setExtraText("Lucky Sum: ");
+
+                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "NUMBERS evening");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve numbers evening");
+        }
+    }
+
+    public void getNumbersMidday() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/midday-numbers/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("NUMBERS Midday");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                int sum = 0;
+                for (String s : nums) {
+                    sum += Integer.valueOf(s);
+                }
+                temp.setExtra(String.valueOf(sum));
+                temp.setExtraText("Lucky Sum: ");
+
+                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "NUMBERS Midday");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve numbers Midday");
+        }
+    }
+
+    public void getPick10() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/pick-10/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("Pick 10");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[10];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
+                nums[6] = dataMatcher.group(10);
+                nums[7] = dataMatcher.group(11);
+                nums[8] = dataMatcher.group(12);
+                nums[9] = dataMatcher.group(13);
+                temp.setWinningNumbers(nums);
+
+
+                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
+                }
+            }
+            saveGame(gamesList, "Pick 10");
+
+        } catch (IOException e) {
+            System.out.println("failed to retrieve Pick 10");
+        }
+    }
+
+    private String formatMonth(String month) {
+        switch (month) {
+            case ("Dec"): {
+                return "12";
+            }
+            case ("Nov"): {
+                return "11";
+            }
+            case ("Oct"): {
+                return "10";
+            }
+            case ("Sep"): {
+                return "09";
+            }
+            case ("Aug"): {
+                return "08";
+            }
+            case ("Jul"): {
+                return "07";
+            }
+            case ("Jun"): {
+                return "06";
+            }
+            case ("May"): {
+                return "05";
+            }
+            case ("Apr"): {
+                return "04";
+            }
+            case ("Mar"): {
+                return "03";
+            }
+            case ("Feb"): {
+                return "02";
+            }
+            case ("Jan"): {
+                return "01";
+            }
+            default:
+                return "00";
+        }
+    }
+
+    private void saveGame(List<NyGames> gamesList, String gameName) {
+        if (!gamesList.isEmpty()) {
+            Iterable<NyGames> gameIterable = gamesList;
             System.out.println("saving " + gameName + " games");
             nyLottoRepository.save(gameIterable);
         } else {
             System.out.println(gameName + " up to date");
         }
     }
-
 }
