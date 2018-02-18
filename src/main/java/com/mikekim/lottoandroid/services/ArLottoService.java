@@ -26,7 +26,7 @@ public class ArLottoService {
     @Autowired
     ArLottoRepository arLottoRepository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 50000)
     public void getAll() {
         getPowerball();
         getMegaMillions();

@@ -27,7 +27,7 @@ public class MaLottoService {
     @Autowired
     MaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.FIREFOX_52);
-    @Scheduled(fixedRate = 5000000)
+//    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();

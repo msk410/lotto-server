@@ -25,10 +25,10 @@ import java.util.regex.Pattern;
 public class DcLottoService {
 
     @Autowired
-
     DcLottoRepository repository;
+
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+//    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
