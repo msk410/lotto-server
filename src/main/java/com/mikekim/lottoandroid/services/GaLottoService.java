@@ -27,7 +27,7 @@ public class GaLottoService {
     GaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -39,6 +39,7 @@ public class GaLottoService {
         getGeorgiaFive();
         getAllOrNothing();
         getFiveCardCash();
+        System.gc();
     }
 
     public void getPowerball() {

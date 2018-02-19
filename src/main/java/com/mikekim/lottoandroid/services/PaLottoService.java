@@ -43,6 +43,7 @@ public class PaLottoService {
         getPick5Midday();
         getTreasureHunt();
         getCash4Life();
+        System.gc();
     }
 
     public void getPowerball() {

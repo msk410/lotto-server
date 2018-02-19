@@ -26,7 +26,7 @@ public class KsLottoService {
     @Autowired
     KsLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -35,6 +35,7 @@ public class KsLottoService {
         getSuperKansasCash();
         get2By2();
         getPick3();
+        System.gc();
     }
 
 

@@ -26,7 +26,7 @@ public class FlLottoService {
     @Autowired
     FlLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -38,6 +38,7 @@ public class FlLottoService {
         getPick4();
         getPick3();
         getPick2();
+        System.gc();
     }
 
     public void getPowerball() {

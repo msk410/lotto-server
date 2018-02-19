@@ -38,6 +38,7 @@ public class TxLottoService {
         getCash5();
         getPick3();
         getDaily4();
+        System.gc();
     }
 
     public void getPowerball() {

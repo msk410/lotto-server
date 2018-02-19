@@ -35,6 +35,7 @@ public class ScLottoService {
         getPick4();
         getPalmettoCash5();
         getLuckyForLife();
+        System.gc();
 
     }
 

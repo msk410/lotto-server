@@ -29,6 +29,7 @@ public class MsLottoService {
     public void getAll() {
         getMegaMillions();
         getPick();
+        System.gc();
 
     }
 

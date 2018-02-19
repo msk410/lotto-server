@@ -33,6 +33,7 @@ public class NjLottoService {
         getPowerball();
         getMegaMillions();
         getAllGames();
+        System.gc();
     }
 
     public void getPowerball() {

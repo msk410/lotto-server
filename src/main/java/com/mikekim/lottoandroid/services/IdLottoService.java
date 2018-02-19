@@ -26,7 +26,7 @@ public class IdLottoService {
     @Autowired
     IdLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -35,6 +35,7 @@ public class IdLottoService {
         getIdahoCash();
         getWeeklyGrand();
         getPick3();
+        System.gc();
     }
 
     public void getPowerball() {

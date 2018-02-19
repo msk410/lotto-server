@@ -35,6 +35,7 @@ public class MnLottoService {
         getDaily3();
         getGopher5();
         getNorthStarCash();
+        System.gc();
 
     }
 

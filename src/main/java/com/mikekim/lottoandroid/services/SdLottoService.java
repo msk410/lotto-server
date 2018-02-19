@@ -34,6 +34,7 @@ public class SdLottoService {
         getDakotaCash();
         getLottoAmerica();
         getLuckyForLife();
+        System.gc();
 
     }
 

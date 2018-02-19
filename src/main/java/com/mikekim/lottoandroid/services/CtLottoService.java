@@ -32,7 +32,7 @@ public class CtLottoService {
     @Autowired
     CtLottoRepository ctLottoRepository;
 
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -45,6 +45,7 @@ public class CtLottoService {
         getLuckyLinksDay();
         getLuckyLinksNight();
         getCash5();
+        System.gc();
     }
 
     public void getPowerball() {

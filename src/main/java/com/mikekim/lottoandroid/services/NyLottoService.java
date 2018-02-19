@@ -41,6 +41,7 @@ public class NyLottoService {
         getNumbersEvening();
         getNumbersMidday();
         getPick10();
+        System.gc();
     }
 
     public void getPowerball() {

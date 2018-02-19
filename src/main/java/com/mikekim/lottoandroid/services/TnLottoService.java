@@ -33,6 +33,7 @@ public class TnLottoService {
         getPowerball();
         getMegaMillions();
         getOthers();
+        System.gc();
     }
 
     public void getPowerball() {

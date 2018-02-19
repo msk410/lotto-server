@@ -36,6 +36,7 @@ public class WiLottoService {
         getPick3();
         getFiveCardCash();
         getBadger5();
+        System.gc();
     }
 
     public void getPowerball() {

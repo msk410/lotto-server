@@ -33,6 +33,7 @@ public class WvLottoService {
         getDaily3();
         getDaily4();
         getCash25();
+        System.gc();
     }
 
     public void getPowerball() {

@@ -27,11 +27,12 @@ public class LaLottoService {
     @Autowired
     LaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
         getAllGames();
+        System.gc();
     }
 
 

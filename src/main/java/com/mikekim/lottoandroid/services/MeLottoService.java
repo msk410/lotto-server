@@ -26,7 +26,7 @@ public class MeLottoService {
     @Autowired
     MeLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -37,6 +37,7 @@ public class MeLottoService {
         getPick3();
         getPick4();
         getWorldPokerTour();
+        System.gc();
     }
 
 

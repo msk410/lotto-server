@@ -33,6 +33,7 @@ public class MtLottoService {
         getLuckyForLife();
         getMontanaCash();
         getBigSkyBonus();
+        System.gc();
     }
 
     public void getPowerball() {

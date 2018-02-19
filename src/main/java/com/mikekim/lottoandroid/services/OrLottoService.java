@@ -35,6 +35,7 @@ public class OrLottoService {
         getLuckyLines();
         getMegabucks();
         getPick4();
+        System.gc();
     }
 
     public void getPowerball() {

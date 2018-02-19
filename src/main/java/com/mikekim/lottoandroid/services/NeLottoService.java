@@ -34,6 +34,7 @@ public class NeLottoService {
         getMyDaY();
         get2By2();
         getLuckyForLife();
+        System.gc();
     }
 
     public void getPowerball() {

@@ -26,7 +26,7 @@ public class CaLottoService {
     @Autowired
     CaLottoRepository caLottoRepository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         System.out.println("***************cali****************");
         getPowerball();
@@ -35,6 +35,7 @@ public class CaLottoService {
         fantasy5();
         daily3();
         daily4();
+        System.gc();
     }
 
     public void getPowerball() {

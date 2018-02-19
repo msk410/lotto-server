@@ -26,7 +26,6 @@ public class DcLottoService {
 
     @Autowired
     DcLottoRepository repository;
-
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
 //    @Scheduled(fixedRate = 5000000)
     public void getAll() {
@@ -36,6 +35,7 @@ public class DcLottoService {
         getDc4();
         getDc5();
         getLuckyForLife();
+        System.gc();
     }
 
     public void getPowerball() {

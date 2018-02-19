@@ -35,6 +35,7 @@ public class NcLottoService {
         getCash5();
         getPick4();
         getPick3();
+        System.gc();
     }
 
     public void getPowerball() {

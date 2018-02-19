@@ -33,6 +33,7 @@ public class NhLottoService {
         getLuckyForLife();
         getPick();
         getGimme5();
+        System.gc();
     }
 
     public void getPowerball() {

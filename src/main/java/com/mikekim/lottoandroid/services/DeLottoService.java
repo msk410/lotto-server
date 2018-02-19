@@ -30,7 +30,7 @@ public class DeLottoService {
     DeLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
 
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -39,6 +39,7 @@ public class DeLottoService {
         getPlay4();
         getMultiWin();
         getLuckyForLife();
+        System.gc();
     }
 
     public void getPowerball() {

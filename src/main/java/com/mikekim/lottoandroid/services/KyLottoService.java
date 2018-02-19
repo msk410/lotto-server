@@ -27,7 +27,7 @@ public class KyLottoService {
     @Autowired
     KyLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -36,6 +36,7 @@ public class KyLottoService {
         getPick4();
         getCashBall();
         get5CardCash();
+        System.gc();
     }
 
 

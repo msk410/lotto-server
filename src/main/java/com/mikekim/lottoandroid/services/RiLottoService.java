@@ -34,6 +34,7 @@ public class RiLottoService {
         getWildMoney();
         getTheNumbersEvening();
         getTheNumbersMidday();
+        System.gc();
     }
 
 

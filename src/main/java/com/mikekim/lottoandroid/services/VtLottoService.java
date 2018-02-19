@@ -37,6 +37,7 @@ public class VtLottoService {
         getLuckyForLife();
         getPick3();
         getPick4();
+        System.gc();
     }
 
     public void getPowerball() {

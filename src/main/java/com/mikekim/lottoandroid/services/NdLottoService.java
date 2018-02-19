@@ -33,6 +33,7 @@ public class NdLottoService {
         getLuckyForLife();
         getLottoAmerica();
         get2By2();
+        System.gc();
     }
 
     public void getPowerball() {

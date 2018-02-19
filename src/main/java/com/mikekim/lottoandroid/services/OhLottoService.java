@@ -32,6 +32,7 @@ public class OhLottoService {
         getPowerball();
         getMegaMillions();
         getAllGames();
+        System.gc();
     }//todo have to do twice a day
 
     public void getPowerball() {

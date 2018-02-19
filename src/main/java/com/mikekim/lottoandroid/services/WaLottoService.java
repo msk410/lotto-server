@@ -35,6 +35,7 @@ public class WaLottoService {
         getMatch4();
         getTheDailyGame();
         getDailyKeno();
+        System.gc();
     }
 
     public void getPowerball() {

@@ -35,6 +35,7 @@ public class OkLottoService {
         getPick3();
         getCash5();
         getPokerPick();
+        System.gc();
     }
 
     public void getPowerball() {

@@ -30,7 +30,7 @@ public class CoLottoService {
     CoLottoRepository coLottoRepository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -38,6 +38,7 @@ public class CoLottoService {
         getLotto();
         getCash5();
         getPick3();
+        System.gc();
 
     }
 

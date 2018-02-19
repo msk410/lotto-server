@@ -34,6 +34,7 @@ public class NmLottoService {
         getRoadRunnerCash();
         getPick3Evening();
         getPick3Midday();
+        System.gc();
     }
 
     public void getPowerball() {

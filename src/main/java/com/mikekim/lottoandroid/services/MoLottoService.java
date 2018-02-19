@@ -32,6 +32,7 @@ public class MoLottoService {
         getPowerball();
         getMegaMillions();
         getAllGames();
+        System.gc();
 
     }
 

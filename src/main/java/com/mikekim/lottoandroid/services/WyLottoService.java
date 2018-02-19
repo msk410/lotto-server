@@ -33,6 +33,7 @@ public class WyLottoService {
         getMegaMillions();
         getCowboyDraw();
         getLuckyForLife();
+        System.gc();
     }
 
     public void getPowerball() {

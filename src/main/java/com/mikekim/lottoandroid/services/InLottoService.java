@@ -26,7 +26,7 @@ public class InLottoService {
     @Autowired
     InLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -36,6 +36,7 @@ public class InLottoService {
         getDaily4();
         getDaily3();
         getQuickDraw();
+        System.gc();
     }
 
 

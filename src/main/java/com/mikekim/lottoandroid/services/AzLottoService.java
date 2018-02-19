@@ -26,7 +26,7 @@ public class AzLottoService {
     @Autowired
     AzLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 5000000)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -35,6 +35,7 @@ public class AzLottoService {
         getPick3();
         get5CardCash();
         getAllOrNothing();
+        System.gc();
     }
 
     public void getPowerball() {
