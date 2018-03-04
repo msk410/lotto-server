@@ -27,15 +27,12 @@ public class VaLottoService {
 
     VaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getBankAMillion();
-        getCash4Life();
-        getCash5();
-        getPick4();
-        getPick3();
+        getAllGames();
         System.gc();
     }
 
@@ -110,7 +107,7 @@ public class VaLottoService {
 
     }
 
-    public void getBankAMillion() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -143,24 +140,12 @@ public class VaLottoService {
             }
             saveGame(gamesList, "Bank a Million");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Bank a Million");
-        }
-    }
+            currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/cash4life.aspx");
 
-    public void getCash4Life() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/cash4life.aspx");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*CASH\\s*BALL\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<VaGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*CASH\\s*BALL\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 VaGames temp = new VaGames();
                 temp.setName("Cash 4 Life");
@@ -180,24 +165,12 @@ public class VaLottoService {
             }
             saveGame(gamesList, "Cash 4 Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Cash 4 Life");
-        }
-    }
+            currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/cash5.aspx");
 
-    public void getCash5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/cash5.aspx");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<VaGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 VaGames temp = new VaGames();
                 VaGames temp2 = new VaGames();
@@ -231,24 +204,13 @@ public class VaLottoService {
             }
             saveGame(gamesList, "Cash 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Cash 5");
-        }
-    }
 
-    public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/pick4.aspx");
+            currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/pick4.aspx");
 
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<VaGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 VaGames temp = new VaGames();
                 VaGames temp2 = new VaGames();
@@ -280,24 +242,12 @@ public class VaLottoService {
             }
             saveGame(gamesList, "Pick 4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 4");
-        }
-    }
+            currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/pick3.aspx");
 
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.valottery.com/SearchNumbers/pick3.aspx");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<VaGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 VaGames temp = new VaGames();
                 VaGames temp2 = new VaGames();
@@ -329,6 +279,8 @@ public class VaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Pick 3");
+        } finally {
+            webClient = null;
         }
     }
 

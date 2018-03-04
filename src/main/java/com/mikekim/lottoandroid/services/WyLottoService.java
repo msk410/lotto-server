@@ -27,12 +27,12 @@ public class WyLottoService {
 
     WyLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getCowboyDraw();
-        getLuckyForLife();
+        getAllGames();
         System.gc();
     }
 
@@ -107,7 +107,7 @@ public class WyLottoService {
 
     }
 
-    public void getCowboyDraw() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -138,24 +138,12 @@ public class WyLottoService {
             }
             saveGame(gamesList, "Cowboy Draw");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Cowboy Draw");
-        }
-    }
+            currentPage = webClient.getPage("https://wyolotto.com/play/lucky-for-life/");
 
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://wyolotto.com/play/lucky-for-life/");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WyGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 WyGames temp = new WyGames();
                 temp.setName("Lucky for Life");
@@ -177,6 +165,8 @@ public class WyLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Lucky for Life");
+        } finally {
+            webClient = null;
         }
     }
 

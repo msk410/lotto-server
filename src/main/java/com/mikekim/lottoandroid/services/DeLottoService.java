@@ -28,9 +28,9 @@ public class DeLottoService {
     public static final Calendar TODAY = Calendar.getInstance();
     @Autowired
     DeLottoRepository repository;
-    WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
+    WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -116,7 +116,7 @@ public class DeLottoService {
     public void getLottoAmerica() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
-
+        webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<DeGames> gamesList = new ArrayList<>();
@@ -175,7 +175,7 @@ public class DeLottoService {
     public void getPlay3() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
-
+        webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<DeGames> gamesList = new ArrayList<>();
@@ -237,7 +237,7 @@ public class DeLottoService {
     public void getPlay4() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
-
+        webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<DeGames> gamesList = new ArrayList<>();
@@ -300,7 +300,7 @@ public class DeLottoService {
     public void getMultiWin() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
-
+        webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<DeGames> gamesList = new ArrayList<>();
@@ -354,7 +354,7 @@ public class DeLottoService {
     public void getLuckyForLife() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
-
+        webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<DeGames> gamesList = new ArrayList<>();

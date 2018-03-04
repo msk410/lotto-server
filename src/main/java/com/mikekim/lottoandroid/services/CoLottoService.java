@@ -30,7 +30,7 @@ public class CoLottoService {
     CoLottoRepository coLottoRepository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -113,10 +113,13 @@ public class CoLottoService {
 
     }
 
+    public void getAllGames() {
+
+    }
     public void getLuckyForLife() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
-
+        webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         HtmlPage currentPage = null;
         List<CoGames> luckyForLifeGames = new ArrayList<>();

@@ -27,13 +27,13 @@ public class OhLottoService {
 
     OhLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
         getAllGames();
         System.gc();
-    }//todo have to do twice a day
+    }
 
     public void getPowerball() {
         try {
@@ -281,6 +281,8 @@ public class OhLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Lotto America");
+        } finally {
+            webClient = null;
         }
     }
 

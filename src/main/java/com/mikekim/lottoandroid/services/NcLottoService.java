@@ -27,7 +27,7 @@ public class NcLottoService {
     @Autowired
     NcLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();

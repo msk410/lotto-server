@@ -26,13 +26,12 @@ public class NdLottoService {
     @Autowired
     NdLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLuckyForLife();
-        getLottoAmerica();
-        get2By2();
+        getAllGames();
         System.gc();
     }
 
@@ -108,7 +107,7 @@ public class NdLottoService {
     }
 
 
-    public void getLuckyForLife() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -144,26 +143,14 @@ public class NdLottoService {
             }
             saveGame(gamesList, "lucky for life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve lucky for life");
-        }
-    }
-
-    public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.lottery.nd.gov/public/games/LottoAmericaWinningNumbers/");
+            currentPage = webClient.getPage("https://www.lottery.nd.gov/public/games/LottoAmericaWinningNumbers/");
             webClient.waitForBackgroundJavaScript(30 * 1000);
             webClient.waitForBackgroundJavaScriptStartingBefore(10000);
 
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NdGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NdGames temp = new NdGames();
                 temp.setName("Lotto America");
@@ -186,27 +173,14 @@ public class NdLottoService {
                 }
             }
             saveGame(gamesList, "Lotto America");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto America");
-        }
-    }
-
-    public void get2By2() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.lottery.nd.gov/public/games/TwoByTwoWinningNumbers/");
+            currentPage = webClient.getPage("https://www.lottery.nd.gov/public/games/TwoByTwoWinningNumbers/");
             webClient.waitForBackgroundJavaScript(30 * 1000);
             webClient.waitForBackgroundJavaScriptStartingBefore(10000);
 
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)-(\\d+)\\s*(\\d+)-(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NdGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)-(\\d+)\\s*(\\d+)-(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NdGames temp = new NdGames();
                 temp.setName("2by2");
@@ -228,6 +202,8 @@ public class NdLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve 2by2");
+        } finally {
+            webClient = null;
         }
     }
 

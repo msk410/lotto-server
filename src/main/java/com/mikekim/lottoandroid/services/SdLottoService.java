@@ -27,13 +27,12 @@ public class SdLottoService {
 
     SdLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getDakotaCash();
-        getLottoAmerica();
-        getLuckyForLife();
+        getAllGames();
         System.gc();
 
     }
@@ -109,10 +108,11 @@ public class SdLottoService {
 
     }
 
-    public void getDakotaCash() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/south-dakota/dakota-cash/");
             String pageHtml = currentPage.asText();
@@ -139,21 +139,11 @@ public class SdLottoService {
             }
             saveGame(gamesList, "Dakota Cash");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Dakota Cash");
-        }
-    }
-
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/south-dakota/lucky-4-life/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<SdGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/south-dakota/lucky-4-life/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 SdGames temp = new SdGames();
                 temp.setName("Lucky for Life");
@@ -175,21 +165,11 @@ public class SdLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
-
-    public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/south-dakota/lotto-america/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*Star Ball\\s*All Star Bonus:\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<SdGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/south-dakota/lotto-america/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*Star Ball\\s*All Star Bonus:\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 SdGames temp = new SdGames();
                 temp.setName("Lotto America");
@@ -215,6 +195,8 @@ public class SdLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Lotto America");
+        } finally {
+            webClient = null;
         }
     }
 

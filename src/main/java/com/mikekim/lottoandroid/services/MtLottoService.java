@@ -25,14 +25,12 @@ public class MtLottoService {
     @Autowired
     MtLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLottoAmerica();
-        getLuckyForLife();
-        getMontanaCash();
-        getBigSkyBonus();
+        getAllGames();
         System.gc();
     }
 
@@ -107,7 +105,7 @@ public class MtLottoService {
 
     }
 
-    public void getLottoAmerica() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -140,23 +138,11 @@ public class MtLottoService {
             }
             saveGame(gamesList, "lotto america");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve lotto america");
-        }
-    }
-
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/lucky-for-life#tab.winningNumbers");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*LB:(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MtGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/lucky-for-life#tab.winningNumbers");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*LB:(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
 
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
@@ -177,23 +163,11 @@ public class MtLottoService {
             }
             saveGame(gamesList, "lucky for life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve lucky for life");
-        }
-    }
-
-    public void getMontanaCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/montana-cash#tab.winningNumbers");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MtGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/montana-cash#tab.winningNumbers");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
 
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
@@ -213,23 +187,11 @@ public class MtLottoService {
             }
             saveGame(gamesList, "Montana Cash");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Montana Cash");
-        }
-    }
-
-    public void getBigSkyBonus() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/big-sky-bonus#tab.winningNumbers");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*BN:\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MtGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/big-sky-bonus#tab.winningNumbers");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*BN:\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
 
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
@@ -251,6 +213,8 @@ public class MtLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Big Sky Bonus");
+        } finally {
+            webClient = null;
         }
     }
 

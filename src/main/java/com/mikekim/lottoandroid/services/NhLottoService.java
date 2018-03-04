@@ -25,14 +25,12 @@ public class NhLottoService {
     @Autowired
     NhLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getMegaBucks();
-        getLuckyForLife();
-        getPick();
-        getGimme5();
+        getAllGames();
         System.gc();
     }
 
@@ -107,7 +105,7 @@ public class NhLottoService {
 
     }
 
-    public void getMegaBucks() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -138,23 +136,11 @@ public class NhLottoService {
             }
             saveGame(gamesList, "Megabucks");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Megabucks");
-        }
-    }
-
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.nhlottery.com/Games/Lucky-for-Life/Past-Winning-Numbers");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*LB(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NhGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.nhlottery.com/Games/Lucky-for-Life/Past-Winning-Numbers");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*LB(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NhGames temp = new NhGames();
                 temp.setName("Lucky for Life");
@@ -174,23 +160,11 @@ public class NhLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
-
-    public void getPick() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.nhlottery.com/Games/Pick-3-Pick-4/Past-Winning-Numbers");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*-\\s*(Evening|Day) Draw\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NhGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.nhlottery.com/Games/Pick-3-Pick-4/Past-Winning-Numbers");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*-\\s*(Evening|Day) Draw\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NhGames temp1 = new NhGames();
                 NhGames temp2 = new NhGames();
@@ -220,23 +194,11 @@ public class NhLottoService {
             }
             saveGame(gamesList, "pick 3/4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 3/4");
-        }
-    }
-
-    public void getGimme5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.nhlottery.com/Games/Gimme-5/Past-Winning-Numbers");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NhGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.nhlottery.com/Games/Gimme-5/Past-Winning-Numbers");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NhGames temp = new NhGames();
                 temp.setName("Gimme 5");
@@ -257,6 +219,8 @@ public class NhLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Gimme 5");
+        } finally {
+            webClient = null;
         }
     }
 

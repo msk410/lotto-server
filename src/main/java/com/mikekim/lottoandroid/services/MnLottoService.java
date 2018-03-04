@@ -26,15 +26,12 @@ public class MnLottoService {
     @Autowired
     MnLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLuckyForLife();
-        getLottoAmerica();
-        getDaily3();
-        getGopher5();
-        getNorthStarCash();
+        getAllGames();
         System.gc();
 
     }
@@ -111,7 +108,7 @@ public class MnLottoService {
 
     }
 
-    public void getLuckyForLife() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -144,23 +141,12 @@ public class MnLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
 
-    public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/lotto_america/winning_s/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*x\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/lotto_america/winning_s/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*x\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MnGames temp = new MnGames();
                 temp.setName("Lotto America");
@@ -184,23 +170,11 @@ public class MnLottoService {
             }
             saveGame(gamesList, "Lotto America");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto America");
-        }
-    }
-
-    public void getDaily3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/daily_3/winning_s/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/daily_3/winning_s/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MnGames temp = new MnGames();
                 temp.setName("Daily 3");
@@ -219,23 +193,11 @@ public class MnLottoService {
             }
             saveGame(gamesList, "Daily 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Daily 3");
-        }
-    }
-
-    public void getGopher5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/gopher_5/winning_s/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/gopher_5/winning_s/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MnGames temp = new MnGames();
                 temp.setName("Gopher 5");
@@ -256,23 +218,11 @@ public class MnLottoService {
             }
             saveGame(gamesList, "gopher 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve gopher 5");
-        }
-    }
-
-    public void getNorthStarCash() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/northstar_cash/winning_s/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MnGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.mnlottery.com/games/lotto_games/northstar_cash/winning_s/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s*(\\d+), (\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MnGames temp = new MnGames();
                 temp.setName("North Star Cash");
@@ -295,6 +245,8 @@ public class MnLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve North Star Cash");
+        } finally {
+            webClient = null;
         }
     }
 

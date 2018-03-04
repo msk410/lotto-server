@@ -26,14 +26,12 @@ public class RiLottoService {
     @Autowired
     RiLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLuckyForLife();
-        getWildMoney();
-        getTheNumbersEvening();
-        getTheNumbersMidday();
+        getAllGames();
         System.gc();
     }
 
@@ -109,10 +107,11 @@ public class RiLottoService {
 
     }
 
-    public void getLuckyForLife() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/rhode-island/lucky-4-life/");
             String pageHtml = currentPage.asText();
@@ -140,21 +139,11 @@ public class RiLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
-
-    public void getWildMoney() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/rhode-island/wild-money/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<RiGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/rhode-island/wild-money/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 RiGames temp = new RiGames();
                 temp.setName("Wild Money");
@@ -176,21 +165,11 @@ public class RiLottoService {
             }
             saveGame(gamesList, "Wild Money");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Wild Money");
-        }
-    }
-
-    public void getTheNumbersEvening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/rhode-island/numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<RiGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/rhode-island/numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 RiGames temp = new RiGames();
                 temp.setName("The Numbers Evening");
@@ -210,21 +189,11 @@ public class RiLottoService {
             }
             saveGame(gamesList, "The Numbers Evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve The Numbers Evening");
-        }
-    }
-
-    public void getTheNumbersMidday() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/rhode-island/midday-numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<RiGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/rhode-island/midday-numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 RiGames temp = new RiGames();
                 temp.setName("The Numbers Midday");
@@ -246,6 +215,8 @@ public class RiLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve The Numbers Midday");
+        } finally {
+            webClient = null;
         }
     }
 

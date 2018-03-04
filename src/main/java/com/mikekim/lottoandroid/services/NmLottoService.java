@@ -26,14 +26,12 @@ public class NmLottoService {
     @Autowired
     NmLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLottoAmerica();
-        getRoadRunnerCash();
-        getPick3Evening();
-        getPick3Midday();
+        getAllGames();
         System.gc();
     }
 
@@ -108,7 +106,7 @@ public class NmLottoService {
 
     }
 
-    public void getLottoAmerica() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -141,25 +139,13 @@ public class NmLottoService {
             }
             saveGame(gamesList, "Lotto America");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto America");
-        }
-    }
+            currentPage = webClient.getPage("http://www.nmlottery.com/roadrunner-cash.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+Winning numbers for the ([A-Za-z]+)\\s*(\\d{1,2}),\\s*(\\d{4})");
 
-    public void getRoadRunnerCash() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.nmlottery.com/roadrunner-cash.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+Winning numbers for the ([A-Za-z]+)\\s*(\\d{1,2}),\\s*(\\d{4})");
+            dataMatcher = dataPattern.matcher(pageHtml);
 
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-
-            List<NmGames> gamesList = new ArrayList<>();
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 NmGames temp = new NmGames();
                 temp.setName("Roadrunner Cash");
@@ -178,21 +164,11 @@ public class NmLottoService {
             }
             saveGame(gamesList, "Road Runner Cash");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Road Runner Cash");
-        }
-    }
-
-    public void getPick3Evening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-mexico/pick-3/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NmGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-mexico/pick-3/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NmGames temp = new NmGames();
                 temp.setName("Pick 3 Evening");
@@ -211,21 +187,11 @@ public class NmLottoService {
             }
             saveGame(gamesList, "Pick 3 Evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 3 Evening");
-        }
-    }
-
-    public void getPick3Midday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-mexico/midday-pick-3/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NmGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-mexico/midday-pick-3/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NmGames temp = new NmGames();
                 temp.setName("Pick 3 Midday");
@@ -246,6 +212,8 @@ public class NmLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Pick 3 Midday");
+        } finally {
+            webClient = null;
         }
     }
 

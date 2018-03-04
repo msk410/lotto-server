@@ -26,16 +26,12 @@ public class InLottoService {
     @Autowired
     InLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getHoosierLotto();
-        getCash5();
-        getCash4Life();
-        getDaily4();
-        getDaily3();
-        getQuickDraw();
+        getAllGames();
         System.gc();
     }
 
@@ -111,10 +107,11 @@ public class InLottoService {
 
     }
 
-    public void getHoosierLotto() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.hoosierlottery.com/games/hoosier-lotto");
             String pageHtml = currentPage.asText();
@@ -144,21 +141,11 @@ public class InLottoService {
             }
             saveGame(gamesList, "hoosier lotto");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve hoosier lotto");
-        }
-    }
-
-    public void getCash5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.hoosierlottery.com/games/ca$h-5");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<InGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.hoosierlottery.com/games/ca$h-5");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 InGames temp = new InGames();
                 temp.setName("Cash 5");
@@ -179,22 +166,12 @@ public class InLottoService {
             }
             saveGame(gamesList, "cash 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve cash 5");
-        }
-    }
+            currentPage = webClient.getPage("https://www.hoosierlottery.com/games/cash4life");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*CB:(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
 
-    public void getCash4Life() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.hoosierlottery.com/games/cash4life");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*CB:(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-
-            List<InGames> gamesList = new ArrayList<>();
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 InGames temp = new InGames();
                 temp.setName("Cash 4 Life");
@@ -215,23 +192,12 @@ public class InLottoService {
                 }
             }
             saveGame(gamesList, "Cash 4 Life");
+            currentPage = webClient.getPage("https://www.hoosierlottery.com/games/daily-4");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(Evening|Midday)\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*SB:(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Cash 4 Life");
-        }
-    }
-
-    public void getDaily4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.hoosierlottery.com/games/daily-4");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(Evening|Midday)\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*SB:(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-
-            List<InGames> gamesList = new ArrayList<>();
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 InGames temp = new InGames();
                 temp.setName("Daily 4 " + dataMatcher.group(4));
@@ -253,21 +219,11 @@ public class InLottoService {
             }
             saveGame(gamesList, "daily 4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve daily 4");
-        }
-    }
-
-    public void getDaily3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.hoosierlottery.com/games/daily-3");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(Evening|Midday)\\s*(\\d+) - (\\d+) - (\\d+)\\s*SB:(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<InGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.hoosierlottery.com/games/daily-3");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(Evening|Midday)\\s*(\\d+) - (\\d+) - (\\d+)\\s*SB:(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 InGames temp = new InGames();
                 temp.setName("Daily 3 " + dataMatcher.group(4));
@@ -288,21 +244,11 @@ public class InLottoService {
             }
             saveGame(gamesList, "daily 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve daily 3");
-        }
-    }
-
-    public void getQuickDraw() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.hoosierlottery.com/games/quick-draw");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(Evening|Midday)\\s*(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*BE:(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<InGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.hoosierlottery.com/games/quick-draw");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(Evening|Midday)\\s*(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*-\\s+(\\d+)\\s*BE:(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 InGames temp = new InGames();
                 temp.setName("Quick Draw " + dataMatcher.group(4));
@@ -326,6 +272,8 @@ public class InLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve quick draw");
+        } finally {
+            webClient = null;
         }
     }
 

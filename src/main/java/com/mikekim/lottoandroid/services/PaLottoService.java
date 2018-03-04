@@ -27,22 +27,12 @@ public class PaLottoService {
 
     PaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getCash5();
-        getMatch6();
-        getPick2Evening();
-        getPick2Midday();
-        getPick3Evening();
-        getPick3Midday();
-        getPick4Evening();
-        getPick4Midday();
-        getPick5Evening();
-        getPick5Midday();
-        getTreasureHunt();
-        getCash4Life();
+        getAllGames();
         System.gc();
     }
 
@@ -117,10 +107,11 @@ public class PaLottoService {
 
     }
 
-    public void getCash5() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/cash-5/");
             String pageHtml = currentPage.asText();
@@ -147,21 +138,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Cash 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Cash 5");
-        }
-    }
-
-    public void getMatch6() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/match-6/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/match-6/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Match 6");
@@ -183,21 +164,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Match 6");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Match 6");
-        }
-    }
-
-    public void getPick2Midday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/midday-pick-2/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/midday-pick-2/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 2 Midday");
@@ -216,21 +187,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Pick 2 Midday");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 2 Midday");
-        }
-    }
-
-    public void getPick2Evening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/pick-2/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/pick-2/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 2 Evening");
@@ -249,21 +210,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Pick 2 Evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 2 Evening");
-        }
-    }
-
-    public void getPick3Midday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/midday-pick-3/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/midday-pick-3/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 3 Midday");
@@ -283,21 +234,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Pick 3 Midday");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 3 Midday");
-        }
-    }
-
-    public void getPick3Evening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/pick-3/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/pick-3/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 3 Evening");
@@ -317,21 +258,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Pick 3 Evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 3 Evening");
-        }
-    }
-
-    public void getPick4Midday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/midday-pick-4/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/midday-pick-4/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 4 Midday");
@@ -352,21 +283,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Pick 4 Midday");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 4 Midday");
-        }
-    }
-
-    public void getPick4Evening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/pick-4/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/pick-4/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 4 Evening");
@@ -387,21 +308,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Pick 4 Evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 4 Evening");
-        }
-    }
-
-    public void getPick5Midday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/midday-pick-5/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/midday-pick-5/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 5 Midday");
@@ -423,21 +334,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Pick 5 Midday");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 5 Midday");
-        }
-    }
-
-    public void getPick5Evening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/pick-5/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/pick-5/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 5 Evening");
@@ -459,21 +360,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Pick 5 Evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 5 Evening");
-        }
-    }
-
-    public void getTreasureHunt() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/treasure-hunt/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/treasure-hunt/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Treasure Hunt");
@@ -494,21 +385,11 @@ public class PaLottoService {
             }
             saveGame(gamesList, "Treasure Hunt");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Treasure Hunt");
-        }
-    }
-
-    public void getCash4Life() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/cash4life/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<PaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/pennsylvania/cash4life/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Cash 4 Life");
@@ -532,6 +413,8 @@ public class PaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Cash 4 Life");
+        } finally {
+            webClient = null;
         }
     }
 

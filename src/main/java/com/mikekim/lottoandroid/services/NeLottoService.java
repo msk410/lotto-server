@@ -25,15 +25,12 @@ public class NeLottoService {
     @Autowired
     NeLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getPick5();
-        getPick3();
-        getMyDaY();
-        get2By2();
-        getLuckyForLife();
+        getAllGames();
         System.gc();
     }
 
@@ -108,13 +105,12 @@ public class NeLottoService {
 
     }
 
-    public void getPick5() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
         try {
             HtmlPage currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/31/gamedetail");
             String pageHtml = currentPage.asText();
@@ -140,24 +136,11 @@ public class NeLottoService {
             }
             saveGame(gamesList, "pick 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 5");
-        }
-    }
-
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/32/gamedetail");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/32/gamedetail");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
 
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
@@ -175,24 +158,11 @@ public class NeLottoService {
             }
             saveGame(gamesList, "pick 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 3");
-        }
-    }
-
-    public void getMyDaY() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/33/gamedetail");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/33/gamedetail");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("My DaY");
@@ -209,24 +179,11 @@ public class NeLottoService {
             }
             saveGame(gamesList, "My DaY");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve My DaY");
-        }
-    }
-
-    public void get2By2() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/34/gamedetail");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*(\\d{2})\\s*,\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/34/gamedetail");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*(\\d{2})\\s*,\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("2by2");
@@ -244,24 +201,11 @@ public class NeLottoService {
             }
             saveGame(gamesList, "2by2");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve 2by2");
-        }
-    }
-
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.waitForBackgroundJavaScript(30 * 1000);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/37/gamedetail");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://nelottery.com/homeapp/lotto/37/gamedetail");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("Lucky for Life");
@@ -283,6 +227,8 @@ public class NeLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Lucky for Life");
+        } finally {
+            webClient = null;
         }
     }
 

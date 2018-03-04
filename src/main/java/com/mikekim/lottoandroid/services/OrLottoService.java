@@ -27,14 +27,12 @@ public class OrLottoService {
 
     OrLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getWinForLife();
-        getLuckyLines();
-        getMegabucks();
-        getPick4();
+        getAllGames();
         System.gc();
     }
 
@@ -109,7 +107,7 @@ public class OrLottoService {
 
     }
 
-    public void getWinForLife() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -138,24 +136,12 @@ public class OrLottoService {
             }
             saveGame(gamesList, "Win for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Win for Life");
-        }
-    }
+            currentPage = webClient.getPage("https://www.oregonlottery.org/games/draw-games/lucky-lines/past-results#games");
 
-    public void getLuckyLines() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.oregonlottery.org/games/draw-games/lucky-lines/past-results#games");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*[$0-9,]+\\s*\\d{4}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<OrGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*[$0-9,]+\\s*\\d{4}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 OrGames temp = new OrGames();
                 temp.setName("Lucky Lines");
@@ -177,24 +163,12 @@ public class OrLottoService {
             }
             saveGame(gamesList, "lucky lines");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve lucky lines");
-        }
-    }
+            currentPage = webClient.getPage("https://www.oregonlottery.org/games/draw-games/oregon's-game-megabucks/past-results#games");
 
-    public void getMegabucks() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.oregonlottery.org/games/draw-games/oregon's-game-megabucks/past-results#games");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*[$0-9,]+\\s*\\d{4}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<OrGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*[$0-9,]+\\s*\\d{4}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 OrGames temp = new OrGames();
                 temp.setName("Megabucks");
@@ -214,24 +188,12 @@ public class OrLottoService {
             }
             saveGame(gamesList, "Megabucks");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Megabucks");
-        }
-    }
+            currentPage = webClient.getPage("https://www.oregonlottery.org/games/draw-games/pick-4/past-results#games");
 
-    public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.oregonlottery.org/games/draw-games/pick-4/past-results#games");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+):\\d+PM\\s*\\d{5}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<OrGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+):\\d+PM\\s*\\d{5}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 OrGames temp = new OrGames();
                 String time = dataMatcher.group(4);
@@ -260,6 +222,8 @@ public class OrLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Pick 4");
+        } finally {
+            webClient = null;
         }
     }
 

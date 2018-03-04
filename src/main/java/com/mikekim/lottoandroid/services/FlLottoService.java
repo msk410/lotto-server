@@ -25,19 +25,13 @@ public class FlLottoService {
 
     @Autowired
     FlLottoRepository repository;
-    WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
-    @Scheduled(fixedRate = 5000000)
+    WebClient webClient = new WebClient(BrowserVersion.CHROME);
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getFloridaLotto();
-        getCash4Life();
-        getLuckyMoney();
-        getFantasyFive();
-        getPick5();
-        getPick4();
-        getPick3();
-        getPick2();
+        getAllGames();
         System.gc();
     }
 
@@ -113,7 +107,7 @@ public class FlLottoService {
     }
 
 
-    public void getFloridaLotto() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -144,21 +138,11 @@ public class FlLottoService {
             }
             saveGame(gamesList, "florida lotto");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve florida lotto");
-        }
-    }
-
-    public void getCash4Life() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.flalottery.com/cash4Life");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<FlGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.flalottery.com/cash4Life");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Cash 4 Life");
@@ -178,21 +162,11 @@ public class FlLottoService {
             }
             saveGame(gamesList, "cash 4 life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve cash 4 life");
-        }
-    }
-
-    public void getLuckyMoney() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.flalottery.com/luckyMoney");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<FlGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.flalottery.com/luckyMoney");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Lucky Money");
@@ -211,21 +185,11 @@ public class FlLottoService {
             }
             saveGame(gamesList, "lucky money");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve lucky money");
-        }
-    }
-
-    public void getFantasyFive() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.flalottery.com/cash4Life");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<FlGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.flalottery.com/cash4Life");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Fantasy 5");
@@ -244,21 +208,11 @@ public class FlLottoService {
             }
             saveGame(gamesList, "fantasy 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve fantasy 5");
-        }
-    }
-
-    public void getPick5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.flalottery.com/pick5");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<FlGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.flalottery.com/pick5");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Pick 5 " + dataMatcher.group(1));
@@ -277,21 +231,11 @@ public class FlLottoService {
             }
             saveGame(gamesList, "pick 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 5");
-        }
-    }
-
-    public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.flalottery.com/pick4");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<FlGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.flalottery.com/pick4");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Pick 4 " + dataMatcher.group(1));
@@ -309,21 +253,11 @@ public class FlLottoService {
             }
             saveGame(gamesList, "pick 4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 4");
-        }
-    }
-
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.flalottery.com/pick3");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<FlGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.flalottery.com/pick3");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Pick 3 " + dataMatcher.group(1));
@@ -340,21 +274,11 @@ public class FlLottoService {
             }
             saveGame(gamesList, "pick 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 3");
-        }
-    }
-
-    public void getPick2() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.flalottery.com/pick2");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<FlGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.flalottery.com/pick2");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Pick 2 " + dataMatcher.group(1));
@@ -372,6 +296,8 @@ public class FlLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve pick 2");
+        } finally {
+            webClient = null;
         }
     }
 

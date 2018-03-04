@@ -26,15 +26,12 @@ public class CaLottoService {
     @Autowired
     CaLottoRepository caLottoRepository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
-        System.out.println("***************cali****************");
         getPowerball();
         getMegaMillions();
-        getSuperLottoPlus();
-        fantasy5();
-        daily3();
-        daily4();
+        getAllGames();
         System.gc();
     }
 
@@ -109,15 +106,17 @@ public class CaLottoService {
 
     }
 
-    public void getSuperLottoPlus() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setCssEnabled(false);
+        List<CaGames> gamesList;
         try {
             HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/superlotto-plus");
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4}) \\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<CaGames> gamesList = new ArrayList<>();
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Super Lotto Plus");
@@ -137,20 +136,11 @@ public class CaLottoService {
             }
             saveGame(gamesList, "super lotto plus");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve super lotto plus");
-        }
-    }
-
-    public void fantasy5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/fantasy-5");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4}) \\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<CaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/fantasy-5");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4}) \\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Fantasy 5");
@@ -169,21 +159,11 @@ public class CaLottoService {
             }
             saveGame(gamesList, "fantasy 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve fantasy 5");
-        }
-    }
-
-    public void daily3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-3");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*\\| Winning Numbers\\s*(\\w+)\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<CaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-3");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*\\| Winning Numbers\\s*(\\w+)\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Daily 3 " + dataMatcher.group(4));
@@ -200,21 +180,11 @@ public class CaLottoService {
             }
             saveGame(gamesList, "daily 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve daily 3");
-        }
-    }
-
-    public void daily4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-4");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*\\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<CaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-4");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*\\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Daily 4 ");
@@ -234,6 +204,9 @@ public class CaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve daily 4");
+        } finally {
+            webClient = null;
+            gamesList = null;
         }
     }
 

@@ -25,14 +25,12 @@ public class WvLottoService {
 
     WvLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLottoAmerica();
-        getDaily3();
-        getDaily4();
-        getCash25();
+        getAllGames();
         System.gc();
     }
 
@@ -107,7 +105,7 @@ public class WvLottoService {
 
     }
 
-    public void getLottoAmerica() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -143,24 +141,13 @@ public class WvLottoService {
             }
             saveGame(gamesList, "Lotto America");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto America");
-        }
-    }
 
-    public void getDaily3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-3/");
+            currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-3/");
 
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WvGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 WvGames temp = new WvGames();
                 temp.setName("Daily 3");
@@ -179,22 +166,11 @@ public class WvLottoService {
             }
             saveGame(gamesList, "Daily 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Daily 3");
-        }
-    }
-    public void getDaily4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-4/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WvGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://wvlottery.com/draw-games/daily-4/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*Drawing results for\\s*[A-Za-z,]+\\s*([A-Za-z]+)\\s*([0-9]+),\\s*([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 WvGames temp = new WvGames();
                 temp.setName("Daily 4");
@@ -213,23 +189,11 @@ public class WvLottoService {
             }
             saveGame(gamesList, "Daily 4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Daily 4");
-        }
-    }
-
-    public void getCash25() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://wvlottery.com/draw-games/cash-25/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]+) ([0-9]+), ([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WvGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://wvlottery.com/draw-games/cash-25/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]+) ([0-9]+), ([0-9]{4})\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)-\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 WvGames temp = new WvGames();
                 temp.setName("Cash 25");
@@ -253,6 +217,8 @@ public class WvLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Cash 25");
+        } finally {
+            webClient = null;
         }
     }
 

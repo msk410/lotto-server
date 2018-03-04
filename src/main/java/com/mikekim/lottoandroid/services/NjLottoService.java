@@ -28,7 +28,7 @@ public class NjLottoService {
     NjLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.FIREFOX_52);
 
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -277,6 +277,8 @@ public class NjLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve new jersey games");
+        } finally {
+            webClient = null;
         }
     }
 

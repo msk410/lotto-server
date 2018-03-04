@@ -27,15 +27,12 @@ public class KyLottoService {
     @Autowired
     KyLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLuckyForLife();
-        getPick3();
-        getPick4();
-        getCashBall();
-        get5CardCash();
+        getAllGames();
         System.gc();
     }
 
@@ -111,10 +108,11 @@ public class KyLottoService {
 
     }
 
-    public void getLuckyForLife() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/luckyforlife/luckyforlife_pastwinning.html");
             String pageHtml = currentPage.asText();
@@ -142,18 +140,8 @@ public class KyLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
-
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/pick3/pick3_pastwinning.html");
-            List<KyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/pick3/pick3_pastwinning.html");
+            gamesList = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
                 final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='greenCustomStyle']").get(i);
                 int j = 0;
@@ -183,18 +171,9 @@ public class KyLottoService {
                 saveGame(gamesList, "pick 3");
                 gamesList = new ArrayList<>();
             }
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
 
-    public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/pick4/pick4_pastwinning.html");
-            List<KyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/pick4/pick4_pastwinning.html");
+            gamesList = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
                 final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='greenCustomStyle']").get(i);
                 int j = 0;
@@ -224,21 +203,12 @@ public class KyLottoService {
                 saveGame(gamesList, "pick 4");
                 gamesList = new ArrayList<>();
             }
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
 
-    public void getCashBall() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/cashball/cashball_pastwinning.html");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*–\\s*(\\d+)\\s*–\\s*(\\d+)\\s*–\\s*(\\d+)\\s*–\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<KyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/cashball/cashball_pastwinning.html");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*–\\s*(\\d+)\\s*–\\s*(\\d+)\\s*–\\s*(\\d+)\\s*–\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 10 && dataMatcher.find()) {
                 KyGames temp = new KyGames();
                 temp.setName("Cash Ball");
@@ -259,21 +229,12 @@ public class KyLottoService {
             }
             saveGame(gamesList, "Cash Ball");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Cash Ball");
-        }
-    }
 
-    public void get5CardCash() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/5cardcash/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<KyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.kylottery.com/apps/draw_games/5cardcash/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 KyGames temp = new KyGames();
                 temp.setName("5 Card Cash");
@@ -296,6 +257,8 @@ public class KyLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve 5 Card Cash");
+        } finally {
+            webClient = null;
         }
     }
 

@@ -26,16 +26,12 @@ public class IaLottoService {
     @Autowired
     IaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLottoAmerica();
-        getLuckyForlife();
-        getPick4Evening();
-        getPick4Midday();
-        getPick3Evening();
-        getPick3Midday();
+        getAllGames();
         System.gc();
     }
 
@@ -111,11 +107,12 @@ public class IaLottoService {
 
     }
 
-    public void getLottoAmerica() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setCssEnabled(false);
 
         try {
             HtmlPage currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/LottoAmericaWin.aspx");
@@ -146,23 +143,11 @@ public class IaLottoService {
             }
             saveGame(gamesList, "lotto america");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve america lotto");
-        }
-    }
-
-    public void getLuckyForlife() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setUseInsecureSSL(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/LuckyForLifeWin.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<IaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/LuckyForLifeWin.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IaGames temp = new IaGames();
                 temp.setName("Lucky for Life");
@@ -184,23 +169,11 @@ public class IaLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
-
-    public void getPick3Midday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setUseInsecureSSL(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/Pick3MWin.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<IaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/Pick3MWin.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IaGames temp = new IaGames();
                 temp.setName("Pick 3 Midday");
@@ -219,23 +192,11 @@ public class IaLottoService {
             }
             saveGame(gamesList, "pick 3 midday");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 3 midday");
-        }
-    }
-
-    public void getPick3Evening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setUseInsecureSSL(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/Pick3Win.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<IaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/Pick3Win.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IaGames temp = new IaGames();
                 temp.setName("Pick 3 Evening");
@@ -254,23 +215,11 @@ public class IaLottoService {
             }
             saveGame(gamesList, "pick 3 evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 3 evening");
-        }
-    }
-
-    public void getPick4Midday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setUseInsecureSSL(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/Pick4MWin.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<IaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/Pick4MWin.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IaGames temp = new IaGames();
                 temp.setName("Pick 4 Midday");
@@ -290,23 +239,11 @@ public class IaLottoService {
             }
             saveGame(gamesList, "pick 4 midday");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 4 midday");
-        }
-    }
-
-    public void getPick4Evening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setUseInsecureSSL(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/Pick4Win.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<IaGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://ialottery.com/Pages/Games-Online/Pick4Win.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IaGames temp = new IaGames();
                 temp.setName("Pick 4 Evening");
@@ -328,6 +265,8 @@ public class IaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve pick 4 evening");
+        } finally {
+            webClient = null;
         }
     }
 

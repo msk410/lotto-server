@@ -26,17 +26,12 @@ public class MeLottoService {
     @Autowired
     MeLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getMegaBucksPlus();
-        getLottoAmerica();
-        getLuckyForLife();
-        getGimme5();
-        getPick3();
-        getPick4();
-        getWorldPokerTour();
+        getAllGames();
         System.gc();
     }
 
@@ -112,7 +107,7 @@ public class MeLottoService {
 
     }
 
-    public void getMegaBucksPlus() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -145,23 +140,11 @@ public class MeLottoService {
             }
             saveGame(gamesList, "Megabucks Plus");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Megabucks Plus");
-        }
-    }
-
-    public void getLottoAmerica() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/lottoamericaold.shtml");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mainelottery.com/games/lottoamericaold.shtml");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Lotto America");
@@ -185,23 +168,11 @@ public class MeLottoService {
             }
             saveGame(gamesList, "Lotto America");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto America");
-        }
-    }
-
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/lucky-for-life-previous.html");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mainelottery.com/games/lucky-for-life-previous.html");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Lucky for Life");
@@ -223,23 +194,11 @@ public class MeLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
-
-    public void getGimme5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/gimme5-previous.html");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mainelottery.com/games/gimme5-previous.html");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Gimme 5");
@@ -260,23 +219,11 @@ public class MeLottoService {
             }
             saveGame(gamesList, "gimme 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve gimme 5");
-        }
-    }
-
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/pickThreeHistory.shtml");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(Day|Eve)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mainelottery.com/games/pickThreeHistory.shtml");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(Day|Eve)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Pick 3 " + dataMatcher.group(4));
@@ -295,23 +242,11 @@ public class MeLottoService {
             }
             saveGame(gamesList, "Pick 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 3");
-        }
-    }
-
-    public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/pickFourHistory.shtml");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(Day|Eve)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mainelottery.com/games/pickFourHistory.shtml");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(Day|Eve)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Pick 4 " + dataMatcher.group(4));
@@ -331,23 +266,11 @@ public class MeLottoService {
             }
             saveGame(gamesList, "Pick 4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 4");
-        }
-    }
-
-    public void getWorldPokerTour() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/world-poker-tour-previous.html");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MeGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mainelottery.com/games/world-poker-tour-previous.html");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("World Poker Tour");
@@ -370,6 +293,8 @@ public class MeLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve World Poker Tour");
+        } finally {
+            webClient = null;
         }
     }
 

@@ -26,15 +26,12 @@ public class KsLottoService {
     @Autowired
     KsLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLottoAmerica();
-        getLuckyForLife();
-        getSuperKansasCash();
-        get2By2();
-        getPick3();
+        getAllGames();
         System.gc();
     }
 
@@ -110,10 +107,11 @@ public class KsLottoService {
 
     }
 
-    public void getLottoAmerica() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/LOAMPreviousNumbers.aspx");
             String pageHtml = currentPage.asText();
@@ -143,22 +141,11 @@ public class KsLottoService {
             }
             saveGame(gamesList, "Lotto America");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto America");
-        }
-    }
-
-
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/L4LPreviousNumbers.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<KsGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/L4LPreviousNumbers.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 KsGames temp = new KsGames();
                 temp.setName("Lucky for Life");
@@ -180,21 +167,11 @@ public class KsLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
-
-    public void getSuperKansasCash() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/KSCAPreviousNumbers.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<KsGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/KSCAPreviousNumbers.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 KsGames temp = new KsGames();
                 temp.setName("Super Kansas Cash");
@@ -216,21 +193,11 @@ public class KsLottoService {
             }
             saveGame(gamesList, "Super Kansas Cash");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Super Kansas Cash");
-        }
-    }
-
-    public void get2By2() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/TBYTPreviousNumbers.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<KsGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/TBYTPreviousNumbers.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 KsGames temp = new KsGames();
                 temp.setName("2by2");
@@ -250,21 +217,11 @@ public class KsLottoService {
             }
             saveGame(gamesList, "2by2");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve 2by2");
-        }
-    }
-
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/PCK3PreviousNumbers.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Evening|Midday)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<KsGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/PCK3PreviousNumbers.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Evening|Midday)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 KsGames temp = new KsGames();
                 temp.setName("Pick 3 " + dataMatcher.group(7));
@@ -285,6 +242,8 @@ public class KsLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve pick 3");
+        } finally {
+            webClient = null;
         }
     }
 

@@ -27,17 +27,12 @@ public class TxLottoService {
 
     TxLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLottoTexas();
-        getTexasTwoStep();
-        getTexasTripleChance();
-        getAllOrNothing();
-        getCash5();
-        getPick3();
-        getDaily4();
+        getAllGames();
         System.gc();
     }
 
@@ -112,7 +107,7 @@ public class TxLottoService {
 
     }
 
-    public void getLottoTexas() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -144,24 +139,12 @@ public class TxLottoService {
             }
             saveGame(gamesList, "Lotto Texas");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto Texas");
-        }
-    }
+            currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Texas_Two_Step/Winning_Numbers/");
 
-    public void getTexasTwoStep() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Texas_Two_Step/Winning_Numbers/");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("Texas Two Step for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<TxGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("Texas Two Step for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 TxGames temp = new TxGames();
                 temp.setName("Texas Two Step");
@@ -180,25 +163,12 @@ public class TxLottoService {
             }
             saveGame(gamesList, "Texas Two Step");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Texas Two Step");
-        }
-    }
+            currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Texas_Two_Step/Winning_Numbers/");
 
-
-    public void getTexasTripleChance() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Texas_Two_Step/Winning_Numbers/");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("Texas Triple Chance for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)\\s*6\\. (\\d+)\\s*7\\. (\\d+)\\s*8\\. (\\d+)\\s*9\\. (\\d+)\\s*10\\. (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<TxGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("Texas Triple Chance for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)\\s*6\\. (\\d+)\\s*7\\. (\\d+)\\s*8\\. (\\d+)\\s*9\\. (\\d+)\\s*10\\. (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 TxGames temp = new TxGames();
                 temp.setName("Texas Triple Chance");
@@ -222,23 +192,11 @@ public class TxLottoService {
             }
             saveGame(gamesList, "Texas Triple Chance");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Texas Triple Chance");
-        }
-    }
-
-    public void getAllOrNothing() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/All_or_Nothing/Winning_Numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("All or Nothing (Evening|Day|Morning|Night) for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\.\\s*(\\d+)\\s*2\\.\\s*(\\d+)\\s*3\\.\\s*(\\d+)\\s*4\\.\\s*(\\d+)\\s*5\\.\\s*(\\d+)\\s*6\\.\\s*(\\d+)\\s*7\\.\\s*(\\d+)\\s*8\\.\\s*(\\d+)\\s*9\\.\\s*(\\d+)\\s*10\\.\\s*(\\d+)\\s*11\\.\\s*(\\d+)\\s*12\\.\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<TxGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/All_or_Nothing/Winning_Numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("All or Nothing (Evening|Day|Morning|Night) for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\.\\s*(\\d+)\\s*2\\.\\s*(\\d+)\\s*3\\.\\s*(\\d+)\\s*4\\.\\s*(\\d+)\\s*5\\.\\s*(\\d+)\\s*6\\.\\s*(\\d+)\\s*7\\.\\s*(\\d+)\\s*8\\.\\s*(\\d+)\\s*9\\.\\s*(\\d+)\\s*10\\.\\s*(\\d+)\\s*11\\.\\s*(\\d+)\\s*12\\.\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 TxGames temp = new TxGames();
                 temp.setName("All or Nothing " + dataMatcher.group(1));
@@ -264,23 +222,12 @@ public class TxLottoService {
             }
             saveGame(gamesList, "All or Nothing");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve All or Nothing");
-        }
-    }
 
-    public void getCash5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Cash_Five/Winning_Numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("Cash Five for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<TxGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Cash_Five/Winning_Numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("Cash Five for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 TxGames temp = new TxGames();
                 temp.setName("Cash Five");
@@ -299,24 +246,11 @@ public class TxLottoService {
             }
             saveGame(gamesList, "Cash 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Cash 5");
-        }
-    }
-
-
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Pick_3/Winning_Numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("Pick 3 (Morning|Day|Evening|Night) for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*Sum It Up! = (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<TxGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Pick_3/Winning_Numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("Pick 3 (Morning|Day|Evening|Night) for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*Sum It Up! = (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 TxGames temp = new TxGames();
                 temp.setName("Pick 3 " + dataMatcher.group(1));
@@ -336,23 +270,11 @@ public class TxLottoService {
             }
             saveGame(gamesList, "Pick 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 3");
-        }
-    }
-
-    public void getDaily4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Daily_4/Winning_Numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("Daily 4 (Morning|Day|Evening|Night) for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*Sum It Up! = (\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<TxGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Daily_4/Winning_Numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("Daily 4 (Morning|Day|Evening|Night) for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*Sum It Up! = (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 TxGames temp = new TxGames();
                 temp.setName("Daily 4 " + dataMatcher.group(1));
@@ -375,6 +297,8 @@ public class TxLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Daily 4");
+        } finally {
+            webClient = null;
         }
     }
 

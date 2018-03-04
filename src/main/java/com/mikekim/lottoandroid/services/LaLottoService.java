@@ -27,7 +27,7 @@ public class LaLottoService {
     @Autowired
     LaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -148,6 +148,8 @@ public class LaLottoService {
             }
         } catch (IOException e) {
             System.out.println("failed to retrieve Lucky for Life");
+        } finally {
+            webClient = null;
         }
     }
 

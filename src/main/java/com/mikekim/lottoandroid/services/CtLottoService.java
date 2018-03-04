@@ -32,7 +32,7 @@ public class CtLottoService {
     @Autowired
     CtLottoRepository ctLottoRepository;
 
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();

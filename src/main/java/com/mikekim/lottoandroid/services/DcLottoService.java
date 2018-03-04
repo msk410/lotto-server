@@ -27,14 +27,12 @@ public class DcLottoService {
     @Autowired
     DcLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-//    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getDc3();
-        getDc4();
-        getDc5();
-        getLuckyForLife();
+        getAllGames();
         System.gc();
     }
 
@@ -109,7 +107,8 @@ public class DcLottoService {
 
     }
 
-    public void getDc3() {
+    public void getAllGames() {
+
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -139,24 +138,13 @@ public class DcLottoService {
             }
             saveGame(gamesList, "DC-3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve DC-3");
-        }
-    }
 
-    public void getDc4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://dclottery.com/games/dc4/pastdata.aspx");
+            currentPage = webClient.getPage("http://dclottery.com/games/dc4/pastdata.aspx");
 
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(evening|mid-day)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<DcGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(evening|mid-day)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 DcGames temp = new DcGames();
                 String extraName = "evening".equals(dataMatcher.group(4)) ? "Evening" : "Midday";
@@ -175,24 +163,13 @@ public class DcLottoService {
             }
             saveGame(gamesList, "DC-4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve DC-4");
-        }
-    }
 
-    public void getDc5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://dclottery.com/games/dc5/pastdata.aspx");
+            currentPage = webClient.getPage("http://dclottery.com/games/dc5/pastdata.aspx");
 
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(evening|mid-day)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<DcGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(evening|mid-day)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 DcGames temp = new DcGames();
                 String extraName = "evening".equals(dataMatcher.group(4)) ? "Evening" : "Midday";
@@ -212,24 +189,13 @@ public class DcLottoService {
             }
             saveGame(gamesList, "DC-5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve DC-5");
-        }
-    }
 
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://dclottery.com/games/lucky-for-life/pastdata.aspx");
+            currentPage = webClient.getPage("http://dclottery.com/games/lucky-for-life/pastdata.aspx");
 
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<DcGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 DcGames temp = new DcGames();
                 temp.setName("Lucky for Life");
@@ -251,9 +217,10 @@ public class DcLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Lucky for Life");
+        } finally {
+            webClient = null;
         }
     }
-
 
     private void saveGame(List<DcGames> gamesList, String gameName) {
         if (!gamesList.isEmpty()) {

@@ -26,15 +26,12 @@ public class WaLottoService {
     @Autowired
     WaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLotto();
-        getHit5();
-        getMatch4();
-        getTheDailyGame();
-        getDailyKeno();
+        getAllGames();
         System.gc();
     }
 
@@ -109,7 +106,7 @@ public class WaLottoService {
 
     }
 
-    public void getLotto() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -140,24 +137,12 @@ public class WaLottoService {
             }
             saveGame(gamesList, "Lotto");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lotto");
-        }
-    }
+            currentPage = webClient.getPage("http://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=hit5&unittype=draw&unitcount=10");
 
-    public void getHit5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=hit5&unittype=draw&unitcount=10");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WaGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("Hit 5");
@@ -176,24 +161,12 @@ public class WaLottoService {
             }
             saveGame(gamesList, "Hit 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Hit 5");
-        }
-    }
+            currentPage = webClient.getPage("http://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=match4&unittype=draw&unitcount=10");
 
-    public void getMatch4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=match4&unittype=draw&unitcount=10");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WaGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("Match 4");
@@ -211,24 +184,12 @@ public class WaLottoService {
             }
             saveGame(gamesList, "Match 4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Match 4");
-        }
-    }
+            currentPage = webClient.getPage("http://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=dailygame&unittype=draw&unitcount=10");
 
-    public void getTheDailyGame() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=dailygame&unittype=draw&unitcount=10");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WaGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("The Daily Game");
@@ -245,24 +206,12 @@ public class WaLottoService {
             }
             saveGame(gamesList, "The Daily Game");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve The Daily Game");
-        }
-    }
+            currentPage = webClient.getPage("http://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=dailykeno&unittype=draw&unitcount=10");
 
-    public void getDailyKeno() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=dailykeno&unittype=draw&unitcount=10");
-
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WaGames> gamesList = new ArrayList<>();
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("Daily Keno");
@@ -281,6 +230,8 @@ public class WaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Daily Keno");
+        } finally {
+            webClient = null;
         }
     }
 

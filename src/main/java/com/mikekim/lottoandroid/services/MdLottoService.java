@@ -27,15 +27,12 @@ public class MdLottoService {
     @Autowired
     MdLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getPickGames();
-        getBonusMatch5();
-        get5CardCash();
-        getMultiMatch();
-        getCash4Life();
+        getAllGames();
         System.gc();
     }
 
@@ -112,7 +109,7 @@ public class MdLottoService {
     }
 
 
-    public void getPickGames() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
@@ -183,20 +180,11 @@ public class MdLottoService {
             saveGame(pick4midday, "Pick 4 midday");
             saveGame(pick4evening, "Pick 4 evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick games");
-        }
-    }
 
-    public void getBonusMatch5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mdlottery.com/games/bonus-match-5/winning-numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            currentPage = webClient.getPage("http://www.mdlottery.com/games/bonus-match-5/winning-numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
             List<MdGames> gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MdGames temp = new MdGames();
@@ -219,18 +207,8 @@ public class MdLottoService {
             }
             saveGame(gamesList, "bonus match 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve bonus match 5");
-        }
-    }
-
-    public void get5CardCash() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mdlottery.com/games/5-card-cash/winning-numbers/");
-            List<MdGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mdlottery.com/games/5-card-cash/winning-numbers/");
+            gamesList = new ArrayList<>();
 
             String gameName = "";
             final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='numbers_tabl']").get(0);
@@ -274,21 +252,11 @@ public class MdLottoService {
             }
             saveGame(gamesList, "5 card cash");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve 5 card cash");
-        }
-    }
-
-    public void getMultiMatch() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mdlottery.com/games/multi-match/winning-numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MdGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mdlottery.com/games/multi-match/winning-numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MdGames temp = new MdGames();
                 temp.setName("Multi Match");
@@ -310,21 +278,11 @@ public class MdLottoService {
             }
             saveGame(gamesList, "multi match");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve multi match");
-        }
-    }
-
-    public void getCash4Life() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.mdlottery.com/games/cash4life/winning-numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MdGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.mdlottery.com/games/cash4life/winning-numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 MdGames temp = new MdGames();
                 temp.setName("Cash 4 Life");
@@ -348,6 +306,8 @@ public class MdLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve cash 4 life");
+        } finally {
+            webClient = null;
         }
     }
 

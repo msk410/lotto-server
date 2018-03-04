@@ -28,7 +28,7 @@ public class TnLottoService {
 
     TnLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -111,6 +111,7 @@ public class TnLottoService {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.tnlottery.com/winningnumbers/default.aspx");
             List<TnGames> gamesList = new ArrayList<>();
@@ -162,6 +163,8 @@ public class TnLottoService {
             }
         } catch (IOException e) {
             System.out.println("failed to retrieve Lucky for Life");
+        } finally {
+            webClient = null;
         }
     }
 

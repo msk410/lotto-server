@@ -26,16 +26,12 @@ public class WiLottoService {
     @Autowired
     WiLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getMegabucks();
-        getSuperCash();
-        getPick4();
-        getPick3();
-        getFiveCardCash();
-        getBadger5();
+        getAllGames();
         System.gc();
     }
 
@@ -110,10 +106,11 @@ public class WiLottoService {
 
     }
 
-    public void getMegabucks() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
 
         try {
             HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/megabuckshistory.aspx");
@@ -142,22 +139,11 @@ public class WiLottoService {
             }
             saveGame(gamesList, "megabucks");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve megabucks");
-        }
-    }
-
-    public void getSuperCash() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/supercashhistory.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Y|N)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WiGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.wilottery.com/lottogames/supercashhistory.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(Y|N)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 WiGames temp = new WiGames();
                 temp.setName("Super Cash");
@@ -181,22 +167,11 @@ public class WiLottoService {
             }
             saveGame(gamesList, "Super Cash");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Super Cash");
-        }
-    }
-
-    public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/pick4history.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WiGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.wilottery.com/lottogames/pick4history.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 WiGames temp = new WiGames();
                 temp.setName("Pick 4");
@@ -216,22 +191,11 @@ public class WiLottoService {
             }
             saveGame(gamesList, "Pick 4");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 4");
-        }
-    }
-
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/pick3history.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WiGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.wilottery.com/lottogames/pick3history.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 WiGames temp = new WiGames();
                 temp.setName("Pick 3");
@@ -250,22 +214,11 @@ public class WiLottoService {
             }
             saveGame(gamesList, "Pick 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 3");
-        }
-    }
-
-    public void getFiveCardCash() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/5CardCash/history.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WiGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.wilottery.com/lottogames/5CardCash/history.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 WiGames temp = new WiGames();
                 temp.setName("5 Card Cash");
@@ -286,22 +239,11 @@ public class WiLottoService {
             }
             saveGame(gamesList, "5 Card Cash");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve 5 Card Cash");
-        }
-    }
-
-    public void getBadger5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.wilottery.com/lottogames/badger5history.aspx");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<WiGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("https://www.wilottery.com/lottogames/badger5history.aspx");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 WiGames temp = new WiGames();
                 temp.setName("Badger 5");
@@ -324,6 +266,8 @@ public class WiLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Badger 5");
+        } finally {
+            webClient = null;
         }
     }
 

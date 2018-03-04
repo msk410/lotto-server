@@ -28,19 +28,12 @@ public class NyLottoService {
     @Autowired
     NyLottoRepository nyLottoRepository;
     WebClient webClient = new WebClient();
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
-        //TODO get intervals
         getPowerball();
         getMegaMillions();
-        getCash4Life();
-        getNyLotto();
-        getTake5();
-        getWin4Evening();
-        getWin4Midday();
-        getNumbersEvening();
-        getNumbersMidday();
-        getPick10();
+        getAllGames();
         System.gc();
     }
 
@@ -115,10 +108,11 @@ public class NyLottoService {
 
     }
 
-    public void getCash4Life() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
         try {
             HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/cash4life/");
             String pageHtml = currentPage.asText();
@@ -146,21 +140,11 @@ public class NyLottoService {
             }
             saveGame(gamesList, "cash 4 life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve cash 4 life");
-        }
-    }
-
-    public void getTake5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/take-5/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/take-5/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NyGames temp = new NyGames();
                 temp.setName("Take 5");
@@ -181,21 +165,11 @@ public class NyLottoService {
             }
             saveGame(gamesList, "take 5");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve take 5");
-        }
-    }
-
-    public void getNyLotto() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/lotto/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/lotto/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NyGames temp = new NyGames();
                 temp.setName("New York Lotto");
@@ -218,21 +192,11 @@ public class NyLottoService {
             }
             saveGame(gamesList, "New York Lotto");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve New York Lotto");
-        }
-    }
-
-    public void getWin4Evening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/win-4/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/win-4/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NyGames temp = new NyGames();
                 temp.setName("Win 4 Evening");
@@ -259,21 +223,11 @@ public class NyLottoService {
             }
             saveGame(gamesList, "win 4 evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve win 4 evening");
-        }
-    }
-
-    public void getWin4Midday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/midday-win-4/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/midday-win-4/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NyGames temp = new NyGames();
                 temp.setName("Win 4 Midday");
@@ -300,21 +254,12 @@ public class NyLottoService {
             }
             saveGame(gamesList, "win 4 midday");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve win 4 midday");
-        }
-    }
 
-    public void getNumbersEvening() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NyGames temp = new NyGames();
                 temp.setName("NUMBERS Evening");
@@ -340,21 +285,11 @@ public class NyLottoService {
             }
             saveGame(gamesList, "NUMBERS evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve numbers evening");
-        }
-    }
-
-    public void getNumbersMidday() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/midday-numbers/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/midday-numbers/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NyGames temp = new NyGames();
                 temp.setName("NUMBERS Midday");
@@ -380,21 +315,11 @@ public class NyLottoService {
             }
             saveGame(gamesList, "NUMBERS Midday");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve numbers Midday");
-        }
-    }
-
-    public void getPick10() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/pick-10/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<NyGames> gamesList = new ArrayList<>();
+            currentPage = webClient.getPage("http://www.lotteryusa.com/new-york/pick-10/");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\w+)\\s(\\d+),\\s(\\d{4})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})\\s*(\\d{1,2})");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            gamesList = new ArrayList<>();
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 NyGames temp = new NyGames();
                 temp.setName("Pick 10");
@@ -424,6 +349,8 @@ public class NyLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Pick 10");
+        } finally {
+            webClient = null;
         }
     }
 

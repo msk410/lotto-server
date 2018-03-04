@@ -28,15 +28,12 @@ public class VtLottoService {
 
     VtLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = 5000000)
+
+    @Scheduled(fixedRate = Constants.TIME)
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getMegabucks();
-        getGimme5();
-        getLuckyForLife();
-        getPick3();
-        getPick4();
+        getAllGames();
         System.gc();
     }
 
@@ -111,7 +108,7 @@ public class VtLottoService {
 
     }
 
-    public void getMegabucks() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -146,21 +143,9 @@ public class VtLottoService {
             }
             saveGame(gamesList, "Megabucks");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Megabucks");
-        }
-    }
+            currentPage = webClient.getPage("https://vtlottery.com/games/gimme-5/view-past-winning-numbers");
 
-    public void getGimme5() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/gimme-5/view-past-winning-numbers");
-
-            List<VtGames> gamesList = new ArrayList<>();
+            gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers noExtra']").get(i);
                 if (div.getFirstChild().asText().matches("\\d+/\\d+/\\d{2}")) {
@@ -184,22 +169,9 @@ public class VtLottoService {
                 }
             }
             saveGame(gamesList, "Gimme 5");
+            currentPage = webClient.getPage("https://vtlottery.com/games/lucky-life/view-past-winning-numbers");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve gimme 5");
-        }
-    }
-
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/lucky-life/view-past-winning-numbers");
-
-            List<VtGames> gamesList = new ArrayList<>();
+            gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers']").get(i);
                 if (div.getFirstChild().asText().matches("\\d+/\\d+/\\d{2}")) {
@@ -226,21 +198,9 @@ public class VtLottoService {
             }
             saveGame(gamesList, "Lucky for Life");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Lucky for Life");
-        }
-    }
+            currentPage = webClient.getPage("https://vtlottery.com/games/pick-3/view-past-winning-numbers");
 
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/pick-3/view-past-winning-numbers");
-
-            List<VtGames> gamesList = new ArrayList<>();
+            gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers threeNumbers']").get(i);
                 if (div.getFirstChild().asText().matches("\\d+/\\d+/\\d{2} - (Day|Evening)")) {
@@ -263,21 +223,9 @@ public class VtLottoService {
             }
             saveGame(gamesList, "pick 3");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 3");
-        }
-    }
+            currentPage = webClient.getPage("https://vtlottery.com/games/pick-4/view-past-winning-numbers");
 
-    public void getPick4() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setActiveXNative(true);
-        webClient.getOptions().setCssEnabled(false);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://vtlottery.com/games/pick-4/view-past-winning-numbers");
-
-            List<VtGames> gamesList = new ArrayList<>();
+            gamesList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 final HtmlDivision div = (HtmlDivision) currentPage.getByXPath("//div[@class='matchingNumbers fourNumbers']").get(i);
                 if (div.getFirstChild().asText().matches("\\d+/\\d+/\\d{2} - (Day|Evening)")) {
@@ -303,6 +251,8 @@ public class VtLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve pick 4");
+        } finally {
+            webClient = null;
         }
     }
 
