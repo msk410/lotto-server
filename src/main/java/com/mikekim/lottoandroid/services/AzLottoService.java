@@ -1,7 +1,6 @@
 package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.AzGames;
@@ -20,7 +19,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.mikekim.lottoandroid.services.Constants.formatMonth;
+import static com.mikekim.lottoandroid.services.Constants.formatMonthShort;
 
 @Service
 public class AzLottoService {
@@ -28,7 +27,8 @@ public class AzLottoService {
     @Autowired
     AzLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = Constants.TIME)
+
+    @Scheduled(cron = Constants.CRON)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -53,7 +53,7 @@ public class AzLottoService {
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 AzGames temp = new AzGames();
                 temp.setName("Powerball");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);

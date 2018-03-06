@@ -1,20 +1,10 @@
 package com.mikekim.lottoandroid;
 
-import com.mikekim.lottoandroid.models.NyGames;
-import com.mikekim.lottoandroid.repositories.ArLottoRepository;
-import com.mikekim.lottoandroid.repositories.NyLottoRepository;
-import com.mikekim.lottoandroid.repositories.OhLottoRepository;
 import com.mikekim.lottoandroid.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.spi.CalendarDataProvider;
 
 @Component
 public class ServiceCaller {

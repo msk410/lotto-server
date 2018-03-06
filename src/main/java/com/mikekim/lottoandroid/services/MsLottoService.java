@@ -25,7 +25,8 @@ public class MsLottoService {
     @Autowired
     MsLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
-    @Scheduled(fixedRate = Constants.TIME)
+
+    @Scheduled(cron = Constants.CRON)
     public void getAll() {
         getMegaMillions();
         getPick();

@@ -2,7 +2,6 @@ package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.GaGames;
@@ -22,6 +21,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.mikekim.lottoandroid.services.Constants.formatMonthShort;
+
 @Service
 public class GaLottoService {
 
@@ -29,7 +30,7 @@ public class GaLottoService {
     GaLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-    @Scheduled(fixedRate = Constants.TIME)
+    @Scheduled(cron = Constants.CRON)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -38,42 +39,37 @@ public class GaLottoService {
     }
 
     public void getPowerball() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
         try {
-            TextPage currentPage = webClient.getPage("http://www.powerball.com/powerball/winnums-text.txt");
-            String textSource = currentPage.getContent();
-            String dateRegex = "\\d\\d/\\d\\d/\\d\\d\\d\\d";
-            String numbersRegex = "  [\\d]{2}  [\\d]{2}  [\\d]{2}  [\\d]{2}  [\\d]{2}  [\\d]{2}  [\\d]{0,2}";
-            Pattern datePattern = Pattern.compile(dateRegex);
-            Matcher dateMatcher = datePattern.matcher(textSource);
-            Pattern numbersPattern = Pattern.compile(numbersRegex);
-            Matcher numbersMatcher = numbersPattern.matcher(textSource);
-
-            List<GaGames> lotto = new ArrayList<>();
-
-            for (int index = 0; index < 30; index++) {
-                if (numbersMatcher.find() && dateMatcher.find()) {
-                    String[] rawWinningNumbers = numbersMatcher.group().trim().split("  ");
-                    GaGames temp = new GaGames();
-                    temp.setName("Powerball");
-                    String[] formatedDateArray = dateMatcher.group().trim().split("/");
-                    String formatedDate = formatedDateArray[2] + "/" + formatedDateArray[0] + "/" + formatedDateArray[1];
-                    temp.setDate(formatedDate);
-                    String[] tempWinningNumbers = new String[5];
-                    for (int i = 0; i < 5; i++) {
-                        tempWinningNumbers[i] = rawWinningNumbers[i];
-                    }
-                    temp.setWinningNumbers(tempWinningNumbers);
-                    temp.setBonus(rawWinningNumbers[5]);
-                    temp.setExtraText(" x ");
-                    temp.setExtra(rawWinningNumbers[6]);
-                    if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                        lotto.add(temp);
-                    } else {
-                        break;
-                    }
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/texas/powerball/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<GaGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                GaGames temp = new GaGames();
+                temp.setName("Powerball");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                temp.setBonus(dataMatcher.group(9));
+                temp.setExtra(dataMatcher.group(10));
+                temp.setExtraText(" x ");
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
                 }
             }
-            saveGame(lotto, "powerball");
+            saveGame(gamesList, "powerball");
 
         } catch (IOException e) {
             System.out.println("failed to retrieve powerball");
@@ -126,7 +122,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("5 Card Cash");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -144,7 +140,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Cash 3 Night");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
                 nums[0] = dataMatcher.group(4);
@@ -160,7 +156,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Cash 3 Midday");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
                 nums[0] = dataMatcher.group(4);
@@ -176,7 +172,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Fantasy 5");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -195,7 +191,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Georgia Five Evening");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -213,7 +209,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Georgia Five Midday");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -231,7 +227,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Jumbo Bucks Lotto");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[6];
                 nums[0] = dataMatcher.group(4);
@@ -250,7 +246,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Cash 4 Life");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -270,7 +266,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Cash 3 Evening");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
                 nums[0] = dataMatcher.group(4);
@@ -286,7 +282,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Cash 4 Night");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(4);
@@ -303,7 +299,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Cash 4 Midday");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(4);
@@ -320,7 +316,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("Cash 4 Evening");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(4);
@@ -337,7 +333,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("All or Nothing Day");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[12];
                 nums[0] = dataMatcher.group(4);
@@ -362,7 +358,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("All or Nothing Evening");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[12];
                 nums[0] = dataMatcher.group(4);
@@ -387,7 +383,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("All or Nothing Morning");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[12];
                 nums[0] = dataMatcher.group(4);
@@ -412,7 +408,7 @@ public class GaLottoService {
             if (dataMatcher.find()) {
                 GaGames temp = new GaGames();
                 temp.setName("All or Nothing Night");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[12];
                 nums[0] = dataMatcher.group(4);
@@ -438,49 +434,6 @@ public class GaLottoService {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private String formatMonth(String month) {
-        switch (month) {
-            case ("Dec"): {
-                return "12";
-            }
-            case ("Nov"): {
-                return "11";
-            }
-            case ("Oct"): {
-                return "10";
-            }
-            case ("Sep"): {
-                return "09";
-            }
-            case ("Aug"): {
-                return "08";
-            }
-            case ("Jul"): {
-                return "07";
-            }
-            case ("Jun"): {
-                return "06";
-            }
-            case ("May"): {
-                return "05";
-            }
-            case ("Apr"): {
-                return "04";
-            }
-            case ("Mar"): {
-                return "03";
-            }
-            case ("Feb"): {
-                return "02";
-            }
-            case ("Jan"): {
-                return "01";
-            }
-            default:
-                return "00";
         }
     }
 

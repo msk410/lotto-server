@@ -1,7 +1,6 @@
 package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.IlGames;
@@ -20,7 +19,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.mikekim.lottoandroid.services.Constants.formatMonth;
+import static com.mikekim.lottoandroid.services.Constants.formatMonthShort;
 
 @Service
 public class IlLottoService {
@@ -29,14 +28,13 @@ public class IlLottoService {
     IlLottoRepository repository;
     WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-    @Scheduled(fixedRate = Constants.TIME)
+    @Scheduled(cron = Constants.CRON)
     public void getAll() {
         getPowerball();
         getMegaMillions();
         getAllGames();
         System.gc();
     }
-
 
     public void getPowerball() {
         webClient.getOptions().setJavaScriptEnabled(false);
@@ -51,7 +49,7 @@ public class IlLottoService {
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Powerball");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -127,7 +125,7 @@ public class IlLottoService {
                 nums[4] = dataMatcher.group(8);
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
-                temp.setExtraText("Extra Shot: ");
+                temp.setExtraText(" Extra Shot: ");
                 temp.setExtra(dataMatcher.group(10));
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
@@ -145,7 +143,7 @@ public class IlLottoService {
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Lucky Day Lotto Evening");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -170,7 +168,7 @@ public class IlLottoService {
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Lucky Day Lotto Midday");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -195,7 +193,7 @@ public class IlLottoService {
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Pick 4 Evening");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(4);
@@ -204,7 +202,7 @@ public class IlLottoService {
                 nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setExtra(dataMatcher.group(8));
-                temp.setExtraText("Fireball: ");
+                temp.setExtraText(" Fireball: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
@@ -221,7 +219,7 @@ public class IlLottoService {
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Pick 4 Midday");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(4);
@@ -230,7 +228,7 @@ public class IlLottoService {
                 nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setExtra(dataMatcher.group(8));
-                temp.setExtraText("Fireball: ");
+                temp.setExtraText(" Fireball: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
@@ -248,7 +246,7 @@ public class IlLottoService {
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Pick 3 Midday");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
                 nums[0] = dataMatcher.group(4);
@@ -256,7 +254,7 @@ public class IlLottoService {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setExtra(dataMatcher.group(7));
-                temp.setExtraText("Fireball: ");
+                temp.setExtraText(" Fireball: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
@@ -273,7 +271,7 @@ public class IlLottoService {
             while (gamesList.size() < 30 && dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Pick 3 Evening");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
                 nums[0] = dataMatcher.group(4);
@@ -281,7 +279,7 @@ public class IlLottoService {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setExtra(dataMatcher.group(7));
-                temp.setExtraText("Fireball: ");
+                temp.setExtraText(" Fireball: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {

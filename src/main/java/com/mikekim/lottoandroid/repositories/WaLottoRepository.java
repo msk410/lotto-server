@@ -1,7 +1,6 @@
 package com.mikekim.lottoandroid.repositories;
 
 import com.mikekim.lottoandroid.models.WaGames;
-import com.mikekim.lottoandroid.models.WiGames;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

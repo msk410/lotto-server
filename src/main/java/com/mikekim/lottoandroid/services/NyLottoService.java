@@ -1,10 +1,7 @@
 package com.mikekim.lottoandroid.services;
 
-import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.mikekim.lottoandroid.models.NyGames;
 import com.mikekim.lottoandroid.repositories.NyLottoRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -21,15 +18,17 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.mikekim.lottoandroid.services.Constants.formatMonthShort;
+
 
 @Service
 public class NyLottoService {
 
     @Autowired
-    NyLottoRepository nyLottoRepository;
+    NyLottoRepository repository;
     WebClient webClient = new WebClient();
 
-    @Scheduled(fixedRate = Constants.TIME)
+    @Scheduled(cron = Constants.CRON)
     public void getAll() {
         getPowerball();
         getMegaMillions();
@@ -38,42 +37,37 @@ public class NyLottoService {
     }
 
     public void getPowerball() {
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setActiveXNative(true);
         try {
-            TextPage currentPage = webClient.getPage("http://www.powerball.com/powerball/winnums-text.txt");
-            String textSource = currentPage.getContent();
-            String dateRegex = "\\d\\d/\\d\\d/\\d\\d\\d\\d";
-            String numbersRegex = "  [\\d]{2}  [\\d]{2}  [\\d]{2}  [\\d]{2}  [\\d]{2}  [\\d]{2}  [\\d]{0,2}";
-            Pattern datePattern = Pattern.compile(dateRegex);
-            Matcher dateMatcher = datePattern.matcher(textSource);
-            Pattern numbersPattern = Pattern.compile(numbersRegex);
-            Matcher numbersMatcher = numbersPattern.matcher(textSource);
-
-            List<NyGames> nyGamesList = new ArrayList<>();
-
-            for (int index = 0; index < 30; index++) {
-                if (numbersMatcher.find() && dateMatcher.find()) {
-                    String[] rawWinningNumbers = numbersMatcher.group().trim().split("  ");
-                    NyGames temp = new NyGames();
-                    temp.setName("Powerball");
-                    String[] formatedDateArray = dateMatcher.group().trim().split("/");
-                    String formatedDate = formatedDateArray[2] + "/" + formatedDateArray[0] + "/" + formatedDateArray[1];
-                    temp.setDate(formatedDate);
-                    String[] tempWinningNumbers = new String[5];
-                    for (int i = 0; i < 5; i++) {
-                        tempWinningNumbers[i] = rawWinningNumbers[i];
-                    }
-                    temp.setWinningNumbers(tempWinningNumbers);
-                    temp.setBonus(rawWinningNumbers[5]);
-                    temp.setExtraText(" x ");
-                    temp.setExtra(rawWinningNumbers[6]);
-                    if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                        nyGamesList.add(temp);
-                    } else {
-                        break;
-                    }
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/texas/powerball/");
+            String pageHtml = currentPage.asText();
+            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            List<NyGames> gamesList = new ArrayList<>();
+            while (gamesList.size() < 30 && dataMatcher.find()) {
+                NyGames temp = new NyGames();
+                temp.setName("Powerball");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                temp.setBonus(dataMatcher.group(9));
+                temp.setExtra(dataMatcher.group(10));
+                temp.setExtraText(" x ");
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                } else {
+                    break;
                 }
             }
-            saveGame(nyGamesList, "powerball");
+            saveGame(gamesList, "powerball");
 
         } catch (IOException e) {
             System.out.println("failed to retrieve powerball");
@@ -98,7 +92,7 @@ public class NyLottoService {
             temp.setBonus(jsonData.get("mega_ball"));
             temp.setExtra(jsonData.get("multiplier"));
             temp.setExtraText(" Megaplier x ");
-            if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+            if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                 nyGamesList.add(temp);
             } else {
                 break;
@@ -132,7 +126,7 @@ public class NyLottoService {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setBonus(dataMatcher.group(9));
-                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
                     break;
@@ -157,7 +151,7 @@ public class NyLottoService {
                 nums[3] = dataMatcher.group(7);
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
-                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
                     break;
@@ -184,7 +178,7 @@ public class NyLottoService {
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 temp.setBonus(dataMatcher.group(10));
-                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
                     break;
@@ -213,9 +207,9 @@ public class NyLottoService {
                     sum += Integer.valueOf(s);
                 }
                 temp.setExtra(String.valueOf(sum));
-                temp.setExtraText("Lucky Sum: ");
+                temp.setExtraText(" Lucky Sum: ");
 
-                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
                     break;
@@ -244,9 +238,9 @@ public class NyLottoService {
                     sum += Integer.valueOf(s);
                 }
                 temp.setExtra(String.valueOf(sum));
-                temp.setExtraText("Lucky Sum: ");
+                temp.setExtraText(" Lucky Sum: ");
 
-                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
                     break;
@@ -275,9 +269,9 @@ public class NyLottoService {
                     sum += Integer.valueOf(s);
                 }
                 temp.setExtra(String.valueOf(sum));
-                temp.setExtraText("Lucky Sum: ");
+                temp.setExtraText(" Lucky Sum: ");
 
-                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
                     break;
@@ -305,9 +299,9 @@ public class NyLottoService {
                     sum += Integer.valueOf(s);
                 }
                 temp.setExtra(String.valueOf(sum));
-                temp.setExtraText("Lucky Sum: ");
+                temp.setExtraText(" Lucky Sum: ");
 
-                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
                     break;
@@ -339,7 +333,7 @@ public class NyLottoService {
                 temp.setWinningNumbers(nums);
 
 
-                if (null == nyLottoRepository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 } else {
                     break;
@@ -401,7 +395,7 @@ public class NyLottoService {
         if (!gamesList.isEmpty()) {
             Iterable<NyGames> gameIterable = gamesList;
             System.out.println("saving " + gameName + " games");
-            nyLottoRepository.save(gameIterable);
+            repository.save(gameIterable);
         } else {
             System.out.println(gameName + " up to date");
         }
