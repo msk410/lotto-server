@@ -101,7 +101,6 @@ public class CaLottoService {
         saveGame(CaGamesList, "mega millions");
 
     }
-
     public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -116,7 +115,7 @@ public class CaLottoService {
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Super Lotto Plus");
-                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -140,7 +139,7 @@ public class CaLottoService {
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Fantasy 5");
-                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -163,7 +162,7 @@ public class CaLottoService {
             while (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Daily 3 " + dataMatcher.group(4));
-                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
                 nums[0] = dataMatcher.group(5);
@@ -184,7 +183,7 @@ public class CaLottoService {
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Daily 4 ");
-                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(4);
@@ -203,6 +202,52 @@ public class CaLottoService {
         } finally {
             webClient = null;
             gamesList = null;
+        }
+    }
+
+    private String formatMonth(String month) {
+        switch (month) {
+            case ("January"): {
+                return "01";
+            }
+            case ("February"): {
+                return "02";
+            }
+            case ("March"): {
+                return "03";
+            }
+            case ("April"): {
+                return "04";
+            }
+            case ("May"): {
+                return "05";
+            }
+            case ("June"): {
+                return "06";
+            }
+            case ("July"): {
+                return "07";
+            }
+            case ("August"): {
+                return "08";
+            }
+            case ("September"): {
+                return "09";
+            }
+            case ("October"): {
+                return "10";
+            }
+            case ("November"): {
+                return "11";
+            }
+            case ("December"): {
+                return "12";
+            }
+
+            default: {
+                return month;
+            }
+
         }
     }
 

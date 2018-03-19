@@ -223,7 +223,7 @@ public class ArLottoService {
                 }
             }
 
-            saveGame(gamesList, gamesList.size() + " georgia");
+            saveGame(gamesList, gamesList.size() + " arkansas");
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

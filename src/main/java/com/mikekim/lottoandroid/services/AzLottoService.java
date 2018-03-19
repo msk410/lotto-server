@@ -106,7 +106,6 @@ public class AzLottoService {
 
     }
 
-
     public void getThePick() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
