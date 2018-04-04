@@ -47,7 +47,7 @@ public class PaLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<PaGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -80,7 +80,7 @@ public class PaLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<PaGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             PaGames temp = new PaGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -114,7 +114,7 @@ public class PaLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<PaGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Cash 5");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -139,7 +139,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Match 6");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -165,7 +165,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 2 Midday");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -188,7 +188,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 2 Evening");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -211,7 +211,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 3 Midday");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -235,7 +235,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 3 Evening");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -259,7 +259,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 4 Midday");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -284,7 +284,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 4 Evening");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -309,7 +309,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 5 Midday");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -335,7 +335,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Pick 5 Evening");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -361,7 +361,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Treasure Hunt");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -386,7 +386,7 @@ public class PaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 PaGames temp = new PaGames();
                 temp.setName("Cash 4 Life");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -409,8 +409,6 @@ public class PaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Cash 4 Life");
-        } finally {
-            webClient = null;
         }
     }
 

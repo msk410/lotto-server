@@ -46,7 +46,7 @@ public class NhLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<NhGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NhGames temp = new NhGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +79,7 @@ public class NhLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<NhGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             NhGames temp = new NhGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -114,7 +114,7 @@ public class NhLottoService {
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*MB(\\d{1,2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<NhGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NhGames temp = new NhGames();
                 temp.setName("Megabucks");
                 String[] nums = new String[5];
@@ -138,7 +138,7 @@ public class NhLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*LB(\\d{1,2})");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NhGames temp = new NhGames();
                 temp.setName("Lucky for Life");
                 String[] nums = new String[5];
@@ -196,7 +196,7 @@ public class NhLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NhGames temp = new NhGames();
                 temp.setName("Gimme 5");
                 String[] nums = new String[5];
@@ -216,8 +216,6 @@ public class NhLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Gimme 5");
-        } finally {
-            webClient = null;
         }
     }
 

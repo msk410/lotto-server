@@ -12,7 +12,7 @@ public interface RiLottoRepository extends CrudRepository<RiGames, Integer> {
 
     RiGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM ri_games WHERE ri_games.name = ?1 ORDER BY ri_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM ri_games WHERE ri_games.name = ?1 ORDER BY ri_games.date DESC LIMIT 1", nativeQuery = true)
     List<RiGames> findAllGames(String gameName);
 
 }

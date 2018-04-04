@@ -50,7 +50,7 @@ public class OkLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<OkGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 OkGames temp = new OkGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -83,7 +83,7 @@ public class OkLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<OkGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             OkGames temp = new OkGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -120,7 +120,7 @@ public class OkLottoService {
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*x(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<OkGames> gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 OkGames temp = new OkGames();
                 temp.setName("Lotto America");
                 String[] nums = new String[5];
@@ -160,7 +160,7 @@ public class OkLottoService {
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<OkGames> gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 OkGames temp = new OkGames();
                 temp.setName("Pick 3");
                 String[] nums = new String[3];
@@ -195,7 +195,7 @@ public class OkLottoService {
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<OkGames> gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 OkGames temp = new OkGames();
                 temp.setName("Cash 5");
                 String[] nums = new String[5];
@@ -233,7 +233,7 @@ public class OkLottoService {
 
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<OkGames> gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 OkGames temp = new OkGames();
                 temp.setName("Poker Pick");
                 String[] nums = new String[5];

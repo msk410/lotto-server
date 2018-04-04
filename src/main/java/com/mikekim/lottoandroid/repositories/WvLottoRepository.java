@@ -12,7 +12,7 @@ public interface WvLottoRepository extends CrudRepository<WvGames, Integer> {
 
     WvGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM wv_games WHERE wv_games.name = ?1 ORDER BY wv_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM wv_games WHERE wv_games.name = ?1 ORDER BY wv_games.date DESC LIMIT 1", nativeQuery = true)
     List<WvGames> findAllGames(String gameName);
 
 }

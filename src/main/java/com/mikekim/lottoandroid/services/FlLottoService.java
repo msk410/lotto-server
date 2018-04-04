@@ -1,6 +1,7 @@
 package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.FlGames;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,6 @@ public class FlLottoService {
         getPowerball();
         getMegaMillions();
         getAllGames();
-        System.gc();
     }
 
     public void getPowerball() {
@@ -46,7 +47,7 @@ public class FlLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<FlGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +80,7 @@ public class FlLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<FlGames> FlGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             FlGames temp = new FlGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -104,15 +105,19 @@ public class FlLottoService {
 
 
     public void getAllGames() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.flalottery.com/lotto");
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/florida/");
+            webClient.waitForBackgroundJavaScriptStartingBefore(30000);
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)-x(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<FlGames> gamesList = new ArrayList<>();
+            Pattern dataPattern = Pattern.compile("Lotto\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Florida Lotto");
@@ -132,13 +137,8 @@ public class FlLottoService {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "florida lotto");
-
-            currentPage = webClient.getPage("http://www.flalottery.com/cash4Life");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataPattern = Pattern.compile("Cash4Life\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Cash 4 Life");
@@ -156,13 +156,8 @@ public class FlLottoService {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "cash 4 life");
-
-            currentPage = webClient.getPage("http://www.flalottery.com/luckyMoney");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataPattern = Pattern.compile("Lucky Money\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
                 temp.setName("Lucky Money");
@@ -179,16 +174,31 @@ public class FlLottoService {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "lucky money");
-
-            currentPage = webClient.getPage("http://www.flalottery.com/cash4Life");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataPattern = Pattern.compile("Fantasy 5\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
-                temp.setName("Fantasy 5");
+                temp.setName("Lucky Money");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+
+
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("Pick 5 Midday\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                FlGames temp = new FlGames();
+                temp.setName("Pick 5 Midday");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
@@ -202,101 +212,131 @@ public class FlLottoService {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "fantasy 5");
-
-            currentPage = webClient.getPage("http://www.flalottery.com/pick5");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataPattern = Pattern.compile("Pick 5\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
-                temp.setName("Pick 5 " + dataMatcher.group(1));
-                String date = dataMatcher.group(4) + "/" + formatMonthShort(dataMatcher.group(2)) + "/" + StringUtils.leftPad(dataMatcher.group(3), 2, "0");
+                temp.setName("Pick 5 Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
-                nums[0] = dataMatcher.group(5);
-                nums[1] = dataMatcher.group(6);
-                nums[2] = dataMatcher.group(7);
-                nums[3] = dataMatcher.group(8);
-                nums[4] = dataMatcher.group(9);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "pick 5");
-
-            currentPage = webClient.getPage("http://www.flalottery.com/pick4");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)-(\\d+)");
+            dataPattern = Pattern.compile("Midday Pick 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
-                temp.setName("Pick 4 " + dataMatcher.group(1));
-                String date = dataMatcher.group(4) + "/" + formatMonthShort(dataMatcher.group(2)) + "/" + StringUtils.leftPad(dataMatcher.group(3), 2, "0");
+                temp.setName("Pick 4 Midday");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
-                nums[0] = dataMatcher.group(5);
-                nums[1] = dataMatcher.group(6);
-                nums[2] = dataMatcher.group(7);
-                nums[3] = dataMatcher.group(8);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "pick 4");
-
-            currentPage = webClient.getPage("http://www.flalottery.com/pick3");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)-(\\d+)");
+            dataPattern = Pattern.compile("Pick 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
-                temp.setName("Pick 3 " + dataMatcher.group(1));
-                String date = dataMatcher.group(4) + "/" + formatMonthShort(dataMatcher.group(2)) + "/" + StringUtils.leftPad(dataMatcher.group(3), 2, "0");
+                temp.setName("Pick 4 Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+
+            dataPattern = Pattern.compile("Midday Pick 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                FlGames temp = new FlGames();
+                temp.setName("Pick 3 Midday");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
-                nums[0] = dataMatcher.group(5);
-                nums[1] = dataMatcher.group(6);
-                nums[2] = dataMatcher.group(7);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "pick 3");
-
-            currentPage = webClient.getPage("http://www.flalottery.com/pick2");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+)\\s*Winning Numbers:\\s*\\w+, (\\w+) (\\d+), (\\d{4})\\s*(\\d+)-(\\d+)");
+            dataPattern = Pattern.compile("Pick 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 FlGames temp = new FlGames();
-                temp.setName("Pick 2 " + dataMatcher.group(1));
-                String date = dataMatcher.group(4) + "/" + formatMonthShort(dataMatcher.group(2)) + "/" + StringUtils.leftPad(dataMatcher.group(3), 2, "0");
+                temp.setName("Pick 3 Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+
+            dataPattern = Pattern.compile("Pick 2 Midday\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                FlGames temp = new FlGames();
+                temp.setName("Pick 2 Midday");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[2];
-                nums[0] = dataMatcher.group(5);
-                nums[1] = dataMatcher.group(6);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "pick 2");
+            dataPattern = Pattern.compile("Pick 2\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                FlGames temp = new FlGames();
+                temp.setName("Pick 2 Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[2];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            saveGame(gamesList, "fl games");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve pick 2");
-        } finally {
-            webClient = null;
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
-    }
 
+    }
     private void saveGame(List<FlGames> gamesList, String gameName) {
         if (!gamesList.isEmpty()) {
             Iterable<FlGames> gameIterable = gamesList;

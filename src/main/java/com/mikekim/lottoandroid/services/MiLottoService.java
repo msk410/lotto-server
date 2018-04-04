@@ -14,11 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.mikekim.lottoandroid.services.Constants.formatMonthShort;
 
 @Service
 public class MiLottoService {
@@ -32,8 +35,6 @@ public class MiLottoService {
         getPowerball();
         getMegaMillions();
         getAllGames();
-        getPokerLotto();
-        System.gc();
     }
 
     public void getPowerball() {
@@ -46,7 +47,7 @@ public class MiLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<MiGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MiGames temp = new MiGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +80,7 @@ public class MiLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<MiGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             MiGames temp = new MiGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -99,43 +100,6 @@ public class MiLottoService {
             }
         }
         saveGame(gamesList, "mega millions");
-
-    }
-
-    public void getPokerLotto() {
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-
-        try {
-            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/michigan/poker-lotto/");
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD])");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<MiGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                MiGames temp = new MiGames();
-                temp.setName("Poker Lotto");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
-                temp.setDate(date);
-                String[] nums = new String[5];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
-                nums[4] = dataMatcher.group(8);
-                temp.setWinningNumbers(nums);
-                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                    gamesList.add(temp);
-                } else {
-                    break;
-                }
-            }
-            saveGame(gamesList, "Poker Lotto");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Poker Lotto");
-        }
     }
 
     public void getAllGames() {
@@ -157,6 +121,24 @@ public class MiLottoService {
                 MiGames temp = new MiGames();
                 temp.setName("Fantasy 5");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("Poker Lotto\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD]),\\s*([0-9AKQJ]+[CSHD])");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                MiGames temp = new MiGames();
+                temp.setName("Poker Lotto");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -290,8 +272,6 @@ public class MiLottoService {
                     gamesList.add(temp);
                 }
             }
-
-
             saveGame(gamesList, gamesList.size() + " michigan");
 
         } catch (IOException e) {

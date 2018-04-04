@@ -12,7 +12,7 @@ public interface ArLottoRepository extends CrudRepository<ArGames, Integer> {
 
     ArGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM ar_games WHERE ar_games.name = ?1 ORDER BY ar_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM ar_games WHERE ar_games.name = ?1 ORDER BY ar_games.date DESC LIMIT 1", nativeQuery = true)
     List<ArGames> findAllGames(String gameName);
 
 }

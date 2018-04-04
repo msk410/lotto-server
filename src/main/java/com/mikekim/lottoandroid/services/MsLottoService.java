@@ -30,7 +30,6 @@ public class MsLottoService {
     public void getAll() {
         getMegaMillions();
         getPick();
-        System.gc();
 
     }
 
@@ -39,7 +38,7 @@ public class MsLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<MsGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             MsGames temp = new MsGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];

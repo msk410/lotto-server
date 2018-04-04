@@ -12,7 +12,7 @@ public interface NcLottoRepository extends CrudRepository<NcGames, Integer> {
 
     NcGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM nc_games WHERE nc_games.name = ?1 ORDER BY nc_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM nc_games WHERE nc_games.name = ?1 ORDER BY nc_games.date DESC LIMIT 1", nativeQuery = true)
     List<NcGames> findAllGames(String gameName);
 
 }

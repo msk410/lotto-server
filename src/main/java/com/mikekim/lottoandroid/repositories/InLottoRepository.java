@@ -12,7 +12,7 @@ public interface InLottoRepository extends CrudRepository<InGames, Integer> {
 
     InGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM in_games WHERE in_games.name = ?1 ORDER BY in_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM in_games WHERE in_games.name = ?1 ORDER BY in_games.date DESC LIMIT 1", nativeQuery = true)
     List<InGames> findAllGames(String gameName);
 
 }

@@ -12,7 +12,7 @@ public interface VaLottoRepository extends CrudRepository<VaGames, Integer> {
 
     VaGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM va_games WHERE va_games.name = ?1 ORDER BY va_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM va_games WHERE va_games.name = ?1 ORDER BY va_games.date DESC LIMIT 1", nativeQuery = true)
     List<VaGames> findAllGames(String gameName);
 
 }

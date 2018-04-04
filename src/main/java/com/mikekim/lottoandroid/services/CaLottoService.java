@@ -1,6 +1,7 @@
 package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.CaGames;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,6 @@ public class CaLottoService {
         getPowerball();
         getMegaMillions();
         getAllGames();
-        System.gc();
     }
 
     public void getPowerball() {
@@ -46,7 +47,7 @@ public class CaLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<CaGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +80,7 @@ public class CaLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<CaGames> CaGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             CaGames temp = new CaGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -101,21 +102,25 @@ public class CaLottoService {
         saveGame(CaGamesList, "mega millions");
 
     }
+
     public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
-        List<CaGames> gamesList;
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/superlotto-plus");
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/california/");
+            webClient.waitForBackgroundJavaScriptStartingBefore(30000);
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4}) \\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            List<CaGames> gamesList = new ArrayList<>();
+            Pattern dataPattern = Pattern.compile("Super Lotto PLUS\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
-                temp.setName("Super Lotto Plus");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setName("Super Lotto PLUS");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -129,17 +134,12 @@ public class CaLottoService {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "super lotto plus");
-
-            currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/fantasy-5");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4}) \\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("Fantasy 5\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
                 temp.setName("Fantasy 5");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[5];
                 nums[0] = dataMatcher.group(4);
@@ -152,38 +152,46 @@ public class CaLottoService {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "fantasy 5");
-
-            currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-3");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*\\| Winning Numbers\\s*(\\w+)\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("Midday 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
-                temp.setName("Daily 3 " + dataMatcher.group(4));
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setName("Daily 3 Midday");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[3];
-                nums[0] = dataMatcher.group(5);
-                nums[1] = dataMatcher.group(6);
-                nums[2] = dataMatcher.group(7);
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "daily 3");
 
-            currentPage = webClient.getPage("http://www.calottery.com/play/draw-games/daily-4");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\w+) (\\d+), (\\d{4})\\s*\\| Winning Numbers\\s*\\| Draw #\\d+\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("Daily 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 CaGames temp = new CaGames();
-                temp.setName("Daily 4 ");
-                String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setName("Daily 3 Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+
+            dataPattern = Pattern.compile("Daily 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                CaGames temp = new CaGames();
+                temp.setName("Daily 4");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[4];
                 nums[0] = dataMatcher.group(4);
@@ -195,59 +203,12 @@ public class CaLottoService {
                     gamesList.add(temp);
                 }
             }
-            saveGame(gamesList, "daily 4");
+            saveGame(gamesList, "ca games");
 
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("failed to retrieve daily 4");
-        } finally {
-            webClient = null;
-            gamesList = null;
-        }
-    }
-
-    private String formatMonth(String month) {
-        switch (month) {
-            case ("January"): {
-                return "01";
-            }
-            case ("February"): {
-                return "02";
-            }
-            case ("March"): {
-                return "03";
-            }
-            case ("April"): {
-                return "04";
-            }
-            case ("May"): {
-                return "05";
-            }
-            case ("June"): {
-                return "06";
-            }
-            case ("July"): {
-                return "07";
-            }
-            case ("August"): {
-                return "08";
-            }
-            case ("September"): {
-                return "09";
-            }
-            case ("October"): {
-                return "10";
-            }
-            case ("November"): {
-                return "11";
-            }
-            case ("December"): {
-                return "12";
-            }
-
-            default: {
-                return month;
-            }
-
+            e.printStackTrace();
         }
     }
 

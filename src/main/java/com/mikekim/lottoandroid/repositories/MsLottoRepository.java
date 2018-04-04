@@ -12,7 +12,7 @@ public interface MsLottoRepository extends CrudRepository<MsGames, Integer> {
 
     MsGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM ms_games WHERE ms_games.name = ?1 ORDER BY ms_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM ms_games WHERE ms_games.name = ?1 ORDER BY ms_games.date DESC LIMIT 1", nativeQuery = true)
     List<MsGames> findAllGames(String gameName);
 
 }

@@ -26,6 +26,7 @@ public class ArGameController {
 
     @GetMapping(value = "/ar/save")
     public String saveGames() {
+        System.out.println("start");
         service.getAll();
         return "done";
     }

@@ -46,7 +46,7 @@ public class MeLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<MeGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +79,7 @@ public class MeLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<MeGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             MeGames temp = new MeGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -114,7 +114,7 @@ public class MeLottoService {
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<MeGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Megabucks Plus");
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -140,7 +140,7 @@ public class MeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Lotto America");
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -168,7 +168,7 @@ public class MeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Lucky for Life");
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -194,7 +194,7 @@ public class MeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Gimme 5");
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -219,7 +219,7 @@ public class MeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(Day|Eve)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 10 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Pick 3 " + dataMatcher.group(4));
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -242,7 +242,7 @@ public class MeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(Day|Eve)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 10 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("Pick 4 " + dataMatcher.group(4));
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -266,7 +266,7 @@ public class MeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])\\s*([0-9AKQJ]+[CSHD])");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MeGames temp = new MeGames();
                 temp.setName("World Poker Tour");
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -288,8 +288,6 @@ public class MeLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve World Poker Tour");
-        } finally {
-            webClient = null;
         }
     }
 

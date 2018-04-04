@@ -47,7 +47,7 @@ public class VaLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<VaGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 VaGames temp = new VaGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -80,7 +80,7 @@ public class VaLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<VaGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             VaGames temp = new VaGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -116,7 +116,7 @@ public class VaLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*BONUS\\s*BALL\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<VaGames> gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 VaGames temp = new VaGames();
                 temp.setName("Bank a Million");
                 String[] nums = new String[6];
@@ -142,7 +142,7 @@ public class VaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*CASH\\s*BALL\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 VaGames temp = new VaGames();
                 temp.setName("Cash 4 Life");
                 String[] nums = new String[5];
@@ -167,7 +167,7 @@ public class VaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+                while (dataMatcher.find()) {
                 VaGames temp = new VaGames();
                 VaGames temp2 = new VaGames();
                 temp.setName("Cash 5 Day");
@@ -275,8 +275,6 @@ public class VaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Pick 3");
-        } finally {
-            webClient = null;
         }
     }
 

@@ -5,6 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Date;
+
 @SpringBootApplication
 @EnableScheduling
 public class LottoAndroidApplication {
@@ -12,7 +14,8 @@ public class LottoAndroidApplication {
     static Logger log = Logger.getLogger(LottoAndroidApplication.class.getName());
 
     public static void main(String[] args) {
-        System.out.println("hey sout");
+        Date d = new Date();
+        System.out.println("hey sout " + d.toString());
         log.info("hey log");
         SpringApplication.run(LottoAndroidApplication.class, args);
     }

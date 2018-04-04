@@ -12,7 +12,7 @@ public interface DcLottoRepository extends CrudRepository<DcGames, Integer> {
 
     DcGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM dc_games WHERE dc_games.name = ?1 ORDER BY dc_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM dc_games WHERE dc_games.name = ?1 ORDER BY dc_games.date DESC LIMIT 1", nativeQuery = true)
     List<DcGames> findAllGames(String gameName);
 
 }

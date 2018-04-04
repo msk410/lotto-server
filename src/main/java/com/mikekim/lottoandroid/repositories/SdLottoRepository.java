@@ -12,7 +12,7 @@ public interface SdLottoRepository extends CrudRepository<SdGames, Integer> {
 
     SdGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM sd_games WHERE sd_games.name = ?1 ORDER BY sd_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM sd_games WHERE sd_games.name = ?1 ORDER BY sd_games.date DESC LIMIT 1", nativeQuery = true)
     List<SdGames> findAllGames(String gameName);
 
 }

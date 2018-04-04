@@ -12,7 +12,7 @@ public interface IlLottoRepository extends CrudRepository<IlGames, Integer> {
 
     IlGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM il_games WHERE il_games.name = ?1 ORDER BY il_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM il_games WHERE il_games.name = ?1 ORDER BY il_games.date DESC LIMIT 1", nativeQuery = true)
     List<IlGames> findAllGames(String gameName);
 
 }

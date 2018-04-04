@@ -46,7 +46,7 @@ public class NeLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<NeGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +79,7 @@ public class NeLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<NeGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             NeGames temp = new NeGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -115,7 +115,7 @@ public class NeLottoService {
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<NeGames> gamesList = new ArrayList<>();
 
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("Pick 5");
                 String[] nums = new String[5];
@@ -139,7 +139,7 @@ public class NeLottoService {
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
 
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("Pick 3");
                 String[] nums = new String[3];
@@ -160,7 +160,7 @@ public class NeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("My DaY");
                 String[] nums = new String[3];
@@ -181,7 +181,7 @@ public class NeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*(\\d{2})\\s*,\\s*(\\d{2})");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("2by2");
                 String[] nums = new String[4];
@@ -203,7 +203,7 @@ public class NeLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NeGames temp = new NeGames();
                 temp.setName("Lucky for Life");
                 String[] nums = new String[5];
@@ -224,8 +224,6 @@ public class NeLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Lucky for Life");
-        } finally {
-            webClient = null;
         }
     }
 

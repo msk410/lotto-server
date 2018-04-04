@@ -1,6 +1,7 @@
 package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.AzGames;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +34,145 @@ public class AzLottoService {
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getThePick();
-        getFantasy5();
-        getPick3();
-        get5CardCash();
-        getAllOrNothing();
-        System.gc();
+        getAllGames();
+    }
+
+    private void getAllGames() {
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        try {
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/arizona/");
+            webClient.waitForBackgroundJavaScriptStartingBefore(30000);
+            String pageHtml = currentPage.asText();
+            List<AzGames> gamesList = new ArrayList<>();
+            Pattern dataPattern = Pattern.compile("The Pick\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                AzGames temp = new AzGames();
+                temp.setName("The Pick");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[6];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
+
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("Fantasy 5\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                AzGames temp = new AzGames();
+                temp.setName("Fantasy 5");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("Pick 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                AzGames temp = new AzGames();
+                temp.setName("Pick 3");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("Morning All or Nothing\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                AzGames temp = new AzGames();
+                temp.setName("All or Nothing Morning");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[10];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
+                nums[6] = dataMatcher.group(10);
+                nums[7] = dataMatcher.group(11);
+                nums[8] = dataMatcher.group(12);
+                nums[9] = dataMatcher.group(13);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("All or Nothing\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                AzGames temp = new AzGames();
+                temp.setName("All or Nothing Evening");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[10];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
+                nums[6] = dataMatcher.group(10);
+                nums[7] = dataMatcher.group(11);
+                nums[8] = dataMatcher.group(12);
+                nums[9] = dataMatcher.group(13);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("5 Card Cash\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*([0-9\\w]+),\\s*\\s*([0-9\\w]+),\\s*\\s*([0-9\\w]+),\\s*\\s*([0-9\\w]+),\\s*\\s*([0-9\\w]+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                AzGames temp = new AzGames();
+                temp.setName("5 Card Cash");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            saveGame(gamesList, "arizona games");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void getPowerball() {
@@ -50,7 +185,7 @@ public class AzLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<AzGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 AzGames temp = new AzGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -83,7 +218,7 @@ public class AzLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<AzGames> AzGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             AzGames temp = new AzGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -104,197 +239,6 @@ public class AzLottoService {
         }
         saveGame(AzGamesList, "mega millions");
 
-    }
-
-    public void getThePick() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.arizonalottery.com/en/play/draw-games/the-pick?gid=%7b39465F31-6446-4A5D-9CCD-9F9BB1B5E57A%7d?panel=last-180-heading");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*\\d+/\\d+/\\d{4}\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<AzGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                AzGames temp = new AzGames();
-                temp.setName("The Pick");
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
-                temp.setDate(date);
-                String[] nums = new String[6];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
-                nums[4] = dataMatcher.group(8);
-                nums[5] = dataMatcher.group(9);
-                temp.setWinningNumbers(nums);
-                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                    gamesList.add(temp);
-                } else {
-                    break;
-                }
-            }
-            saveGame(gamesList, "The Pick");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve The Pick");
-        }
-    }
-
-    public void getFantasy5() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.arizonalottery.com/en/play/draw-games/fantasy-5?gid=%7b06702181-7018-48C5-AD15-3F682C660D5C%7d?panel=last-180-heading");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*\\d+/\\d+/\\d{4}\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<AzGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                AzGames temp = new AzGames();
-                temp.setName("Fantasy 5");
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
-                temp.setDate(date);
-                String[] nums = new String[5];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
-                nums[4] = dataMatcher.group(8);
-                temp.setWinningNumbers(nums);
-                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                    gamesList.add(temp);
-                } else {
-                    break;
-                }
-            }
-            saveGame(gamesList, "Fantasy 5");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Fantasy 5");
-        }
-    }
-
-    public void getPick3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.arizonalottery.com/en/play/draw-games/pick-3?gid=%7bC6A15472-90AF-4C22-AAC8-840E4E740EE0%7d?panel=last-180-heading");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*\\d+/\\d+/\\d{4}\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<AzGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                AzGames temp = new AzGames();
-                temp.setName("Pick 3");
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
-                temp.setDate(date);
-                String[] nums = new String[3];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                temp.setWinningNumbers(nums);
-                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                    gamesList.add(temp);
-                } else {
-                    break;
-                }
-            }
-            saveGame(gamesList, "Pick 3");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 3");
-        }
-    }
-
-    public void getAllOrNothing() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.arizonalottery.com/en/play/draw-games/all-or-nothing?gid=%7b68F68FAA-41AF-4998-B995-6D7A8FC01F04%7d?panel=last-180-heading");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(PM|AM)\\s*\\d+/\\d+/\\d{4}\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<AzGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                AzGames temp = new AzGames();
-                String extraName = dataMatcher.group(4);
-                extraName = "PM".equals(extraName) ? "Evening" : "Morning";
-                temp.setName("All or Nothing " + extraName);
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
-                temp.setDate(date);
-                String[] nums = new String[10];
-                nums[0] = dataMatcher.group(5);
-                nums[1] = dataMatcher.group(6);
-                nums[2] = dataMatcher.group(7);
-                nums[3] = dataMatcher.group(8);
-                nums[4] = dataMatcher.group(9);
-                nums[5] = dataMatcher.group(10);
-                nums[6] = dataMatcher.group(11);
-                nums[7] = dataMatcher.group(12);
-                nums[8] = dataMatcher.group(13);
-                nums[9] = dataMatcher.group(14);
-                temp.setWinningNumbers(nums);
-                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                    gamesList.add(temp);
-                } else {
-                    break;
-                }
-            }
-            saveGame(gamesList, "All or Nothing");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve All or Nothing");
-        }
-    }
-
-    public void get5CardCash() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setActiveXNative(true);
-        try {
-            HtmlPage currentPage = webClient.getPage("https://www.arizonalottery.com/en/play/draw-games/5-card-cash?gid=%7b788F304E-269D-4829-974B-4EFC334C4D2B%7d?panel=last-180-heading");
-            webClient.waitForBackgroundJavaScript(30 * 1000);
-            webClient.waitForBackgroundJavaScriptStartingBefore(10000);
-            String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*\\d+/\\d+/\\d{4}\\s([0-9AKQJ]+[CSHD])\\s*-\\s*([0-9AKQJ]+[CSHD])\\s*-\\s*([0-9AKQJ]+[CSHD])\\s*-\\s*([0-9AKQJ]+[CSHD])\\s*-\\s*([0-9AKQJ]+[CSHD])");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<AzGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
-                AzGames temp = new AzGames();
-                temp.setName("5 Card Cash");
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
-                temp.setDate(date);
-                String[] nums = new String[5];
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
-                nums[4] = dataMatcher.group(8);
-                temp.setWinningNumbers(nums);
-                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                    gamesList.add(temp);
-                } else {
-                    break;
-                }
-            }
-            saveGame(gamesList, "5 Card Cash");
-
-        } catch (IOException e) {
-            System.out.println("failed to retrieve 5 Card Cash");
-        }
     }
 
     private void saveGame(List<AzGames> AzGamesList, String gameName) {

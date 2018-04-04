@@ -12,7 +12,7 @@ public interface MaLottoRepository extends CrudRepository<MaGames, Integer> {
 
     MaGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM ma_games WHERE ma_games.name = ?1 ORDER BY ma_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM ma_games WHERE ma_games.name = ?1 ORDER BY ma_games.date DESC LIMIT 1", nativeQuery = true)
     List<MaGames> findAllGames(String gameName);
 
 }

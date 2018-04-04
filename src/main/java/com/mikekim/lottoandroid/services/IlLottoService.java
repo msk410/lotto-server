@@ -1,6 +1,7 @@
 package com.mikekim.lottoandroid.services;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mikekim.lottoandroid.models.IlGames;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,6 @@ public class IlLottoService {
         getPowerball();
         getMegaMillions();
         getAllGames();
-        System.gc();
     }
 
     public void getPowerball() {
@@ -46,7 +47,7 @@ public class IlLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<IlGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +80,7 @@ public class IlLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<IlGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             IlGames temp = new IlGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -104,18 +105,21 @@ public class IlLottoService {
     public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.illinoislottery.com/en-us/Lotto.html");
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/");
+            webClient.waitForBackgroundJavaScriptStartingBefore(30000);
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d{2})/(\\d{1,2})/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
-            Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<IlGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            Pattern dataPattern = Pattern.compile("Lotto\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*Extra Shot:\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Lotto");
-                String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                 temp.setDate(date);
                 String[] nums = new String[6];
                 nums[0] = dataMatcher.group(4);
@@ -125,22 +129,15 @@ public class IlLottoService {
                 nums[4] = dataMatcher.group(8);
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
-                temp.setExtraText(" Extra Shot: ");
                 temp.setExtra(dataMatcher.group(10));
+                temp.setExtraText(" Extra Shot: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
-            saveGame(gamesList, "lotto");
-
-            currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/lucky-day-lotto-evening/");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("Lucky Day Lotto Evening\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Lucky Day Lotto Evening");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -154,18 +151,11 @@ public class IlLottoService {
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
-            saveGame(gamesList, "lucky day lotto evening");
-
-            currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/midday-lucky-day-lotto/");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("Midday Lucky Day Lotto\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Lucky Day Lotto Midday");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -179,18 +169,12 @@ public class IlLottoService {
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
-            saveGame(gamesList, "lucky day lotto midday");
 
-            currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/daily-4/");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("Daily 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Pick 4 Evening");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -205,18 +189,13 @@ public class IlLottoService {
                 temp.setExtraText(" Fireball: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
-            saveGame(gamesList, "Pick 4 Evening");
 
-            currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/midday-4/");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+
+            dataPattern = Pattern.compile("Midday 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Pick 4 Midday");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -231,19 +210,11 @@ public class IlLottoService {
                 temp.setExtraText(" Fireball: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
-            saveGame(gamesList, "Pick 4 Midday");
-
-
-            currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/midday-3/");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("Midday 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Pick 3 Midday");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -257,18 +228,11 @@ public class IlLottoService {
                 temp.setExtraText(" Fireball: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
-            saveGame(gamesList, "Pick 3 Midday");
-
-            currentPage = webClient.getPage("http://www.lotteryusa.com/illinois/daily-3/");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("Daily 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 IlGames temp = new IlGames();
                 temp.setName("Pick 3 Evening");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -282,18 +246,17 @@ public class IlLottoService {
                 temp.setExtraText(" Fireball: ");
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
-            saveGame(gamesList, "Pick 3 Evening");
 
-        } catch (IOException e) {
-            System.out.println("failed to retrieve Pick 3 Evening");
-        } finally {
-            webClient = null;
+            saveGame(gamesList, "il games");
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
     }
+
 
     private void saveGame(List<IlGames> gamesList, String gameName) {
         if (!gamesList.isEmpty()) {

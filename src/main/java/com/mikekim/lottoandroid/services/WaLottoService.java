@@ -46,7 +46,7 @@ public class WaLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<WaGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +79,7 @@ public class WaLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<WaGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             WaGames temp = new WaGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -114,7 +114,7 @@ public class WaLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<WaGames> gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("Lotto");
                 String[] nums = new String[6];
@@ -139,7 +139,7 @@ public class WaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("Hit 5");
                 String[] nums = new String[5];
@@ -163,7 +163,7 @@ public class WaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("Match 4");
                 String[] nums = new String[4];
@@ -186,7 +186,7 @@ public class WaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("The Daily Game");
                 String[] nums = new String[3];
@@ -208,7 +208,7 @@ public class WaLottoService {
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 WaGames temp = new WaGames();
                 temp.setName("Daily Keno");
                 String[] nums = new String[20];
@@ -226,8 +226,6 @@ public class WaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Daily Keno");
-        } finally {
-            webClient = null;
         }
     }
 

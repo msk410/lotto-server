@@ -12,7 +12,7 @@ public interface OkLottoRepository extends CrudRepository<OkGames, Integer> {
 
     OkGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM ok_games WHERE ok_games.name = ?1 ORDER BY ok_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM ok_games WHERE ok_games.name = ?1 ORDER BY ok_games.date DESC LIMIT 1", nativeQuery = true)
     List<OkGames> findAllGames(String gameName);
 
 }

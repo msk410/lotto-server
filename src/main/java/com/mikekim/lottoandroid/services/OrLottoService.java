@@ -47,7 +47,7 @@ public class OrLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<OrGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 OrGames temp = new OrGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -80,7 +80,7 @@ public class OrLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<OrGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             OrGames temp = new OrGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -115,7 +115,7 @@ public class OrLottoService {
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*[$0-9,]+\\s*\\d{4}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<OrGames> gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 OrGames temp = new OrGames();
                 temp.setName("Win for Life");
                 String[] nums = new String[4];
@@ -138,7 +138,7 @@ public class OrLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*[$0-9,]+\\s*\\d{4}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 OrGames temp = new OrGames();
                 temp.setName("Lucky Lines");
                 String[] nums = new String[8];
@@ -165,7 +165,7 @@ public class OrLottoService {
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*[$0-9,]+\\s*\\d{4}\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 OrGames temp = new OrGames();
                 temp.setName("Megabucks");
                 String[] nums = new String[6];
@@ -218,8 +218,6 @@ public class OrLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Pick 4");
-        } finally {
-            webClient = null;
         }
     }
 

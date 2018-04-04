@@ -47,7 +47,7 @@ public class MaLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<MaGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MaGames temp = new MaGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -80,7 +80,7 @@ public class MaLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<MaGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             MaGames temp = new MaGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -117,7 +117,7 @@ public class MaLottoService {
             List<MaGames> gamesList = new ArrayList<>();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (gamesList.size() < 30 && dataMatcher.find()) {
                 MaGames temp = new MaGames();
                 temp.setName("Megabucks Doubler");
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -132,8 +132,6 @@ public class MaLottoService {
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
             saveGame(gamesList, "Megabucks Doubler");
@@ -144,7 +142,7 @@ public class MaLottoService {
             gamesList = new ArrayList<>();
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (gamesList.size() < 30 && dataMatcher.find()) {
                 MaGames temp = new MaGames();
                 temp.setName("Lucky for Life");
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -159,8 +157,6 @@ public class MaLottoService {
                 temp.setBonus(dataMatcher.group(9));
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
             saveGame(gamesList, "Lucky for Life");
@@ -171,7 +167,7 @@ public class MaLottoService {
             gamesList = new ArrayList<>();
             dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            if (gamesList.size() < 30 && dataMatcher.find()) {
                 MaGames temp = new MaGames();
                 temp.setName("Mass Cash");
                 String date = dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -185,8 +181,6 @@ public class MaLottoService {
                 temp.setWinningNumbers(nums);
                 if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
                     gamesList.add(temp);
-                } else {
-                    break;
                 }
             }
             saveGame(gamesList, "Mass Cash");
@@ -219,8 +213,6 @@ public class MaLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Numbers Game");
-        } finally {
-            webClient = null;
         }
     }
 

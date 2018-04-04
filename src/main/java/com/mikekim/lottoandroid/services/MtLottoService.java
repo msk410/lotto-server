@@ -46,7 +46,7 @@ public class MtLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<MtGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -79,7 +79,7 @@ public class MtLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<MtGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             MtGames temp = new MtGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -114,7 +114,7 @@ public class MtLottoService {
             Pattern dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*SB:(\\d{2})\\s*ASB:x(\\d{1,2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<MtGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
                 temp.setName("Lotto America");
                 String[] nums = new String[5];
@@ -141,7 +141,7 @@ public class MtLottoService {
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
 
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
                 temp.setName("Lucky for Life");
                 String[] nums = new String[5];
@@ -166,7 +166,7 @@ public class MtLottoService {
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
 
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
                 temp.setName("Montana Cash");
                 String[] nums = new String[5];
@@ -190,7 +190,7 @@ public class MtLottoService {
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
 
-            while (gamesList.size() < 10 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 MtGames temp = new MtGames();
                 temp.setName("Big Sky Bonus");
                 String[] nums = new String[4];
@@ -210,8 +210,6 @@ public class MtLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Big Sky Bonus");
-        } finally {
-            webClient = null;
         }
     }
 

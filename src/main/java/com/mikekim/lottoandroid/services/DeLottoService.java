@@ -36,12 +36,7 @@ public class DeLottoService {
     public void getAll() {
         getPowerball();
         getMegaMillions();
-        getLottoAmerica();
-        getPlay3();
-        getPlay4();
-        getMultiWin();
-        getLuckyForLife();
-        System.gc();
+        getAllGames();
     }
 
     public void getPowerball() {
@@ -54,7 +49,7 @@ public class DeLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<DeGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 DeGames temp = new DeGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -87,7 +82,7 @@ public class DeLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<DeGames> deGamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             DeGames temp = new DeGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -109,298 +104,150 @@ public class DeLottoService {
         saveGame(deGamesList, "mega millions");
 
     }
-
-    public void getLottoAmerica() {
+    public void getAllGames() {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-        HtmlPage currentPage = null;
-        List<DeGames> gamesList = new ArrayList<>();
-        boolean flag = true;
         try {
-            String baseUrl = "https://www.delottery.com/Winning-Numbers/Search-Winners/";
-            String year = String.valueOf(TODAY.get(Calendar.YEAR));
-            String month = String.valueOf(TODAY.get(Calendar.MONTH) + 1);
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{2})/([0-9]{2})(\\s*|\\t*)([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})");
-            Pattern extraPattern = Pattern.compile("Multiplier® (\\d)X");
-
-            String url = baseUrl + year + "/" + month + "/LottoAmerica";
-            while (gamesList.size() < 6 && flag) {
-
-                currentPage = webClient.getPage(url);
-                String pageHtml = currentPage.asText();
-                Matcher dataMatcher = dataPattern.matcher(pageHtml);
-                Matcher extraMatcher = extraPattern.matcher(pageHtml);
-                while (dataMatcher.find() && extraMatcher.find()) {
-                    DeGames temp = new DeGames();
-                    temp.setName("Lotto America");
-                    String date = "20" + dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + dataMatcher.group(2);
-                    temp.setDate(date);
-                    String[] winningNumbers = new String[5];
-                    winningNumbers[0] = dataMatcher.group(5);
-                    winningNumbers[1] = dataMatcher.group(6);
-                    winningNumbers[2] = dataMatcher.group(7);
-                    winningNumbers[3] = dataMatcher.group(8);
-                    winningNumbers[4] = dataMatcher.group(9);
-                    temp.setWinningNumbers(winningNumbers);
-                    temp.setBonus(dataMatcher.group(10));
-                    temp.setExtra(extraMatcher.group(1));
-                    temp.setExtraText(" Multiplier ");
-
-                    if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                        gamesList.add(temp);
-                    } else {
-                        flag = false;
-                        break;
-                    }
+            HtmlPage currentPage = webClient.getPage("http://www.lotteryusa.com/delaware/");
+            webClient.waitForBackgroundJavaScriptStartingBefore(30000);
+            String pageHtml = currentPage.asText();
+            List<DeGames> gamesList = new ArrayList<>();
+            Pattern dataPattern = Pattern.compile("Lotto America\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*[\\w\\s]*:\\s*(\\d+)");
+            Matcher dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                DeGames temp = new DeGames();
+                temp.setName("Lotto America");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                temp.setBonus(dataMatcher.group(9));
+                temp.setExtra(dataMatcher.group(10));
+                temp.setExtraText("All Star Bonus: ");
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
                 }
-                month = String.valueOf(Integer.parseInt(month) - 1);
-                if ("0".equals(month)) {
-                    month = "12";
-                    year = String.valueOf(Integer.parseInt(year) - 1);
-                }
-                url = baseUrl + year + "/" + month + "/LottoAmerica";
             }
-        } catch (MalformedURLException e) {
-        } catch (IOException e) {
-        }
-
-        saveGame(gamesList, "lotto america");
-    }
-
-    public void getPlay3() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-        HtmlPage currentPage = null;
-        List<DeGames> gamesList = new ArrayList<>();
-        boolean flag = true;
-        try {
-            String baseUrl = "https://www.delottery.com/Winning-Numbers/Search-Winners/";
-            String year = String.valueOf(TODAY.get(Calendar.YEAR));
-            String month = String.valueOf(TODAY.get(Calendar.MONTH) + 1);
-            Pattern datePattern = Pattern.compile("Play 3\\s*(<i class=\"li li-sun li-lg color-tertiary\">|<i class=\"li li-moon\">)\\s*</i>\\s*</td>\\s*<td data-label=\"Date\">\\s*(\\d+)/(\\d+)/(\\d+)");
-            Pattern numbersPattern = Pattern.compile("<ul class=\"list-unstyled drawing-ball\">\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)");
-
-            String url = baseUrl + year + "/" + month + "/Play3";
-            int occurances = 0;
-            while (gamesList.size() < 6 && flag) {
-
-                currentPage = webClient.getPage(url);
-                String pageHtml = currentPage.asXml();
-                Matcher dateMatcher = datePattern.matcher(pageHtml);
-                Matcher numbersMacher = numbersPattern.matcher(pageHtml);
-                while (dateMatcher.find() && numbersMacher.find()) {
-                    DeGames temp = new DeGames();
-                    String n = "";
-                    n = dateMatcher.group(1).contains("sun") ? "Day" : "Night";
-
-                    temp.setName("Play 3 " + n);
-                    String date = "20" + dateMatcher.group(4) + "/" + dateMatcher.group(2) + "/" + dateMatcher.group(3);
-                    temp.setDate(date);
-                    String[] winningNumbers = new String[3];
-                    winningNumbers[0] = numbersMacher.group(1);
-                    winningNumbers[1] = numbersMacher.group(2);
-                    winningNumbers[2] = numbersMacher.group(3);
-                    temp.setWinningNumbers(winningNumbers);
-
-                    if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                        gamesList.add(temp);
-                    } else {
-                        occurances++;
-                        if (occurances > 3) {
-                            if (gamesList.size() > 5)
-                                flag = false;
-                            break;
-                        }
-                    }
+            dataPattern = Pattern.compile("Play 3 Midday\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                DeGames temp = new DeGames();
+                temp.setName("Play 3 Day");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
                 }
-                month = String.valueOf(Integer.parseInt(month) - 1);
-                if ("0".equals(month)) {
-                    month = "12";
-                    year = String.valueOf(Integer.parseInt(year) - 1);
-                }
-                url = baseUrl + year + "/" + month + "/Play3";
             }
-        } catch (MalformedURLException e) {
-        } catch (IOException e) {
-        }
-
-        saveGame(gamesList, "play 3");
-    }
-
-    public void getPlay4() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-        HtmlPage currentPage = null;
-        List<DeGames> gamesList = new ArrayList<>();
-        boolean flag = true;
-        try {
-            String baseUrl = "https://www.delottery.com/Winning-Numbers/Search-Winners/";
-            String year = String.valueOf(TODAY.get(Calendar.YEAR));
-            String month = String.valueOf(TODAY.get(Calendar.MONTH) + 1);
-            Pattern datePattern = Pattern.compile("Play 4\\s*(<i class=\"li li-sun li-lg color-tertiary\">|<i class=\"li li-moon\">)\\s*</i>\\s*</td>\\s*<td data-label=\"Date\">\\s*(\\d+)/(\\d+)/(\\d+)");
-            Pattern numbersPattern = Pattern.compile("<ul class=\"list-unstyled drawing-ball\">\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)\\s*</li>\\s*<li class=\"\">\\s*(\\d)");
-            int occurances = 0;
-            String url = baseUrl + year + "/" + month + "/Play4";
-            while (gamesList.size() < 6 && flag) {
-
-                currentPage = webClient.getPage(url);
-                String pageHtml = currentPage.asXml();
-                Matcher dateMatcher = datePattern.matcher(pageHtml);
-                Matcher numbersMacher = numbersPattern.matcher(pageHtml);
-                while (dateMatcher.find() && numbersMacher.find()) {
-                    DeGames temp = new DeGames();
-                    String n = "";
-                    n = dateMatcher.group(1).contains("sun") ? "Day" : "Night";
-
-                    temp.setName("Play 4 " + n);
-                    String date = "20" + dateMatcher.group(4) + "/" + dateMatcher.group(2) + "/" + dateMatcher.group(3);
-                    temp.setDate(date);
-                    String[] winningNumbers = new String[4];
-                    winningNumbers[0] = numbersMacher.group(1);
-                    winningNumbers[1] = numbersMacher.group(2);
-                    winningNumbers[2] = numbersMacher.group(3);
-                    winningNumbers[3] = numbersMacher.group(4);
-                    temp.setWinningNumbers(winningNumbers);
-
-                    if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                        gamesList.add(temp);
-                    } else {
-                        occurances++;
-                        if (occurances > 3) {
-                            if (gamesList.size() > 5)
-                                flag = false;
-                            break;
-                        }
-                    }
+            dataPattern = Pattern.compile("Play 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                DeGames temp = new DeGames();
+                temp.setName("Play 3 Night");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[3];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
                 }
-                month = String.valueOf(Integer.parseInt(month) - 1);
-                if ("0".equals(month)) {
-                    month = "12";
-                    year = String.valueOf(Integer.parseInt(year) - 1);
-                }
-                url = baseUrl + year + "/" + month + "/Play4";
             }
-        } catch (MalformedURLException e) {
-        } catch (IOException e) {
-        }
-
-        saveGame(gamesList, "play 4");
-    }
-
-
-    public void getMultiWin() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-        HtmlPage currentPage = null;
-        List<DeGames> gamesList = new ArrayList<>();
-        boolean flag = true;
-        try {
-            String baseUrl = "https://www.delottery.com/Winning-Numbers/Search-Winners/";
-            String year = String.valueOf(TODAY.get(Calendar.YEAR));
-            String month = String.valueOf(TODAY.get(Calendar.MONTH) + 1);
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{2})/([0-9]{2})(\\s*|\\t*)([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})");
-
-            String url = baseUrl + year + "/" + month + "/MultiWin";
-            while (gamesList.size() < 6 && flag) {
-
-                currentPage = webClient.getPage(url);
-                String pageHtml = currentPage.asText();
-                Matcher dataMatcher = dataPattern.matcher(pageHtml);
-                while (dataMatcher.find()) {
-                    DeGames temp = new DeGames();
-                    temp.setName("Multi Win");
-                    String date = "20" + dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + dataMatcher.group(2);
-                    temp.setDate(date);
-                    String[] winningNumbers = new String[6];
-                    winningNumbers[0] = dataMatcher.group(5);
-                    winningNumbers[1] = dataMatcher.group(6);
-                    winningNumbers[2] = dataMatcher.group(7);
-                    winningNumbers[3] = dataMatcher.group(8);
-                    winningNumbers[4] = dataMatcher.group(9);
-                    winningNumbers[5] = dataMatcher.group(10);
-                    temp.setWinningNumbers(winningNumbers);
-                    if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                        gamesList.add(temp);
-                    } else {
-                        flag = false;
-                        break;
-                    }
+            dataPattern = Pattern.compile("Play 4 Midday\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                DeGames temp = new DeGames();
+                temp.setName("Play 4 Day");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
                 }
-                month = String.valueOf(Integer.parseInt(month) - 1);
-                if ("0".equals(month)) {
-                    month = "12";
-                    year = String.valueOf(Integer.parseInt(year) - 1);
-                }
-                url = baseUrl + year + "/" + month + "/MultiWin";
             }
-        } catch (MalformedURLException e) {
-        } catch (IOException e) {
-        }
-        saveGame(gamesList, "multi win");
-    }
-
-
-    public void getLuckyForLife() {
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-        HtmlPage currentPage = null;
-        List<DeGames> gamesList = new ArrayList<>();
-        boolean flag = true;
-        try {
-            String baseUrl = "https://www.delottery.com/Winning-Numbers/Search-Winners/";
-            String year = String.valueOf(TODAY.get(Calendar.YEAR));
-            String month = String.valueOf(TODAY.get(Calendar.MONTH) + 1);
-            Pattern dataPattern = Pattern.compile("([0-9]{2})/([0-9]{2})/([0-9]{2})(\\s*|\\t*)([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})\\s*([0-9]{2})");
-
-            String url = baseUrl + year + "/" + month + "/LuckyForLife";
-            while (gamesList.size() < 6 && flag) {
-
-                currentPage = webClient.getPage(url);
-                String pageHtml = currentPage.asText();
-                Matcher dataMatcher = dataPattern.matcher(pageHtml);
-                while (dataMatcher.find()) {
-                    DeGames temp = new DeGames();
-                    temp.setName("Lucky for Life");
-                    String date = "20" + dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + dataMatcher.group(2);
-                    temp.setDate(date);
-                    String[] winningNumbers = new String[5];
-                    winningNumbers[0] = dataMatcher.group(5);
-                    winningNumbers[1] = dataMatcher.group(6);
-                    winningNumbers[2] = dataMatcher.group(7);
-                    winningNumbers[3] = dataMatcher.group(8);
-                    winningNumbers[4] = dataMatcher.group(9);
-                    temp.setWinningNumbers(winningNumbers);
-                    temp.setBonus(dataMatcher.group(10));
-
-                    if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
-                        gamesList.add(temp);
-                    } else {
-                        flag = false;
-                        break;
-                    }
+            dataPattern = Pattern.compile("Play 4\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                DeGames temp = new DeGames();
+                temp.setName("Play 4 Night");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[4];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
                 }
-                month = String.valueOf(Integer.parseInt(month) - 1);
-                if ("0".equals(month)) {
-                    month = "12";
-                    year = String.valueOf(Integer.parseInt(year) - 1);
-                }
-                url = baseUrl + year + "/" + month + "/LuckyForLife";
             }
-        } catch (MalformedURLException e) {
-        } catch (IOException e) {
-        }
+            dataPattern = Pattern.compile("Lotto\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                DeGames temp = new DeGames();
+                temp.setName("Multi Win");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[6];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
+                temp.setWinningNumbers(nums);
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
+            dataPattern = Pattern.compile("Lucky For Life\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                DeGames temp = new DeGames();
+                temp.setName("Lucky for Life");
+                String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[5];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                temp.setWinningNumbers(nums);
+                temp.setBonus(dataMatcher.group(9));
+                if (null == repository.findByNameAndDate(temp.getName(), temp.getDate())) {
+                    gamesList.add(temp);
+                }
+            }
 
-        saveGame(gamesList, "lucky for life");
+            saveGame(gamesList, "de games");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

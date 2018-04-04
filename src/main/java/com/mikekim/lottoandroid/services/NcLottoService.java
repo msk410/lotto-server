@@ -50,7 +50,7 @@ public class NcLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<NcGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 NcGames temp = new NcGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -83,7 +83,7 @@ public class NcLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<NcGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             NcGames temp = new NcGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -116,7 +116,7 @@ public class NcLottoService {
             List<NcGames> gamesList = new ArrayList<>();
             final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='datatable past_results']").get(0);
             int j = 2;
-            while (gamesList.size() < 10 && j < table.getRowCount()) {
+            while (gamesList.size() < 1 && j < table.getRowCount()) {
                 if (table.getRow(j).getCell(0).asText().matches("[\\w]{3}\\s*\\d+,\\s*\\d{4}")) {
 
                     NcGames temp = new NcGames();
@@ -158,7 +158,7 @@ public class NcLottoService {
             List<NcGames> gamesList = new ArrayList<>();
             final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='datatable past_results']").get(0);
             int j = 2;
-            while (gamesList.size() < 10 && j < table.getRowCount()) {
+            while (gamesList.size() < 1 && j < table.getRowCount()) {
                 if (table.getRow(j).getCell(0).asText().matches("[\\w]{3}\\s*\\d+,\\s*\\d{4}")) {
 
                     NcGames temp = new NcGames();

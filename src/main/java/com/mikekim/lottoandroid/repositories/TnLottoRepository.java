@@ -12,7 +12,7 @@ public interface TnLottoRepository extends CrudRepository<TnGames, Integer> {
 
     TnGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM tn_games WHERE tn_games.name = ?1 ORDER BY tn_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM tn_games WHERE tn_games.name = ?1 ORDER BY tn_games.date DESC LIMIT 1", nativeQuery = true)
     List<TnGames> findAllGames(String gameName);
 
 }

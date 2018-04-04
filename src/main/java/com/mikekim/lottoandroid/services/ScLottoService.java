@@ -48,7 +48,7 @@ public class ScLottoService {
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*PB\\s*Power Play:\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<ScGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 ScGames temp = new ScGames();
                 temp.setName("Powerball");
                 String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -81,7 +81,7 @@ public class ScLottoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity("https://data.ny.gov/resource/h6w8-42p9.json", Object[].class);
         List<ScGames> gamesList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1; i++) {
             ScGames temp = new ScGames();
             temp.setName("Mega Millions");
             Map<String, String> jsonData = (Map) responseEntity.getBody()[i];
@@ -115,7 +115,7 @@ public class ScLottoService {
             Pattern dataPattern = Pattern.compile("(Evening|Midday),\\s*([A-Za-z]+)\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             List<ScGames> gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 10 && dataMatcher.find()) {
                 ScGames temp = new ScGames();
                 temp.setName("Pick 3 " + dataMatcher.group(1));
                 String date = dataMatcher.group(4) + "/" + formatMonth(dataMatcher.group(2)) + "/" + StringUtils.leftPad(dataMatcher.group(3), 2, "0");
@@ -138,7 +138,7 @@ public class ScLottoService {
             dataPattern = Pattern.compile("(Evening|Midday),\\s*([A-Za-z]+)\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 10 && dataMatcher.find()) {
                 ScGames temp = new ScGames();
                 temp.setName("Pick 4 " + dataMatcher.group(1));
                 String date = dataMatcher.group(4) + "/" + formatMonth(dataMatcher.group(2)) + "/" + StringUtils.leftPad(dataMatcher.group(3), 2, "0");
@@ -162,7 +162,7 @@ public class ScLottoService {
             dataPattern = Pattern.compile("([A-Za-z]+)\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*Power-Up\\s*-\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 ScGames temp = new ScGames();
                 temp.setName("Palmetto Cash 5");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -189,7 +189,7 @@ public class ScLottoService {
             dataPattern = Pattern.compile("([A-Za-z]+)\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*/\\s*Lucky Ball:\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
             gamesList = new ArrayList<>();
-            while (gamesList.size() < 30 && dataMatcher.find()) {
+            while (gamesList.size() < 1 && dataMatcher.find()) {
                 ScGames temp = new ScGames();
                 temp.setName("Lucky for Life");
                 String date = dataMatcher.group(3) + "/" + formatMonth(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
@@ -212,8 +212,6 @@ public class ScLottoService {
 
         } catch (IOException e) {
             System.out.println("failed to retrieve Lucky for Life");
-        } finally {
-            webClient = null;
         }
     }
 

@@ -12,7 +12,7 @@ public interface WyLottoRepository extends CrudRepository<WyGames, Integer> {
 
     WyGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM wy_games WHERE wy_games.name = ?1 ORDER BY wy_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM wy_games WHERE wy_games.name = ?1 ORDER BY wy_games.date DESC LIMIT 1", nativeQuery = true)
     List<WyGames> findAllGames(String gameName);
 
 }

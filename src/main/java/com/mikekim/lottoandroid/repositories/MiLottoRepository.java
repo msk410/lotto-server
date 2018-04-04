@@ -12,7 +12,7 @@ public interface MiLottoRepository extends CrudRepository<MiGames, Integer> {
 
     MiGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM mi_games WHERE mi_games.name = ?1 ORDER BY mi_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM mi_games WHERE mi_games.name = ?1 ORDER BY mi_games.date DESC LIMIT 1", nativeQuery = true)
     List<MiGames> findAllGames(String gameName);
 
 }

@@ -12,7 +12,7 @@ public interface LaLottoRepository extends CrudRepository<LaGames, Integer> {
 
     LaGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM la_games WHERE la_games.name = ?1 ORDER BY la_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM la_games WHERE la_games.name = ?1 ORDER BY la_games.date DESC LIMIT 1", nativeQuery = true)
     List<LaGames> findAllGames(String gameName);
 
 }

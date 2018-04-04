@@ -12,7 +12,7 @@ public interface ScLottoRepository extends CrudRepository<ScGames, Integer> {
 
     ScGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM sc_games WHERE sc_games.name = ?1 ORDER BY sc_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM sc_games WHERE sc_games.name = ?1 ORDER BY sc_games.date DESC LIMIT 1", nativeQuery = true)
     List<ScGames> findAllGames(String gameName);
 
 }

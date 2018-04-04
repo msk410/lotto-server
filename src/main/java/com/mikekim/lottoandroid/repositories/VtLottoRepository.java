@@ -12,7 +12,7 @@ public interface VtLottoRepository extends CrudRepository<VtGames, Integer> {
 
     VtGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM vt_games WHERE vt_games.name = ?1 ORDER BY vt_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM vt_games WHERE vt_games.name = ?1 ORDER BY vt_games.date DESC LIMIT 1", nativeQuery = true)
     List<VtGames> findAllGames(String gameName);
 
 }

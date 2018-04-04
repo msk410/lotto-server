@@ -11,6 +11,6 @@ import java.util.List;
 public interface CoLottoRepository extends CrudRepository<CoGames, Integer> {
     CoGames findByNameAndDate(String name, String date);
 
-    @Query(value = "SELECT * FROM co_games WHERE co_games.name = ?1 ORDER BY co_games.date DESC LIMIT 30", nativeQuery = true)
+    @Query(value = "SELECT * FROM co_games WHERE co_games.name = ?1 ORDER BY co_games.date DESC LIMIT 1", nativeQuery = true)
     List<CoGames> findAllGames(String gameName);
 }
