@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +28,7 @@ public class InService implements Geet {
         try {
             HtmlPage currentPage = webClient.getPage("https://www.hoosierlottery.com/games/hoosier-lotto");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*LOTTO\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*\\$[0-9\\. ]+Million\\s*[0-9,]+\\s*\\d+/\\d+/\\d+\\s*\\+PLUS\\s*(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)\\s*[0-9,]+\\s*");
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*LOTTO\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*\\$([0-9\\. ]+)\\s*Million\\s*[0-9,]+\\s*\\d+/\\d+/\\d+\\s*\\+PLUS\\s*(\\d+ - \\d+ - \\d+ - \\d+ - \\d+ - \\d+)\\s*[0-9,]+\\s*");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             if (dataMatcher.find()) {
                 LottoGame temp = new LottoGame();
@@ -43,14 +44,16 @@ public class InService implements Geet {
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 temp.setExtraText(" +PLUS: ");
-                temp.setExtra(dataMatcher.group(10));
+                temp.setExtra(dataMatcher.group(11));
                 temp.setState("in");
+                int jackpot = (int) (1000000 * Double.valueOf(dataMatcher.group(10)));
+                temp.setJackpot("$" + NumberFormat.getIntegerInstance().format(jackpot));
                 gamesList.add(temp);
             }
 
             currentPage = webClient.getPage("https://www.hoosierlottery.com/games/ca$h-5");
             pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)");
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)\\s*([\\d,]*)");
             dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {
@@ -66,6 +69,7 @@ public class InService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("in");
+                temp.setJackpot("$" + dataMatcher.group(9));
                 gamesList.add(temp);
             }
             currentPage = webClient.getPage("https://www.hoosierlottery.com/games/daily-4");
@@ -87,6 +91,7 @@ public class InService implements Geet {
                 temp.setExtra(dataMatcher.group(9));
                 temp.setExtraText(" Superball: ");
                 temp.setState("in");
+                temp.setJackpot("$5,000");
                 gamesList.add(temp);
             }
 
@@ -109,6 +114,7 @@ public class InService implements Geet {
                 temp.setExtra(dataMatcher.group(8));
                 temp.setExtraText(" Superball: ");
                 temp.setState("in");
+                temp.setJackpot("$500");
 
                 gamesList.add(temp);
             }
@@ -132,6 +138,29 @@ public class InService implements Geet {
                 temp.setExtra(dataMatcher.group(25));
                 temp.setExtraText(" Superball: ");
                 temp.setState("in");
+                temp.setJackpot("$300,000");
+                gamesList.add(temp);
+            }
+
+            currentPage = webClient.getPage("https://www.hoosierlottery.com/games/lucky-seven");
+            pageHtml = currentPage.asText();
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{2})\\s*(\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+) - (\\d+)");
+            dataMatcher = dataPattern.matcher(pageHtml);
+            if (dataMatcher.find()) {
+                LottoGame temp = new LottoGame();
+                temp.setName("Lucky Seven");
+                String date = "20" + dataMatcher.group(3) + "/" + StringUtils.leftPad(dataMatcher.group(1), 2, "0") + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                temp.setDate(date);
+                String[] nums = new String[7];
+                nums[0] = dataMatcher.group(4);
+                nums[1] = dataMatcher.group(5);
+                nums[2] = dataMatcher.group(6);
+                nums[3] = dataMatcher.group(7);
+                nums[4] = dataMatcher.group(8);
+                nums[5] = dataMatcher.group(9);
+                nums[6] = dataMatcher.group(10);
+                temp.setState("in");
+                temp.setJackpot("$77,777");
                 gamesList.add(temp);
             }
 

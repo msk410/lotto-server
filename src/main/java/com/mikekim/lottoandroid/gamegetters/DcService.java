@@ -45,6 +45,7 @@ public class DcService implements Geet {
                 nums[2] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setState("dc");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
             }
 
@@ -70,7 +71,7 @@ public class DcService implements Geet {
                 nums[3] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("dc");
-
+                temp.setJackpot("$5,000");
                 gamesList.add(temp);
             }
 
@@ -96,6 +97,7 @@ public class DcService implements Geet {
                 nums[3] = dataMatcher.group(8);
                 nums[4] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
+                temp.setJackpot("$50,000");
                 temp.setState("dc");
 
                 gamesList.add(temp);

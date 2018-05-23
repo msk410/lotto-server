@@ -47,6 +47,7 @@ public class IaService implements Geet {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("ia");
+                temp.setJackpot("$600");
                 gamesList.add(temp);
             }
 
@@ -66,6 +67,7 @@ public class IaService implements Geet {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("ia");
+                temp.setJackpot("$600");
                 gamesList.add(temp);
             }
 
@@ -86,6 +88,7 @@ public class IaService implements Geet {
                 nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setState("ia");
+                temp.setJackpot("$6,000");
                 gamesList.add(temp);
             }
 
@@ -106,6 +109,7 @@ public class IaService implements Geet {
                 nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setState("ia");
+                temp.setJackpot("$6,000");
                 gamesList.add(temp);
             }
 

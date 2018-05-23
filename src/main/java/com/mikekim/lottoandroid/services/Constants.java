@@ -3,7 +3,7 @@ package com.mikekim.lottoandroid.services;
 public class Constants {
     public static final int TIME = 500000;
 
-    public static final String CRON = "0 1 * * * *";
+    public static final String CRON = "* 0/10 * * * *";
 
     public static String formatMonthShort(String month) {
         switch (month) {

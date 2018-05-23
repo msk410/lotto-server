@@ -36,24 +36,25 @@ public class LottoUsaGameGetterer {
             for (Map.Entry<String, String> entry : request.getNameRegex().entrySet()) {
                 Pattern dataPattern = Pattern.compile(entry.getValue());
                 Matcher dataMatcher = dataPattern.matcher(pageHtml);
-                if (dataMatcher.find()) {
+                    if (dataMatcher.find()) {
                     LottoGame temp = new LottoGame();
-                    temp.setName(entry.getKey());
+                    String name = entry.getKey();
+                    temp.setName(name);
                     String date = dataMatcher.group(3) + "/" + formatMonthShort(dataMatcher.group(1)) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
                     temp.setDate(date);
-                    int size = request.getNameGameSize().get(entry.getKey());
+                    int size = request.getNameGameSize().get(name);
                     String[] nums = new String[size];
                     for (int i = 0, j = 4; i < size; i++, j++) {
                         nums[i] = dataMatcher.group(j).toUpperCase();
                     }
                     temp.setWinningNumbers(nums);
-                    if (request.getNameBonus() != null && request.getNameBonus().containsKey(entry.getKey())) {
-                        temp.setBonus(dataMatcher.group(request.getNameBonus().get(entry.getKey())));
+                    if (request.getNameBonus() != null && request.getNameBonus().containsKey(name)) {
+                        temp.setBonus(dataMatcher.group(request.getNameBonus().get(name)));
                     }
-                    if (request.getNameExtra() != null && request.getNameExtra().containsKey(entry.getKey())) {
+                    if (request.getNameExtra() != null && request.getNameExtra().containsKey(name)) {
                         temp.setExtraText(request.getNameExtra().get(entry.getKey()).getText());
                         if (request.getNameExtra().get(entry.getKey()).getIndex() != -1) {
-                            temp.setExtra(dataMatcher.group(request.getNameExtra().get(entry.getKey()).getIndex()));
+                            temp.setExtra(dataMatcher.group(request.getNameExtra().get(name).getIndex()));
                         } else {
                             int sum = 0;
                             for (String s : nums) {
@@ -61,6 +62,11 @@ public class LottoUsaGameGetterer {
                             }
                             temp.setExtra(String.valueOf(sum));
                         }
+                    }
+                    if (null != request.getJackpotPosition().get(name)) {
+                        temp.setJackpot(request.getJackpotPosition().get(name).contains("$") ? request.getJackpotPosition().get(name) : "$" + dataMatcher.group(Integer.valueOf(request.getJackpotPosition().get(name))));
+                    } else {
+                        temp.setJackpot("");
                     }
                     temp.setState(request.getState());
                     lottoGames.add(temp);

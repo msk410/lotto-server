@@ -32,7 +32,7 @@ public class IdService implements Geet {
 
             currentPage = webClient.getPage("https://www.idaholottery.com/games/draw/idahoCash/");
             pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\d{1,2})/(\\d{1,2})/(\\d{4})\\s*(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)");
+            dataPattern = Pattern.compile("(\\d{1,2})/(\\d{1,2})/(\\d{4})\\s*(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)\\s*([\\$\\d,]*)");
             dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {
@@ -48,7 +48,7 @@ public class IdService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("id");
-
+                temp.setJackpot(dataMatcher.group(9));
                 gamesList.add(temp);
             }
 
@@ -70,6 +70,7 @@ public class IdService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("id");
+                temp.setJackpot("$1,000");
                 gamesList.add(temp);
             }
 
@@ -102,6 +103,7 @@ public class IdService implements Geet {
                 }
                 temp.setExtra(String.valueOf(sum));
                 temp.setState("id");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
             }
             dataPattern = Pattern.compile("Pick 3\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
@@ -124,6 +126,7 @@ public class IdService implements Geet {
                 }
                 temp.setExtra(String.valueOf(sum));
                 temp.setState("id");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
             }
 

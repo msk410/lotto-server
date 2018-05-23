@@ -34,7 +34,7 @@ public class TnService implements Geet {
                 }
                 final HtmlTable table = currentPage.getHtmlElementById(tableName);
                 int j = 1;
-                while (j < 3) {
+                while (j < 4) {
                     if (table.getRow(j).getCell(1).asText().matches("\\d+/\\d+/\\d{4}")) {
                         LottoGame temp = new LottoGame();
                         String[] rawDate = table.getRow(j).getCell(1).asText().split("/");

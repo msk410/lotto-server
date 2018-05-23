@@ -19,4 +19,5 @@ public class Request {
     Map<String, Integer> nameGameSize;
     Map<String, Extra> nameExtra;
     Map<String, Integer> nameBonus;
+    Map<String, String> jackpotPosition;
 }

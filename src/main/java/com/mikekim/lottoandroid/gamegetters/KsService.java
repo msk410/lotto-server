@@ -32,7 +32,7 @@ public class KsService implements Geet {
 
             currentPage = webClient.getPage("http://www.kslottery.com/NumbersLookup/KSCAPreviousNumbers.aspx");
             pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*([\\$\\d,]*)");
             dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {
@@ -49,6 +49,7 @@ public class KsService implements Geet {
                 temp.setWinningNumbers(nums);
                 temp.setBonus(dataMatcher.group(9));
                 temp.setState("ks");
+                temp.setJackpot(dataMatcher.group(10));
                 gamesList.add(temp);
             }
 
@@ -69,7 +70,7 @@ public class KsService implements Geet {
                 nums[3] = dataMatcher.group(7) + "W";
                 temp.setWinningNumbers(nums);
                 temp.setState("ks");
-
+            temp.setJackpot("$22,000");
                 gamesList.add(temp);
             }
 
@@ -90,7 +91,7 @@ public class KsService implements Geet {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("ks");
-
+temp.setJackpot("$500");
                 gamesList.add(temp);
             }
 

@@ -32,7 +32,7 @@ public class MaService implements Geet {
             webClient.waitForBackgroundJavaScriptStartingBefore(10000);
             String pageHtml = currentPage.asText();
 
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*-\\s*(\\d+)\\s*\\d+\\s*([\\$\\d,]*)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
             if ( dataMatcher.find()) {
                 LottoGame temp = new LottoGame();
@@ -48,6 +48,7 @@ public class MaService implements Geet {
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 temp.setState("ma");
+                temp.setJackpot(dataMatcher.group(10));
                 gamesList.add(temp);
             }
 
@@ -71,6 +72,7 @@ public class MaService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("ma");
+                temp.setJackpot("$100,000");
                 gamesList.add(temp);
             }
 

@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -26,6 +27,7 @@ public class LottoGame {
     String extra;
     String extraText;
     boolean showGame;
+    String jackpot;
 
     public LottoGame() {
         this.name = "";
@@ -35,6 +37,7 @@ public class LottoGame {
         this.extra = "";
         this.extraText = "";
         this.showGame = true;
+        this.jackpot = "";
     }
 
     @Override

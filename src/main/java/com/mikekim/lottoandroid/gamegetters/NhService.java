@@ -26,7 +26,7 @@ public class NhService implements Geet {
         try {
             HtmlPage currentPage = webClient.getPage("https://www.nhlottery.com/Games/Megabucks/Past-Winning-Numbers");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*MB(\\d{1,2})\\s*Jackpot");
+            Pattern dataPattern = Pattern.compile("Drawing results from (\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*MB(\\d{1,2})\\s*Jackpot");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {
@@ -84,7 +84,7 @@ public class NhService implements Geet {
 
             currentPage = webClient.getPage("https://www.nhlottery.com/Games/Gimme-5/Past-Winning-Numbers");
             pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            dataPattern = Pattern.compile("Drawing results from (\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {

@@ -5,10 +5,12 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.mikekim.lottoandroid.models.LottoGame;
+import com.sun.javafx.binding.StringFormatter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,28 +30,39 @@ public class MoService implements Geet {
                 final HtmlTable table = (HtmlTable) currentPage.getByXPath("//table[@class='main']").get(i);
                 int j = 1;
                 LottoGame temp = new LottoGame();
+                LottoGame temp2 = new LottoGame();
                 String[] rawDate = table.getRow(j).getCell(0).asText().split(" ");
                 String d = rawDate[3] + "/" + formatMonth(rawDate[1]) + "/" + StringUtils.leftPad(rawDate[2].split(",")[0], 2, "0");
                 temp.setDate(d);
                 if (i == 3) {
                     temp.setName("Lotto");
                     temp.setWinningNumbers(table.getRow(j).getCell(1).asText().split("-"));
+                    int jackpot = (int)(1000000 * Double.valueOf(table.getRow(j).getCell(2).asText().split("\\$")[1].split("million")[0].trim()));
+                    temp.setJackpot("$" + NumberFormat.getIntegerInstance().format(jackpot));
                 } else if (i == 4) {
                     temp.setName("Show Me Cash");
                     temp.setWinningNumbers(table.getRow(j).getCell(2).asText().split("-"));
+                    temp.setJackpot("$245,000");
                 } else if (i == 5) {
                     temp.setName("Pick 4 " + table.getRow(j).getCell(1).asText());
                     temp.setWinningNumbers(table.getRow(j).getCell(2).asText().split("-"));
-                    temp.setName("Pick 4 " + table.getRow(2).getCell(1).asText());
-                    temp.setWinningNumbers(table.getRow(2).getCell(2).asText().split("-"));
+                    temp.setJackpot("$6,000");
+                    temp2.setName("Pick 4 " + table.getRow(2).getCell(1).asText());
+                    temp2.setWinningNumbers(table.getRow(2).getCell(2).asText().split("-"));
+                    temp2.setJackpot("$6,000");
                 } else if (i == 6) {
                     temp.setName("Pick 3 " + table.getRow(j).getCell(1).asText());
                     temp.setWinningNumbers(table.getRow(j).getCell(2).asText().split("-"));
-                    temp.setName("Pick 3 " + table.getRow(2).getCell(1).asText());
-                    temp.setWinningNumbers(table.getRow(2).getCell(2).asText().split("-"));
+                    temp.setJackpot("$600");
+                    temp2.setName("Pick 3 " + table.getRow(2).getCell(1).asText());
+                    temp2.setWinningNumbers(table.getRow(2).getCell(2).asText().split("-"));
+                    temp2.setJackpot("$6000");
                 }
                 temp.setState("mo");
                 gamesList.add(temp);
+                if(!"".equals(temp2.getName())) {
+                    gamesList.add(temp2);
+                }
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();

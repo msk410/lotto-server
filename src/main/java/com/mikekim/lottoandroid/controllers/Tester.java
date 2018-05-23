@@ -108,7 +108,7 @@ public class Tester {
                     "pick 3 day", "pick 3 evening", "pick 4 day", "pick 4 evening");
         } else if (state.equals("NJ".toLowerCase())) {
             gamesList = Arrays.asList("powerball", "mega millions", "cash 4 life", "pick 6 xtra", "jersey cash 5 xtra",
-                    "pick 3 midday", "pick 3 evening", "pick 4 midday", "pick 4 evening");
+                    "pick 3 midday", "pick 3 evening", "pick 4 midday", "pick 4 evening", "5 card cash");
         } else if (state.equals("NM".toLowerCase())) {
             gamesList = Arrays.asList("powerball", "mega millions", "lotto america", "roadrunner cash", "pick 3 midday",
                     "pick 3 evening");
@@ -165,7 +165,6 @@ public class Tester {
             gamesList = Arrays.asList("powerball", "mega millions", "cowboy draw");
         }
 
-        System.out.println("hey");
         Iterable<LottoGame> allGames = repo.findAllGames(state);
         List<List<LottoGame>> all = new ArrayList<>();
         for (String gameName : gamesList) {

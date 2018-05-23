@@ -7,6 +7,7 @@ import com.mikekim.lottoandroid.models.LottoGame;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,7 +31,7 @@ public class MtService implements Geet {
 
             currentPage = webClient.getPage("https://www.montanalottery.com/en/view/game/montana-cash#tab.winningNumbers");
             pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
+            dataPattern = Pattern.compile("(\\d+).(\\d+).(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*\\$([\\d]+)\\s*K");
             dataMatcher = dataPattern.matcher(pageHtml);
 
 
@@ -47,6 +48,8 @@ public class MtService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("mt");
+                int jackpot = (int) (1000 * Double.valueOf(dataMatcher.group(9)));
+                temp.setJackpot("$" + NumberFormat.getIntegerInstance().format(jackpot));
                 gamesList.add(temp);
             }
 
@@ -56,7 +59,7 @@ public class MtService implements Geet {
             dataMatcher = dataPattern.matcher(pageHtml);
 
 
-            if(dataMatcher.find()) {
+            if (dataMatcher.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Big Sky Bonus");
                 String[] nums = new String[4];
