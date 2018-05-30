@@ -32,11 +32,12 @@ public class NmService implements Geet {
             currentPage = webClient.getPage("http://www.nmlottery.com/roadrunner-cash.aspx");
             pageHtml = currentPage.asText();
             dataPattern = Pattern.compile("(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+(\\d{1,2})\\s+Winning numbers for the ([A-Za-z]+)\\s*(\\d{1,2}),\\s*(\\d{4})");
-
             dataMatcher = dataPattern.matcher(pageHtml);
+            Pattern dataPattern2 = Pattern.compile("Roadrunner Cash\\s*Estimated Jackpot\\s*([\\$\\d]*)\\s*Thousand");
+            Matcher dataMatcher2 = dataPattern2.matcher(pageHtml);
 
 
-            if (dataMatcher.find()) {
+            if (dataMatcher.find() && dataMatcher2.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Roadrunner Cash");
                 String[] nums = new String[5];
@@ -49,6 +50,7 @@ public class NmService implements Geet {
                 nums[4] = dataMatcher.group(5);
                 temp.setWinningNumbers(nums);
                 temp.setState("nm");
+                temp.setJackpot(dataMatcher2.group(1) + ",000");
                 gamesList.add(temp);
             }
 
@@ -68,6 +70,7 @@ public class NmService implements Geet {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("nm");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
             }
 
@@ -87,6 +90,7 @@ public class NmService implements Geet {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("nm");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
             }
         } catch (MalformedURLException e) {

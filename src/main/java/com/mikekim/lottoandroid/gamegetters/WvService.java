@@ -43,6 +43,7 @@ public class WvService implements Geet{
                 nums[2] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 temp.setState("wv");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
 
             }
@@ -62,6 +63,7 @@ public class WvService implements Geet{
                 nums[3] = dataMatcher.group(10);
                 temp.setWinningNumbers(nums);
                 temp.setState("wv");
+                temp.setJackpot("$5,000");
                 gamesList.add(temp);
 
             }

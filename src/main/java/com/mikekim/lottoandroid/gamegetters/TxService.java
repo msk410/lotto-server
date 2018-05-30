@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TxService implements Geet{
+public class TxService implements Geet {
     public List<LottoGame> getGames() {
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setJavaScriptEnabled(false);
@@ -24,11 +24,12 @@ public class TxService implements Geet{
         List<LottoGame> gamesList = new ArrayList<>();
         try {
             HtmlPage currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Lotto_Texas/index.html");
-
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("Lotto Texas for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)\\s*6\\. (\\d+)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            if (dataMatcher.find()) {
+            Pattern dataPattern2 = Pattern.compile("Annuitized Jackpot for \\d*/\\d*/\\d* is:\\s*\\s\\$([\\d.]*)\\s*Million");
+            Matcher dataMatcher2 = dataPattern2.matcher(pageHtml);
+            if (dataMatcher.find() && dataMatcher2.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Lotto Texas");
                 String[] nums = new String[6];
@@ -42,30 +43,30 @@ public class TxService implements Geet{
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 temp.setState("tx");
-
+                int jackpot = (int) (1000000 * Double.valueOf(dataMatcher2.group(1)));
+                temp.setJackpot("$" + String.valueOf(jackpot));
                 gamesList.add(temp);
             }
-
             currentPage = webClient.getPage("http://www.txlottery.org/export/sites/lottery/Games/Texas_Two_Step/Winning_Numbers/");
 
             pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("Texas Two Step for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)");
+            dataPattern = Pattern.compile("\\s*([\\$\\d,]*)\\s*Texas Two Step for (\\d+)/(\\d+)/(\\d{4}):\\s*1\\. (\\d+)\\s*2\\. (\\d+)\\s*3\\. (\\d+)\\s*4\\. (\\d+)\\s*5\\. (\\d+)");
             dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Texas Two Step");
                 String[] nums = new String[4];
-                String date = dataMatcher.group(3) + "/" + dataMatcher.group(1) + "/" + StringUtils.leftPad(dataMatcher.group(2), 2, "0");
+                String date = dataMatcher.group(4) + "/" + dataMatcher.group(2) + "/" + StringUtils.leftPad(dataMatcher.group(3), 2, "0");
                 temp.setDate(date);
-                nums[0] = dataMatcher.group(4);
-                nums[1] = dataMatcher.group(5);
-                nums[2] = dataMatcher.group(6);
-                nums[3] = dataMatcher.group(7);
+                nums[0] = dataMatcher.group(5);
+                nums[1] = dataMatcher.group(6);
+                nums[2] = dataMatcher.group(7);
+                nums[3] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
-                temp.setBonus(dataMatcher.group(8));
+                temp.setBonus(dataMatcher.group(9));
                 temp.setState("tx");
-
+                temp.setJackpot(dataMatcher.group(1));
                 gamesList.add(temp);
             }
 
@@ -93,7 +94,7 @@ public class TxService implements Geet{
                 nums[9] = dataMatcher.group(13);
                 temp.setWinningNumbers(nums);
                 temp.setState("tx");
-
+                temp.setJackpot("$100,000");
                 gamesList.add(temp);
             }
 
@@ -122,7 +123,7 @@ public class TxService implements Geet{
                     nums[11] = dataMatcher.group(16);
                     temp.setWinningNumbers(nums);
                     temp.setState("tx");
-
+                    temp.setJackpot("$250,000");
                     gamesList.add(temp);
                 }
             }
@@ -168,7 +169,7 @@ public class TxService implements Geet{
                     temp.setExtra(dataMatcher.group(8));
                     temp.setExtraText("Sum It Up!: ");
                     temp.setState("tx");
-
+                    temp.setJackpot("$500");
                     gamesList.add(temp);
                 }
             }
@@ -193,6 +194,7 @@ public class TxService implements Geet{
                     temp.setExtra(dataMatcher.group(9));
                     temp.setExtraText("Sum It Up!: ");
                     temp.setState("tx");
+                    temp.setJackpot("$5,000");
                     gamesList.add(temp);
                 }
             }

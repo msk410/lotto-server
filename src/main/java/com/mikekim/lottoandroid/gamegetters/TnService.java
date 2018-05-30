@@ -26,7 +26,7 @@ public class TnService implements Geet {
             HtmlPage currentPage = webClient.getPage("http://www.tnlottery.com/winningnumbers/default.aspx");
             String tableName = "dgCash3Winners";
             String gameName = new String();
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 2; i++) {
                 if (i == 1) {
                     tableName = "dgCash4Winners";
                 } else if (i == 2) {
@@ -46,6 +46,11 @@ public class TnService implements Geet {
                             temp.setName(gameName + " " + table.getRow(j).getCell(2).asText());
                             temp.setWinningNumbers(table.getRow(j).getCell(3).asText().split(""));
                             temp.setBonus(table.getRow(j).getCell(4).asText());
+                            if (i == 0) {
+                                temp.setJackpot("$500");
+                            } else if (i == 1) {
+                                temp.setJackpot("$5,000");
+                            }
                         } else {
                             temp.setName(gameName);
                             temp.setWinningNumbers(table.getRow(j).getCell(2).asText().split(" ")[0].split("-"));

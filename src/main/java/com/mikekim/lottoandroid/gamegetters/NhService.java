@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 public class NhService implements Geet {
     @Override
     public List<LottoGame> getGames() {
@@ -24,11 +25,10 @@ public class NhService implements Geet {
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
         try {
-            HtmlPage currentPage = webClient.getPage("https://www.nhlottery.com/Games/Megabucks/Past-Winning-Numbers");
+            HtmlPage currentPage = webClient.getPage("https://www.lotteryusa.com/new-hampshire/");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("Drawing results from (\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*MB(\\d{1,2})\\s*Jackpot");
+            Pattern dataPattern = Pattern.compile("Megabucks\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*Megaball\\s*([\\$\\d,]*)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-
             if (dataMatcher.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Megabucks");
@@ -43,6 +43,7 @@ public class NhService implements Geet {
                 temp.setWinningNumbers(nums);
                 temp.setBonus(dataMatcher.group(9));
                 temp.setState("nh");
+                temp.setJackpot(dataMatcher.group(10));
                 gamesList.add(temp);
             }
 
@@ -68,6 +69,7 @@ public class NhService implements Geet {
                 nums[1] = dataMatcher.group(6);
                 nums[2] = dataMatcher.group(7);
                 temp1.setWinningNumbers(nums);
+                temp1.setJackpot("$500");
 
                 nums = new String[4];
                 nums[0] = dataMatcher.group(8);
@@ -77,7 +79,7 @@ public class NhService implements Geet {
                 temp2.setWinningNumbers(nums);
                 temp1.setState("nh");
                 temp2.setState("nh");
-
+                temp2.setJackpot("$5,000");
                 gamesList.add(temp1);
                 gamesList.add(temp2);
             }
@@ -100,7 +102,7 @@ public class NhService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("nh");
-
+temp.setJackpot("$100,000");
                 gamesList.add(temp);
             }
 

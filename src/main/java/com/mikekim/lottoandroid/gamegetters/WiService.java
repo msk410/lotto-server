@@ -42,6 +42,7 @@ public class WiService implements Geet {
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 temp.setState("wi");
+                temp.setJackpot("$1,000,000");
                 gamesList.add(temp);
 
             }
@@ -65,6 +66,7 @@ public class WiService implements Geet {
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 temp.setState("wi");
+                temp.setJackpot("$350,000");
                 gamesList.add(temp);
 
             }
@@ -86,6 +88,7 @@ public class WiService implements Geet {
                 nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setState("wi");
+                temp.setJackpot("$5,000");
                 gamesList.add(temp);
 
             }
@@ -106,6 +109,7 @@ public class WiService implements Geet {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("wi");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
 
             }
@@ -128,13 +132,14 @@ public class WiService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("wi");
+                temp.setJackpot("$250,000");
                 gamesList.add(temp);
 
             }
 
             currentPage = webClient.getPage("https://www.wilottery.com/lottogames/badger5history.aspx");
             pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("([A-Za-z]{3})\\s(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*([\\$\\d,]*)");
             dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {
@@ -150,6 +155,7 @@ public class WiService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("wi");
+                temp.setJackpot(dataMatcher.group(9));
                 gamesList.add(temp);
 
             }

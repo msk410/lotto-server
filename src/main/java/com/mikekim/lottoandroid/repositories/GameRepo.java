@@ -11,4 +11,6 @@ public interface GameRepo extends CrudRepository<LottoGame, Integer> {
 
     @Query(value = "SELECT * FROM lotto_game WHERE lotto_game.state = ?1 OR lotto_game.state = 'xx' ORDER BY lotto_game.name, lotto_game.date DESC", nativeQuery = true)
     List<LottoGame> findAllGames(String state);
+
+    LottoGame findByNameAndDate(String name, String date);
 }

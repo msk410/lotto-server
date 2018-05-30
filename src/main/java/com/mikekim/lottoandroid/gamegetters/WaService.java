@@ -28,7 +28,10 @@ public class WaService implements Geet{
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            if (dataMatcher.find()) {
+            Pattern dataPattern2 = Pattern.compile("6\\s*of\\s*6\\s*([\\$\\d,]*)");
+            Matcher dataMatcher2 = dataPattern2.matcher(pageHtml);
+
+            if (dataMatcher.find() && dataMatcher2.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Lotto");
                 String[] nums = new String[6];
@@ -42,6 +45,7 @@ public class WaService implements Geet{
                 nums[5] = dataMatcher.group(9);
                 temp.setWinningNumbers(nums);
                 temp.setState("wa");
+                temp.setJackpot(dataMatcher2.group(1));
                 gamesList.add(temp);
             }
 
@@ -49,8 +53,10 @@ public class WaService implements Geet{
             pageHtml = currentPage.asText();
             dataPattern = Pattern.compile("([A-Za-z]{3})\\s*(\\d{2}),\\s*(\\d{4})[\\sA-Za-z]*\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})\\s*(\\d{2})");
             dataMatcher = dataPattern.matcher(pageHtml);
+            dataPattern2 = Pattern.compile("5\\s*of\\s*5\\s*([\\$\\d,]*)");
+            dataMatcher2 = dataPattern2.matcher(pageHtml);
 
-            if (dataMatcher.find()) {
+            if (dataMatcher.find() && dataMatcher2.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Hit 5");
                 String[] nums = new String[5];
@@ -63,6 +69,7 @@ public class WaService implements Geet{
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("wa");
+                temp.setJackpot(dataMatcher2.group(1));
                 gamesList.add(temp);
             }
 
@@ -83,6 +90,7 @@ public class WaService implements Geet{
                 nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setState("wa");
+                temp.setJackpot("$10,000");
                 gamesList.add(temp);
             }
 
@@ -101,6 +109,7 @@ public class WaService implements Geet{
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("wa");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
             }
 
@@ -120,6 +129,7 @@ public class WaService implements Geet{
                 }
                 temp.setWinningNumbers(nums);
                 temp.setState("wa");
+                temp.setJackpot("$100,000");
                 gamesList.add(temp);
             }
 

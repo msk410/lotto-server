@@ -25,11 +25,9 @@ public class WyService implements Geet{
 
         try {
             HtmlPage currentPage = webClient.getPage("https://wyolotto.com/play/cowboy-draw/");
-
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*Winning Numbers\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*Estimated Jackpot\\s*([\\$\\d,]*)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-            List<LottoGame> gamesList = new ArrayList<>();
             if (dataMatcher.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Cowboy Draw");
@@ -43,6 +41,7 @@ public class WyService implements Geet{
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("wy");
+                temp.setJackpot(dataMatcher.group(9));
                 lottoGames.add(temp);
             }
 

@@ -26,9 +26,9 @@ public class MeService implements Geet {
         webClient.getOptions().setActiveXNative(true);
         webClient.getOptions().setCssEnabled(false);
         try {
-            HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/games/megaplusold.shtml");
+            HtmlPage currentPage = webClient.getPage("http://www.mainelottery.com/index.html");
             String pageHtml = currentPage.asText();
-            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*MB\\s*(\\d+)\\s*Next estimated jackpot is\\s*([\\$\\d,]*)");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {
@@ -45,12 +45,11 @@ public class MeService implements Geet {
                 temp.setWinningNumbers(nums);
                 temp.setBonus(dataMatcher.group(9));
                 temp.setState("me");
+                temp.setJackpot(dataMatcher.group(10));
                 gamesList.add(temp);
             }
 
-            currentPage = webClient.getPage("http://www.mainelottery.com/games/gimme5-previous.html");
-            pageHtml = currentPage.asText();
-            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)");
+            dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*Top prize is\\s*([\\$\\d,]*)");
             dataMatcher = dataPattern.matcher(pageHtml);
 
             if (dataMatcher.find()) {
@@ -66,6 +65,7 @@ public class MeService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("me");
+                temp.setJackpot("$100,000");
                 gamesList.add(temp);
             }
 
@@ -86,6 +86,7 @@ public class MeService implements Geet {
                 nums[2] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setState("me");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
             }
 
@@ -108,6 +109,8 @@ public class MeService implements Geet {
                 nums[3] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("me");
+                temp.setJackpot("$5,000");
+
                 gamesList.add(temp);
             }
 
@@ -129,6 +132,8 @@ public class MeService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("me");
+                temp.setJackpot("$100,000");
+
                 gamesList.add(temp);
             }
 

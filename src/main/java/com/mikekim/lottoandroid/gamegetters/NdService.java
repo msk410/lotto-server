@@ -50,6 +50,7 @@ public class NdService implements Geet {
                 nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setState("nd");
+                temp.setJackpot("$22,000");
                 gamesList.add(temp);
             }
 

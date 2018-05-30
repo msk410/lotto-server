@@ -33,30 +33,33 @@ public class GameService {
 //    @Scheduled(cron = Constants.CRON)
     public void saveGames() {
         x++;
-//        commonGames();
-//        az();
-//        ar();
-//        ca();
-//        co();
-//        ct();
-//        de();
-//        fl();
-//        ga();
-//        il();
-//        la();
-//        md();
-//        mi();
-//        mn();
-//        nj();
-//        oh();
-//        ky();
-//        ny();
-//        sd();
-//        pa();
-//        ri();
+        commonGames();
+        az();
+        ar();
+        ca();
+        co();
+        ct();
+        de();
+        fl();
+        ga();
+        il();
+        la();
+        md();
+        mi();
+        mn();
+        nj();
+        oh();
+        ky();
+        ny();
+        sd();
+        pa();
+        ri();
+        tn();
         nonLottoUsa();
         System.out.println("asdf" + x);
     }
+
+
 
     public void commonGames() {
         regex = new HashMap<>();
@@ -150,6 +153,27 @@ public class GameService {
                 .nameRegex(regex)
                 .nameGameSize(gameSize)
                 .state("az")
+                .jackpotPosition(jackpotPosition)
+                .build();
+        List<LottoGame> lottoGameList = lottoUsaGameGetterer.getLottoGame(request);
+        gameRepo.save(lottoGameList);
+    }
+    public void tn() {
+        regex = new HashMap<>();
+        gameSize = new HashMap<>();
+        jackpotPosition = new HashMap<>();
+        bonusMap = new HashMap<>();
+
+        regex.put("Tennessee Cash", "Tennessee Cash\\s*Past Results:\\s*last 10\\s*year\\s*[A-Za-z]*,\\s*([A-Za-z]+)\\s*(\\d+),\\s*(\\d{4})\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*(\\d+)\\s*CashBall\\s*\\$([\\d,]*)");
+        gameSize.put("Tennessee Cash", 5);
+        bonusMap.put("Tennessee Cash", 9);
+        jackpotPosition.put("Tennessee Cash", "10");
+        Request request = Request.builder()
+                .url("http://www.lotteryusa.com/tennessee/")
+                .nameRegex(regex)
+                .nameGameSize(gameSize)
+                .state("tn")
+                .nameBonus(bonusMap)
                 .jackpotPosition(jackpotPosition)
                 .build();
         List<LottoGame> lottoGameList = lottoUsaGameGetterer.getLottoGame(request);
@@ -1011,33 +1035,43 @@ public class GameService {
 
     public void nonLottoUsa() {
         List<Geet> geets = new ArrayList<>();
-//        geets.add(new DcService());
-//        geets.add(new IaService());
-//        geets.add(new IdService());
-//        geets.add(new InService());
-//        geets.add(new KsService());
-//        geets.add(new MaService());
-//        geets.add(new MeService()); //todo maybe move to lotteryusa???
-//        geets.add(new MoService());
-//        geets.add(new MtService());
+        geets.add(new DcService());
+        geets.add(new IaService());
+        geets.add(new IdService());
+        geets.add(new InService());
+        geets.add(new KsService());
+        geets.add(new MaService());
+        geets.add(new MeService());
+        geets.add(new MoService());
+        geets.add(new MtService());
         geets.add(new NcService());
-//        geets.add(new NdService());
-//        geets.add(new NeService());
-//        geets.add(new NhService());
-//        geets.add(new NmService());
-//        geets.add(new OkService());
-//        geets.add(new OrService());
-//        geets.add(new ScService());
-//        geets.add(new TnService());
-//        geets.add(new TxService());
-//        geets.add(new VaService());
-//        geets.add(new VtService());
-//        geets.add(new WaService());
-//        geets.add(new WiService());
-//        geets.add(new WyService());
-//        geets.add(new WvService());
+        geets.add(new NdService());
+        geets.add(new NeService());
+        geets.add(new NhService());
+        geets.add(new NmService());
+        geets.add(new OkService());
+        geets.add(new OrService());
+        geets.add(new ScService());
+        geets.add(new TnService());
+        geets.add(new TxService());
+        geets.add(new VaService());
+        geets.add(new VtService());
+        geets.add(new WaService());
+        geets.add(new WiService());
+        geets.add(new WyService());
+        geets.add(new WvService());
 
-        geets.forEach(geet -> gameRepo.save(geet.getGames()));
+        geets.forEach(geet -> geet.getGames().forEach(game -> {
+            if (gameRepo.findByNameAndDate(game.getName(), game.getDate()) == null) {
+                gameRepo.save(game);
+            }
+        }));
     }
-
 }
+
+
+
+
+
+
+

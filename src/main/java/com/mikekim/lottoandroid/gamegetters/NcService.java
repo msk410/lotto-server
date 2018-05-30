@@ -42,6 +42,7 @@ public class NcService implements Geet {
                     nums[4] = table.getRow(j).getCell(1).getFirstChild().getNextSibling().getNextSibling().getNextSibling().getNextSibling().asText();
                     temp.setWinningNumbers(nums);
                     temp.setState("nc");
+                    temp.setJackpot(table.getRow(j).getCell(2).asText());
                     gamesList.add(temp);
                 } else {
                     break;
@@ -64,6 +65,7 @@ public class NcService implements Geet {
                     temp.setDate(rawDate[2] + "/" + formatMonth(rawDate[0]) + "/" + StringUtils.leftPad(rawDate[1].split(",")[0], 2, "0"));
                     temp.setWinningNumbers(table.getRow(j).getCell(2).asText().split(" - "));
                     temp.setState("nc");
+                    temp.setJackpot("$5,000");
                     gamesList.add(temp);
                 } else {
                     break;
@@ -85,6 +87,7 @@ public class NcService implements Geet {
                     temp.setDate(rawDate[2] + "/" + formatMonth(rawDate[0]) + "/" + StringUtils.leftPad(rawDate[1].split(",")[0], 2, "0"));
                     temp.setWinningNumbers(table.getRow(j).getCell(2).asText().split(" - "));
                     temp.setState("nc");
+                    temp.setJackpot("$500");
                     gamesList.add(temp);
 
                 } else {

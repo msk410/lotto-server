@@ -43,6 +43,7 @@ public class VaService implements Geet{
                 temp.setWinningNumbers(nums);
                 temp.setBonus(dataMatcher.group(10));
                 temp.setState("va");
+                temp.setJackpot("$1,000,000");
                 gamesList.add(temp);
             }
 
@@ -68,6 +69,7 @@ public class VaService implements Geet{
                 nums[3] = dataMatcher.group(7);
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
+                temp.setJackpot("$100,000");
 
                 nums = new String[5];
                 nums[0] = dataMatcher.group(9);
@@ -78,7 +80,7 @@ public class VaService implements Geet{
                 temp2.setWinningNumbers(nums);
                 temp.setState("va");
                 temp2.setState("va");
-
+                temp2.setJackpot("$100,000");
                 gamesList.add(temp);
                 gamesList.add(temp2);
             }
@@ -105,6 +107,7 @@ public class VaService implements Geet{
                 nums[2] = dataMatcher.group(6);
                 nums[3] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
+                temp.setJackpot("$5,000");
 
                 nums = new String[4];
                 nums[0] = dataMatcher.group(8);
@@ -114,7 +117,7 @@ public class VaService implements Geet{
                 temp2.setWinningNumbers(nums);
                 temp.setState("va");
                 temp2.setState("va");
-
+                temp2.setJackpot("$5,000");
                 gamesList.add(temp);
                 gamesList.add(temp2);
             }
@@ -139,7 +142,7 @@ public class VaService implements Geet{
                 nums[1] = dataMatcher.group(5);
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
-
+                temp.setJackpot("$500");
                 nums = new String[3];
                 nums[0] = dataMatcher.group(7);
                 nums[1] = dataMatcher.group(8);
@@ -147,7 +150,7 @@ public class VaService implements Geet{
                 temp2.setWinningNumbers(nums);
                 temp.setState("va");
                 temp2.setState("va");
-
+                temp2.setJackpot("$500");
                 gamesList.add(temp);
                 gamesList.add(temp2);
             }

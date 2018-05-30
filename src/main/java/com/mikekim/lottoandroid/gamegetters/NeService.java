@@ -27,9 +27,9 @@ public class NeService implements Geet {
             String pageHtml = currentPage.asText();
             Pattern dataPattern = Pattern.compile("(\\d+)/(\\d+)/(\\d{4})\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})\\s*,\\s*(\\d{2})");
             Matcher dataMatcher = dataPattern.matcher(pageHtml);
-
-
-            if (dataMatcher.find()) {
+            Pattern dataPattern2 = Pattern.compile("Estimated Jackpot for \\d+/\\d+/\\d{4} is\\s*([\\$\\d,]*)");
+            Matcher dataMatcher2 = dataPattern2.matcher(pageHtml);
+            if (dataMatcher.find() && dataMatcher2.find()) {
                 LottoGame temp = new LottoGame();
                 temp.setName("Pick 5");
                 String[] nums = new String[5];
@@ -42,6 +42,7 @@ public class NeService implements Geet {
                 nums[4] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("ne");
+                temp.setJackpot(dataMatcher2.group(1));
                 gamesList.add(temp);
             }
 
@@ -62,6 +63,7 @@ public class NeService implements Geet {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("ne");
+                temp.setJackpot("$600");
                 gamesList.add(temp);
             }
 
@@ -81,6 +83,7 @@ public class NeService implements Geet {
                 nums[2] = dataMatcher.group(6);
                 temp.setWinningNumbers(nums);
                 temp.setState("ne");
+                temp.setJackpot("$5,000");
                 gamesList.add(temp);
             }
 
@@ -101,6 +104,7 @@ public class NeService implements Geet {
                 nums[3] = dataMatcher.group(7) + "W";
                 temp.setWinningNumbers(nums);
                 temp.setState("ne");
+                temp.setJackpot("$22,000");
                 gamesList.add(temp);
             }
 

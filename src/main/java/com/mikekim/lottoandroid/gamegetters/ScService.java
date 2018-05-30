@@ -38,6 +38,7 @@ public class ScService implements Geet {
                 nums[2] = dataMatcher.group(7);
                 temp.setWinningNumbers(nums);
                 temp.setState("sc");
+                temp.setJackpot("$500");
                 gamesList.add(temp);
             }
 
@@ -58,6 +59,7 @@ public class ScService implements Geet {
                 nums[3] = dataMatcher.group(8);
                 temp.setWinningNumbers(nums);
                 temp.setState("sc");
+                temp.setJackpot("$5,000");
                 gamesList.add(temp);
             }
 
@@ -81,6 +83,7 @@ public class ScService implements Geet {
                 temp.setExtra(dataMatcher.group(9));
                 temp.setExtraText("Power-Up: ");
                 temp.setState("sc");
+                temp.setJackpot("$100,000");
                 gamesList.add(temp);
             }
         } catch (MalformedURLException e) {

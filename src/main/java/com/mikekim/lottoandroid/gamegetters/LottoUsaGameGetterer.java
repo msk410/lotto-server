@@ -36,7 +36,7 @@ public class LottoUsaGameGetterer {
             for (Map.Entry<String, String> entry : request.getNameRegex().entrySet()) {
                 Pattern dataPattern = Pattern.compile(entry.getValue());
                 Matcher dataMatcher = dataPattern.matcher(pageHtml);
-                    if (dataMatcher.find()) {
+                if (dataMatcher.find()) {
                     LottoGame temp = new LottoGame();
                     String name = entry.getKey();
                     temp.setName(name);
